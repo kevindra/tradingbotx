@@ -1,0 +1,2 @@
+# tradingbot
+Trading Bot CLI
