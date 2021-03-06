@@ -1,13 +1,21 @@
 import Alpaca from '@master-chief/alpaca';
 import {OrderSide} from '../types';
 
+export interface OrderRequest {
+  symbol: string;
+  side: OrderSide;
+  qty?: number;
+  notional?: number;
+}
 export class AlpacaClient {
   alpaca;
   constructor() {
     this.alpaca = new Alpaca.AlpacaClient({
       credentials: {
-        key: process.env.ALP_API_KEY || '',
-        secret: process.env.ALP_SECURITY_KEY || '',
+        key: process.env.ALP_API_KEY || 'PK1GIX30SSW0MI9O4SIP',
+        secret:
+          process.env.ALP_SECURITY_KEY ||
+          'YEaKCvNTuB69xcrTLQXZg8YaaSOcbddPNdcRfNJd',
         paper: true,
         // usePolygon: false,
       },
@@ -18,19 +26,13 @@ export class AlpacaClient {
   /**
    * Places a market order with day as time_in_force.
    */
-  async placeOrder(
-    symbol: string,
-    side: OrderSide,
-    qty?: number,
-    notional?: number
-  ) {
-    let order;
+  async placeOrder(order: OrderRequest) {
     try {
-      order = await this.alpaca.placeOrder({
-        symbol: symbol,
-        qty: qty,
-        notional: notional,
-        side: side,
+      return await this.alpaca.placeOrder({
+        symbol: order.symbol,
+        qty: order.qty,
+        notional: order.notional,
+        side: order.side,
         type: 'market',
         time_in_force: 'day',
       });
@@ -38,7 +40,10 @@ export class AlpacaClient {
       console.log(err);
       throw err;
     }
-    return order;
+  }
+
+  async getPositions() {
+    return await this.alpaca.getPositions();
   }
 }
 

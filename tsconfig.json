@@ -4,7 +4,8 @@
     "rootDir": "src",
     "outDir": "dist",
     "esModuleInterop": true,
-    "allowJs": false
+    "allowJs": false,
+    "resolveJsonModule": true
   },
   "include": ["src/**/*", "test/**/*"],
   "exclude": ["src/public"]
