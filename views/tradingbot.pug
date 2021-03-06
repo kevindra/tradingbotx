@@ -37,6 +37,9 @@ html(lang="en")
         div(class="container")
             h1="Trading Bot"
             <span>Trading Bot finds attractive stocks on demand and buys or sells them automatically on your behalf.</span> <br/><br/>
+
+            <div class="alert alert-primary" role="alert">👉 To use Trading Bot, you first need to create an account on <a href='https://alpaca.markets/'>Alpaca (https://alpaca.markets/)</a>. Once your sign up is complete, you will receive your access key and secret key (for paper money a/c and live money a/c). After you get those keys, enter them below. (Do not play with real money, I will not be held liable for any loss of money. :))
+            </div>
             <form method="POST" action="/" id="startbot">
                 <div class="row mb-5">
                     <div class="col-sm-2">
@@ -84,7 +87,7 @@ html(lang="en")
                         input#horizon.form-control(type='text' name='alp_access' aria-describedby='horizonHelp' value="")
                     </div>
                     <div class="col-sm-3">
-                        <span id="horizonHelp" class="form-text">Your Alpaca account's api access key. If you haven't signed up for Alpaca, do it.</span>
+                        <span id="horizonHelp" class="form-text">Your Alpaca paper money account's api access key. If you haven't signed up for Alpaca, do it.</span>
                     </div>
                 </div>
 
