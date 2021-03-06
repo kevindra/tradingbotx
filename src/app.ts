@@ -85,7 +85,7 @@ app.get('/oauth', async (req, res) => {
 
   if (!code) {
     res.send('Login denied!');
-    res.redirect('/login');
+    // res.redirect('/login');
     return;
   }
   // POST https://api.alpaca.markets/oauth/token
@@ -119,7 +119,7 @@ app.get('/oauth', async (req, res) => {
           const tokens = JSON.parse(body);
           (sess as any)['tokens'] = tokens;
           res.send('Login successful!');
-          res.redirect('/login');
+          // res.redirect('/login');
           resolve();
         }
       }
