@@ -65,18 +65,15 @@ app.get('/tradingbot', (req, res) => {
 
 app.get('/login', (req, res) => {
   var sess: any = req.session;
-  if (sess.tokens) {
-    res.send('Already logged in : ' + JSON.stringify(sess.tokens));
-  } else {
-    res.render('login', {
-      title: 'Buy The Dip Club | Login',
-      navTitle: NAV_TITLE,
-      message: SECONDARY_TITLE,
-      clientId: process.env.ALP_CLIENT_ID,
-      secret: process.env.ALP_CLIENT_SECRET,
-      redirectUri: process.env.ALP_REDIRECT_URI,
-    });
-  }
+  res.render('login', {
+    title: 'Buy The Dip Club | Login',
+    navTitle: NAV_TITLE,
+    message: SECONDARY_TITLE,
+    clientId: process.env.ALP_CLIENT_ID,
+    secret: process.env.ALP_CLIENT_SECRET,
+    redirectUri: process.env.ALP_REDIRECT_URI,
+    tokens: sess.tokens,
+  });
 });
 
 app.get('/oauth', async (req, res) => {
@@ -118,8 +115,7 @@ app.get('/oauth', async (req, res) => {
         } else {
           const tokens = JSON.parse(body);
           (sess as any)['tokens'] = tokens;
-          res.send('Login successful!');
-          // res.redirect('/login');
+          res.redirect('/login');
           resolve();
         }
       }

@@ -2,7 +2,7 @@ html(lang="en")
     head
         include head.pug
     body
-        - var indexPageActive = 'active'
+        - var loginPageActive = 'active'
         include nav.pug 
 
         div(class="container")
@@ -10,9 +10,14 @@ html(lang="en")
             div.mb-5
                 span=secondaryMessage
 
-            <a href='https://app.alpaca.markets/oauth/authorize?response_type=code&client_id=#{clientId}&redirect_uri=#{redirectUri}&state=SOMETHING_RANDOM&scope=account:write%20trading' class='btn btn-primary btn-lg'>Login with Alpaca</a>
+            if tokens
+                <div class="alert alert-primary" role="alert">
+                    <span>Logged in. Go <a href='/trade'>trade!</a></span>
+                </div>
+            else 
+                <a href='https://app.alpaca.markets/oauth/authorize?response_type=code&client_id=#{clientId}&redirect_uri=#{redirectUri}&state=SOMETHING_RANDOM&scope=account:write%20trading' class='btn btn-primary btn-lg mb-5'>Login with Alpaca</a>
 
             include donation.pug
-            include disclaimer.pug 
+            include disclaimer.pug
 
     include footer.pug
