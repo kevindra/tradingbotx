@@ -44,7 +44,7 @@ export class AlpacaClient {
 
 // module.exports = new AlpacaClient();
 
-// var ac = new AlpacaClient();
+// let ac = new AlpacaClient();
 // ac.placeOrder('AAPL', 1, 'buy').then((o) => console.log(JSON.stringify(o)));
 // ac.placeOrder('AAPL', 1, 'buy').then((o) => console.log(JSON.stringify(o)));
 // ac.placeOrder('AAPL', 1, 'buy').then((o) => console.log(JSON.stringify(o)));

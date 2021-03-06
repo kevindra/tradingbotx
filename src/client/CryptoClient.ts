@@ -38,10 +38,10 @@ export class CryptoClient {
    * }
    */
   async getData(query: Query): Promise<CryptoGetDataResult> {
-    var url = this._buildUrl(query);
+    const url = this._buildUrl(query);
 
     console.log('Making request to the url: ', url);
-    var opt = {
+    const opt = {
       url: url,
       // ,
       // headers: {
@@ -61,20 +61,19 @@ export class CryptoClient {
   }
 
   _buildUrl(query: Query) {
-    let url = Mustache.render(URL, {
+    return Mustache.render(URL, {
       ticker: query.ticker.toUpperCase(),
       currency: query.currency.toUpperCase(),
       periodInDays: query.periodInDays,
     });
-    return url;
   }
 }
 
 // https://min-api.cryptocompare.com/data/histoday?aggregate=1&e=CCCAGG&extraParams=CryptoCompare&fsym=BTC&limit=365&tryConversion=false&tsym=USD
 // module.exports = new CryptoClient();
-// var cc = new CryptoClient()
+// const cc = new CryptoClient()
 // cc.getData({ticker: 'BTC', currency: 'USD'}).then((data) => {
 //     // console.log(data);
-//     var fs = require('fs')
+//     const fs = require('fs')
 //     fs.writeFileSync('./data/timeseries/BTC.json', JSON.stringify(data, null, 2))
 // })

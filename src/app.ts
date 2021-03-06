@@ -44,12 +44,12 @@ app.get('/api/conf', async (req, res) => {
   const type = req.query.type as SecurityType;
   const horizon = parseInt((req.query.horizon as string) || '365');
 
-  if (type == 'stocks') {
-    var data = await confidenceCalculator.stockBuyerConf(ticker, horizon);
+  if (type === 'stocks') {
+    const data = await confidenceCalculator.stockBuyerConf(ticker, horizon);
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(data));
-  } else if (type == 'crypto') {
-    var data = await confidenceCalculator.cryptoBuyerConf(
+  } else if (type === 'crypto') {
+    const data = await confidenceCalculator.cryptoBuyerConf(
       ticker,
       currency,
       horizon
@@ -61,21 +61,24 @@ app.get('/api/conf', async (req, res) => {
   }
 });
 
-
 app.get('/api/latestconf', async (req, res) => {
   console.log(req.query);
-  let ticker = req.query.t as string;
-  let currency = req.query.c as string;
-  let type = req.query.type as string;
-  let horizon = parseInt((req.query.horizon as string) || '365');
+  const ticker = req.query.t as string;
+  const currency = req.query.c as string;
+  const type = req.query.type as string;
+  const horizon = parseInt((req.query.horizon as string) || '365');
 
   try {
-    if (type == 'stocks') {
-      var data = await confidenceCalculator.stockBuyerConf(ticker, horizon);
+    if (type === 'stocks') {
+      const data = await confidenceCalculator.stockBuyerConf(ticker, horizon);
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(data[data.length - 2]));
-    } else if (type == 'crypto') {
-      var data = await confidenceCalculator.cryptoBuyerConf(ticker, currency, horizon);
+    } else if (type === 'crypto') {
+      const data = await confidenceCalculator.cryptoBuyerConf(
+        ticker,
+        currency,
+        horizon
+      );
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(data[data.length - 2]));
     } else {

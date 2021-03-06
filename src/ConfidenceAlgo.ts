@@ -27,8 +27,8 @@ export class ConfidenceAlgo {
     minDropPercent = 0.5,
     maxDropDuration = 60
   ): Event[] {
-    let eventsOfInterest = [];
-    let events: Event[] = [];
+    const eventsOfInterest = [];
+    const events: Event[] = [];
     let n = 1;
     let lastMaxPrice = algoInput.prices[0];
     let lastMaxPriceIndex = 0;
@@ -43,10 +43,10 @@ export class ConfidenceAlgo {
         }
       }
 
-      let drop = lastMaxPrice - algoInput.prices[n];
-      let dropPercent = drop / lastMaxPrice;
-      let dropDuration = n - lastMaxPriceIndex;
-      let e: Event = {
+      const drop = lastMaxPrice - algoInput.prices[n];
+      const dropPercent = drop / lastMaxPrice;
+      const dropDuration = n - lastMaxPriceIndex;
+      const e: Event = {
         currentIndex: n,
         lastMaxPriceIndex: lastMaxPriceIndex,
         currentPrice: algoInput.prices[n],
@@ -67,11 +67,11 @@ export class ConfidenceAlgo {
       n++;
     }
 
-    var hist: {[key: number]: number} = {};
+    const hist: {[key: number]: number} = {};
     n = 0;
     while (n < events.length) {
       // avgDropPerInterval is going to be the likelihood metric
-      var e = events[n];
+      const e = events[n];
       e.normalizedAvgDropPerInterval =
         e.avgDropPerInterval / maxAvgDropPerInterval;
 
@@ -80,7 +80,7 @@ export class ConfidenceAlgo {
       }
       e.normalizedDropIntensity = 100 * (e.dropIntensity / maxDropIntensity); // TODO, not being used in the histogram yet.
 
-      // var bucket = Math.round(e.normalizedAvgDropPerInterval * 100);
+      // const bucket = Math.round(e.normalizedAvgDropPerInterval * 100);
       // if (hist[bucket] === undefined) {
       //   hist[bucket] = 1;
       // } else {
@@ -91,8 +91,8 @@ export class ConfidenceAlgo {
 
     // n = 0;
     // while (n < events.length) {
-    //   var e = events[n];
-    //   var bucket = Math.round(e.normalizedAvgDropPerInterval! * 100);
+    //   const e = events[n];
+    //   const bucket = Math.round(e.normalizedAvgDropPerInterval! * 100);
     //   e.confidence = hist[bucket] / events.length;
     //   eventsOfInterest.push(e);
     //   n++;
@@ -102,9 +102,9 @@ export class ConfidenceAlgo {
 }
 
 // module.exports = new BuyPredictor();
-// var StockPriceData = require('../manager/StockPriceData');
-// var spd = new StockPriceData(require('../data/timeseries/AMZN.json'));
+// const StockPriceData = require('../manager/StockPriceData');
+// const spd = new StockPriceData(require('../data/timeseries/AMZN.json'));
 
-// var bp = new BuyPredictor();
-// var buySignals = bp.predict(spd.dailyClose());
+// const bp = new BuyPredictor();
+// const buySignals = bp.predict(spd.dailyClose());
 // console.log(buySignals);

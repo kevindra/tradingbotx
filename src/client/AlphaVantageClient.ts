@@ -1,8 +1,5 @@
-// var request = require('request');
-// var queryString = require('query-string');
 import request from 'request';
 import queryString from 'query-string';
-import {query} from 'express';
 
 export interface GetData {
   symbol: string;
@@ -27,16 +24,16 @@ export class AlphaVantageClient {
   constructor() {}
 
   async getData(symbol: string): Promise<AVGetDataResult> {
-    let getDataQuery: GetData = {
+    const getDataQuery: GetData = {
       symbol: symbol,
       apikey: process.env.AV_API_KEY || '',
       function: 'TIME_SERIES_DAILY_ADJUSTED',
       outputsize: 'full',
     };
-    var url = URL + queryString.stringify(getDataQuery);
+    const url = URL + queryString.stringify(getDataQuery);
 
     console.log('Making request to the url: ', url);
-    var opt = {
+    const opt = {
       url: url,
       // ,
       // headers: {

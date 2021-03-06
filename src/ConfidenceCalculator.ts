@@ -10,14 +10,14 @@ export class ConfidenceCalculator {
   constructor() {}
 
   async stockBuyerConf(ticker: string, horizon: number) {
-    var stockData = await timeseriesManager.getStockTimeseries(ticker, horizon);
-    var prices = stockData.prices;
+    const stockData = await timeseriesManager.getStockTimeseries(ticker, horizon);
+    const prices = stockData.prices;
 
-    var events: Event[] = algo.predict({
+    const events: Event[] = algo.predict({
       prices: prices.map(price => price.price),
     });
 
-    var confidences = _.map(events, 'normalizedDropIntensity');
+    const confidences = _.map(events, 'normalizedDropIntensity');
 
     return prices.map((row, index) => {
       return [row.timestamp, row.price, confidences[index]];
@@ -25,18 +25,18 @@ export class ConfidenceCalculator {
   }
 
   async cryptoBuyerConf(ticker = 'BTC', currency = 'USD', horizon = 365) {
-    var cryptoData: PriceTimeSeriesData = await timeseriesManager.getCryptoTimeseries(
+    const cryptoData: PriceTimeSeriesData = await timeseriesManager.getCryptoTimeseries(
       ticker,
       currency,
       horizon
     );
 
-    var prices = cryptoData.prices;
-    var events: Event[] = algo.predict({
+    const prices = cryptoData.prices;
+    const events: Event[] = algo.predict({
       prices: prices.map(price => price.price),
     });
 
-    var confidences = _.map(events, 'normalizedDropIntensity');
+    const confidences = _.map(events, 'normalizedDropIntensity');
     return prices.map((row, index) => {
       return [row.timestamp, row.price, confidences[index]];
     });
