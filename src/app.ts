@@ -1,4 +1,5 @@
 import express from 'express';
+import session from 'express-session';
 import path from 'path';
 import {ConfidenceCalculator} from './ConfidenceCalculator';
 import {Trader} from './trader';
@@ -8,10 +9,15 @@ import {Opportunities, OpportunitiesFinder} from './OpportunitiesFinder';
 import popularTickers = require('./popularTickers.json');
 import bodyParser from 'body-parser';
 import request from 'request';
+import {ESRCH} from 'constants';
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
+app.use(
+  session({secret: 'ssshhhhhhhhhhhh', saveUninitialized: true, resave: true})
+);
+
 const NAV_TITLE = 'Buy The Dip Club';
 const SECONDARY_TITLE = 'Stock/Crypto Buy Predictor & Trader';
 const confidenceCalculator = new ConfidenceCalculator();
@@ -58,20 +64,27 @@ app.get('/tradingbot', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('login', {
-    title: 'Buy The Dip Club | Login',
-    navTitle: NAV_TITLE,
-    message: SECONDARY_TITLE,
-    clientId: process.env.ALP_CLIENT_ID,
-    secret: process.env.ALP_CLIENT_SECRET,
-    redirectUri: process.env.ALP_REDIRECT_URI,
-  });
+  var sess: any = req.session;
+  if (sess.tokens) {
+    res.send('Already logged in : ' + JSON.stringify(sess.tokens));
+  } else {
+    res.render('login', {
+      title: 'Buy The Dip Club | Login',
+      navTitle: NAV_TITLE,
+      message: SECONDARY_TITLE,
+      clientId: process.env.ALP_CLIENT_ID,
+      secret: process.env.ALP_CLIENT_SECRET,
+      redirectUri: process.env.ALP_REDIRECT_URI,
+    });
+  }
 });
 
 app.get('/oauth', async (req, res) => {
   const code = req.query.code;
+  let sess = req.session;
 
   if (!code) {
+    res.send('Login denied!');
     res.redirect('/login');
     return;
   }
@@ -104,8 +117,9 @@ app.get('/oauth', async (req, res) => {
           resolve();
         } else {
           const tokens = JSON.parse(body);
-          console.log('GOT TOKENS: ' + JSON.stringify(tokens));
+          (sess as any)['tokens'] = tokens;
           res.send('Login successful!');
+          res.redirect('/login');
           resolve();
         }
       }
