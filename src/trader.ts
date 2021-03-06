@@ -88,29 +88,3 @@ export class Trader {
     }
   }
 }
-
-// const tradeManager = new TradeManager();
-// tradeManager
-//   .performTrades(
-//     {
-//       buyOpportunities: [
-//         // {
-//         //   symbol: 'AMZN',
-//         //   buyConfidence: 96.63427457210949,
-//         //   sellConfidence: 3.36572542789051,
-//         //   price: 2977.57,
-//         // },
-//       ],
-//       sellOpportunities: [
-//         {
-//           symbol: 'WMT',
-//           buyConfidence: 96.63427457210949,
-//           sellConfidence: 3.36572542789051,
-//           price: 129,
-//         },
-//       ],
-//     },
-//     100,
-//     false
-//   )
-//   .then(() => {});
