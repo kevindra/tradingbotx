@@ -45,6 +45,10 @@ export class AlpacaClient {
   async getPositions() {
     return await this.alpaca.getPositions();
   }
+
+  async isAuthenticated() {
+    return await this.alpaca.isAuthenticated();
+  }
 }
 
 // module.exports = new AlpacaClient();

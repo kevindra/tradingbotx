@@ -9,7 +9,7 @@ import {Opportunities, OpportunitiesFinder} from './OpportunitiesFinder';
 import popularTickers = require('./popularTickers.json');
 import bodyParser from 'body-parser';
 import request from 'request';
-import {ESRCH} from 'constants';
+import {AlpacaClient} from './client/AlpacaClient';
 
 dotenv.config();
 const app = express();
@@ -57,12 +57,15 @@ app.get('/portfolio', (req, res) => {
   });
 });
 
-app.get('/tradingbot', (req, res) => {
+app.get('/tradingbot', async (req, res) => {
+  var sess: any = req.session;
+  let isAuth = await isAuthenticated(sess.tokens as AccessToken);
+
   res.render('tradingbot', {
     title: 'Buy The Dip Club | Trading Bot',
     navTitle: NAV_TITLE,
     message: SECONDARY_TITLE,
-    tokens: (req.session as any).tokens,
+    isAuth,
   });
 });
 
@@ -203,13 +206,14 @@ app.get('/api/opportunities', async (req, res) => {
 
 app.post('/api/trade', async (req, res) => {
   var sess: any = req.session;
-  if (!sess.tokens) {
-    res.status(403).send('user is not authenticated.');
+  if (!(await isAuthenticated(sess.tokens as AccessToken))) {
+    sess.tokens = undefined;
+    res.status(403).send('user is not authenticated or session expired.');
   }
 
   console.log('Trader received: ' + JSON.stringify(req.body));
   const opp = req.body.opp as Opportunities;
-  const tokens = sess.tokens;
+  const tokens = (req.session as any).tokens;
   // const alpAccessKey = req.body.alp_access_key;
   // const alpSecretKey = req.body.alp_secret_key;
 
@@ -219,5 +223,18 @@ app.post('/api/trade', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify({orders}));
 });
+
+async function isAuthenticated(accessToken: AccessToken) {
+  console.log(accessToken);
+  if (!accessToken) {
+    return false;
+  }
+  const alpacaClient = new AlpacaClient(accessToken);
+  let isAuth = await alpacaClient.isAuthenticated();
+  if (!isAuth) {
+    return false;
+  }
+  return true;
+}
 
 app.listen(port, () => console.log(`Server started on port ${port}...`));
