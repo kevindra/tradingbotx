@@ -16,7 +16,12 @@
                     <a class="nav-link #{tradingPageActive}" aria-current="page" href="/tradingbot">Trading Bot 🤖</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link #{loginPageActive}" aria-current="page" href="/login">Login</a>
+                    <a class="nav-link #{loginPageActive}" aria-current="page" href="/login">
+                    if tokens
+                        span="Logged in"
+                    else
+                        span="Login"
+                    </a>
                 </li>
             </ul>
         </div>

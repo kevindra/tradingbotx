@@ -39,6 +39,7 @@ app.get('/', (req, res) => {
     ticker: req.query.t,
     tickerType: req.query.type,
     horizon: req.query.h,
+    tokens: (req.session as any).tokens,
   });
 });
 
@@ -52,6 +53,7 @@ app.get('/portfolio', (req, res) => {
     ticker: req.query.t,
     tickerType: req.query.type,
     horizon: req.query.h,
+    tokens: (req.session as any).tokens,
   });
 });
 
@@ -60,6 +62,7 @@ app.get('/tradingbot', (req, res) => {
     title: 'Buy The Dip Club | Trading Bot',
     navTitle: NAV_TITLE,
     message: SECONDARY_TITLE,
+    tokens: (req.session as any).tokens,
   });
 });
 
