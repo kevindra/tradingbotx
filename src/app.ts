@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import {Opportunities, OpportunitiesFinder} from './OpportunitiesFinder';
 import popularTickers = require('./popularTickers.json');
 import bodyParser from 'body-parser';
+import request from 'request';
 
 dotenv.config();
 const app = express();
@@ -63,7 +64,52 @@ app.get('/login', (req, res) => {
     message: SECONDARY_TITLE,
     clientId: process.env.ALP_CLIENT_ID,
     secret: process.env.ALP_CLIENT_SECRET,
-    redirectUri: process.env.ALP_REDIRECT_URI
+    redirectUri: process.env.ALP_REDIRECT_URI,
+  });
+});
+
+app.get('/oauth', async (req, res) => {
+  const code = req.query.code;
+
+  if (!code) {
+    res.redirect('/login');
+    return;
+  }
+  // POST https://api.alpaca.markets/oauth/token
+
+  const url = 'https://api.alpaca.markets/oauth/token';
+
+  console.log('Making request to the url: ', url);
+
+  const params = {
+    grant_type: 'authorization_code',
+    code: code,
+    client_id: process.env.ALP_CLIENT_ID,
+    client_secret: process.env.ALP_CLIENT_SECRET,
+    redirect_uri: process.env.ALP_REDIRECT_URI,
+  };
+
+  return new Promise((resolve, reject) => {
+    request.post(
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        url: url,
+        form: params,
+      },
+      (err, result, body) => {
+        if (err) {
+          res.redirect('/login');
+          resolve('');
+        } else {
+          const tokens = JSON.parse(body);
+          console.log('GOT TOKENS: ' + JSON.stringify(tokens));
+          res.send('Login successful!');
+          resolve('');
+        }
+      }
+    );
   });
 });
 
