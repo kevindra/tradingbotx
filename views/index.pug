@@ -1,0 +1,119 @@
+html(lang="en")
+    head
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        title=title
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/data.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com/modules/export-data.js"></script>
+        <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+        <link rel="stylesheet" href="/public/css/style.css">
+    body
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                a.navbar-brand(hred='/')=navTitle
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/">Quick Analysis</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/portfolio">Portfolio</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        div(class="container")
+            h1=message
+            <span>This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.</span> <br/><br/>
+            <form method="GET" action="/">
+                <div class="row mb-3">
+                    <div class="col-sm-1">
+                        <label for="ticker" class="col-sm-2 col-form-label">Ticker:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        //- <input type="text" id="ticker" name="t" class="form-control" aria-describedby="tickerHelp" value=ticker>
+                        input.form-control(type='text' id='ticker' name='t' aria-describedby="tickerHelp" value=ticker)
+                    </div>
+                    <div class="col-sm-3">
+                        <span id="tickerHelp" class="form-text">It can be any stock ticker symbol. Or for Crypto just use "BTC" "ETH" etc..</span>
+                    </div>
+                    <input type="hidden" name="c" value="USD"/>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-1">
+                        <label for="tickerType" class="col-sm-2 col-form-label">Type:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        select.form-select(name='type' id='tickerType' aria-describedby='tickerTypeHelp')
+                            option(value='stocks', selected=true) Stocks
+                            option(value='crypto', selected= tickerType == 'crypto') Crypto
+                    </div>
+                    <div class="col-sm-3">
+                        <span id="tickerTypeHelp" class="form-text">Stocks or Crypto, based on the ticker you enter.</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-1">
+                        <label for="tickerType" class="col-sm-2 col-form-label">Investment horizon(#days):</label>
+                    </div>
+                    <div class="col-sm-4">
+                        input#horizon.form-control(type='text' name='h' aria-describedby='horizonHelp' value=horizon)
+                    </div>
+                    <div class="col-sm-3">
+                        <span id="horizonHelp" class="form-text">Buy confidence is relative to past event. This is number of days in the past you want to look into. Try something like 90-180 to get better sample data of the price.</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-5">
+                        <input type="submit" value="Load Ticker" class="btn btn-primary"/> 
+                    </div>
+
+                    <div class="col-sm-3">
+                        <span class="form-text">First load the ticker and then hit "Get Confidence" to calculate buy confidence.</label>
+                    </div>
+                </div>
+            </form>
+
+            <button id="conf" class="btn btn-secondary"> Get Confidence </button>
+
+            <div class="alert alert-warning mt-2" role="alert">Warning: 
+                <ul>
+                    <li>Website is running on a low budget, hence may get throttled by the APIs if traffic gets high. If this happens, try again in a few minutes.</li>
+                </ul> 
+            </div>
+            <div class="alert alert-primary" role="alert"> 
+                <div> If you like the analysis, help me keep this website running by donating. It pays for the hosting fees and API access fees. Thank you!!
+                <form action="https://www.paypal.com/donate" method="post" target="_top" style='float: right'>
+                    <input type="hidden" name="business" value="AD8RG6ADS8QTS" />
+                    <input type="hidden" name="item_name" value="Help me run this website by paying its hosting fees." />
+                    <input type="hidden" name="currency_code" value="USD" />
+                    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+                    <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+                </form> 
+            </div>
+            </div>
+            <figure class="highcharts-figure">
+                <div id="container"></div>
+                <p class="highcharts-description">
+                </p>
+            </figure>
+            
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-MH1D22FBST"></script>
+            <script src="/public/js/script.js"></script>
+
+            <div class="alert alert-danger" role="alert">
+                <span><b>(IMPORTANT)</b> This is only for entertainment purposes, not a financial advice.</span>
+            </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>

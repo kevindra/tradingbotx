@@ -1,2 +1,4 @@
 # tradingbot
-Trading Bot CLI
+Trading Bot CLI & Web Console
+
+
