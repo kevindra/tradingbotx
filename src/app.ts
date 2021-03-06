@@ -101,12 +101,12 @@ app.get('/oauth', async (req, res) => {
       (err, result, body) => {
         if (err) {
           res.redirect('/login');
-          resolve('');
+          resolve();
         } else {
           const tokens = JSON.parse(body);
           console.log('GOT TOKENS: ' + JSON.stringify(tokens));
           res.send('Login successful!');
-          resolve('');
+          resolve();
         }
       }
     );
