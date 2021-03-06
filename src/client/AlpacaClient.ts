@@ -11,6 +11,7 @@ export interface OrderRequest {
 export class AlpacaClient {
   alpaca;
   constructor(accessToken: AccessToken) {
+    console.log('sending access token: ' + accessToken.access_token)
     this.alpaca = new Alpaca.AlpacaClient({
       credentials: {
         // key: process.env.ALP_API_KEY || accessKey,
