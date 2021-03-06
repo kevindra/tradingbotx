@@ -12,7 +12,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 const NAV_TITLE = 'Buy The Dip Club';
-const SECONDARY_TITLE = 'Stock/Crypto Buy Predictor';
+const SECONDARY_TITLE = 'Stock/Crypto Buy Predictor & Trader';
 const confidenceCalculator = new ConfidenceCalculator();
 const opportunitiesFinder = new OpportunitiesFinder();
 
@@ -27,6 +27,8 @@ app.get('/', (req, res) => {
     title: 'Buy The Dip Club | Quick Analysis',
     navTitle: NAV_TITLE,
     message: SECONDARY_TITLE,
+    secondaryMessage:
+      'This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.',
     ticker: req.query.t,
     tickerType: req.query.type,
     horizon: req.query.h,
@@ -38,6 +40,8 @@ app.get('/portfolio', (req, res) => {
     title: 'Buy The Dip Club | Portfolio Analysis',
     navTitle: NAV_TITLE,
     message: SECONDARY_TITLE,
+    secondaryMessage:
+      'This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.',
     ticker: req.query.t,
     tickerType: req.query.type,
     horizon: req.query.h,
@@ -49,6 +53,17 @@ app.get('/tradingbot', (req, res) => {
     title: 'Buy The Dip Club | Trading Bot',
     navTitle: NAV_TITLE,
     message: SECONDARY_TITLE,
+  });
+});
+
+app.get('/login', (req, res) => {
+  res.render('login', {
+    title: 'Buy The Dip Club | Login',
+    navTitle: NAV_TITLE,
+    message: SECONDARY_TITLE,
+    clientId: process.env.ALP_CLIENT_ID,
+    secret: process.env.ALP_CLIENT_SECRET,
+    redirectUri: process.env.ALP_REDIRECT_URI
   });
 });
 

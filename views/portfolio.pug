@@ -1,43 +1,14 @@
 html(lang="en")
     head
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        title=title
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/data.js"></script>
-        <script src="https://code.highcharts.com/modules/exporting.js"></script>
-        <script src="https://code.highcharts.com/modules/export-data.js"></script>
-        <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-        <link rel="stylesheet" href="/public/css/style.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        include head.pug
     body
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                a.navbar-brand(hred='/')=navTitle
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/">Quick Analysis</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/portfolio">Portfolio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/tradingbot">Trading Bot 🤖</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        - var portfolioPageActive = 'active'
+        include nav.pug 
+
         div(class="container")
             h1='Portfolio Analysis'
-            <span>This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.</span> <br/><br/>
+            div.mb-5 
+                span=secondaryMessage
 
             <div class="container-lg">
                 <div class="table-responsive">
@@ -84,26 +55,8 @@ html(lang="en")
                 </div>
             </div>     
 
-            <script async src="https://www.googletagmanager.com/gtag/js?id=G-MH1D22FBST"></script>
-            <script src="/public/js/script.js"></script>
-            <div class="alert alert-warning mt-2" role="alert">Warning: 
-                <ul>
-                    <li>Website is running on a low budget, hence may get throttled by the APIs if traffic gets high. If this happens, try again in a few minutes.</li>
-                </ul> 
-            </div>
-            <div class="alert alert-primary" role="alert"> 
-                <div> If you like the analysis, help me keep this website running by donating. It pays for the hosting fees and API access fees. Thank you!!
-                <form action="https://www.paypal.com/donate" method="post" target="_top" style='float: right'>
-                    <input type="hidden" name="business" value="AD8RG6ADS8QTS" />
-                    <input type="hidden" name="item_name" value="Help me run this website by paying its hosting fees." />
-                    <input type="hidden" name="currency_code" value="USD" />
-                    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-                    <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-                </form> 
-            </div>
-            </div>
 
-            <div class="alert alert-danger" role="alert">
-                <span><b>(IMPORTANT)</b> This is only for entertainment purposes, not a financial advice.</span>
-            </div>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+            include donation.pug
+            include disclaimer.pug
+
+    include footer.pug

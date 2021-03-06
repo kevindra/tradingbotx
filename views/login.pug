@@ -1,0 +1,18 @@
+html(lang="en")
+    head
+        include head.pug
+    body
+        - var indexPageActive = 'active'
+        include nav.pug 
+
+        div(class="container")
+            h1=message
+            div.mb-5
+                span=secondaryMessage
+
+            <a href='https://app.alpaca.markets/oauth/authorize?response_type=code&client_id=#{clientId}&redirect_uri=#{redirectUri}&state=SOMETHING_RANDOM&scope=account:write%20trading' class='btn btn-primary btn-lg'>Login with Alpaca</a>
+
+            include donation.pug
+            include disclaimer.pug 
+
+    include footer.pug
