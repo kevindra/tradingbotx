@@ -1,4 +1,5 @@
 import Alpaca from '@master-chief/alpaca';
+import {AccessToken} from '../trader';
 import {OrderSide} from '../types';
 
 export interface OrderRequest {
@@ -9,11 +10,12 @@ export interface OrderRequest {
 }
 export class AlpacaClient {
   alpaca;
-  constructor(accessKey: string, secretKey: string) {
+  constructor(accessToken: AccessToken) {
     this.alpaca = new Alpaca.AlpacaClient({
       credentials: {
-        key: process.env.ALP_API_KEY || accessKey,
-        secret: process.env.ALP_SECURITY_KEY || secretKey,
+        // key: process.env.ALP_API_KEY || accessKey,
+        // secret: process.env.ALP_SECURITY_KEY || secretKey,
+        access_token: accessToken.access_token,
         paper: true,
         // usePolygon: false,
       },

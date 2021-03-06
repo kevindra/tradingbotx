@@ -4,16 +4,19 @@ import {Order} from '@master-chief/alpaca';
 
 let chalk = require('chalk');
 
+export interface AccessToken {
+  access_token: string,
+  token_type: string,
+  scope: string
+}
 export class Trader {
   alpacaClient: AlpacaClient;
-  constructor(accessKey: string, secretKey: string) {
-    this.alpacaClient = new AlpacaClient(accessKey, secretKey);
+  constructor(accessToken: AccessToken) {
+    this.alpacaClient = new AlpacaClient(accessToken);
   }
 
   async performTrades(
     opportunities: Opportunities,
-    alpAccessKey: string,
-    alpSecretKey: string,
     perTradeMaxDollar = 200
   ) {
     let orders: Order[] = [];

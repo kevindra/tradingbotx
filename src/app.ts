@@ -2,7 +2,7 @@ import express from 'express';
 import session from 'express-session';
 import path from 'path';
 import {ConfidenceCalculator} from './ConfidenceCalculator';
-import {Trader} from './trader';
+import {AccessToken, Trader} from './trader';
 import {SecurityType} from './types';
 import dotenv from 'dotenv';
 import {Opportunities, OpportunitiesFinder} from './OpportunitiesFinder';
@@ -202,14 +202,19 @@ app.get('/api/opportunities', async (req, res) => {
 });
 
 app.post('/api/trade', async (req, res) => {
+  var sess: any = req.session;
+  if (!sess.tokens) {
+    res.status(403).send('user is not authenticated.');
+  }
+
   console.log('Trader received: ' + JSON.stringify(req.body));
-
   const opp = req.body.opp as Opportunities;
-  const alpAccessKey = req.body.alp_access_key;
-  const alpSecretKey = req.body.alp_secret_key;
+  const tokens = sess.tokens;
+  // const alpAccessKey = req.body.alp_access_key;
+  // const alpSecretKey = req.body.alp_secret_key;
 
-  const trader = new Trader(alpAccessKey, alpSecretKey);
-  const orders = await trader.performTrades(opp, alpAccessKey, alpSecretKey);
+  const trader = new Trader(tokens as AccessToken);
+  const orders = await trader.performTrades(opp);
 
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify({orders}));
