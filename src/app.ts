@@ -15,7 +15,6 @@ const NAV_TITLE = 'Buy The Dip Club';
 const SECONDARY_TITLE = 'Stock/Crypto Buy Predictor';
 const confidenceCalculator = new ConfidenceCalculator();
 const opportunitiesFinder = new OpportunitiesFinder();
-const trader = new Trader();
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
@@ -132,7 +131,11 @@ app.post('/api/trade', async (req, res) => {
   console.log('Trader received: ' + JSON.stringify(req.body));
 
   const opp = req.body.opp as Opportunities;
-  const orders = await trader.performTrades(opp);
+  const alpAccessKey = req.body.alp_access_key;
+  const alpSecretKey = req.body.alp_secret_key;
+
+  const trader = new Trader(alpAccessKey, alpSecretKey);
+  const orders = await trader.performTrades(opp, alpAccessKey, alpSecretKey);
 
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify({orders}));

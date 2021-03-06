@@ -9,13 +9,11 @@ export interface OrderRequest {
 }
 export class AlpacaClient {
   alpaca;
-  constructor() {
+  constructor(accessKey: string, secretKey: string) {
     this.alpaca = new Alpaca.AlpacaClient({
       credentials: {
-        key: process.env.ALP_API_KEY || 'PK1GIX30SSW0MI9O4SIP',
-        secret:
-          process.env.ALP_SECURITY_KEY ||
-          'YEaKCvNTuB69xcrTLQXZg8YaaSOcbddPNdcRfNJd',
+        key: process.env.ALP_API_KEY || accessKey,
+        secret: process.env.ALP_SECURITY_KEY || secretKey,
         paper: true,
         // usePolygon: false,
       },

@@ -35,11 +35,11 @@ html(lang="en")
             </div>
         </nav>
         div(class="container")
-            h1=message
-            <span>Trading Bot finds attractive stocks on demand and buys or sells them automatically.</span> <br/><br/>
+            h1="Trading Bot"
+            <span>Trading Bot finds attractive stocks on demand and buys or sells them automatically on your behalf.</span> <br/><br/>
             <form method="POST" action="/" id="startbot">
                 <div class="row mb-5">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                         <label for="tickerSelection" class="col-sm-2 col-form-label">Watchlist:</label>
                     </div>
                     <div class="col-sm-4" aria-describedBy="tickerSelectionHelp">
@@ -52,7 +52,7 @@ html(lang="en")
                 </div>
                 
                 <div class="row mb-3">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                         <label for="tickers" class="col-sm-2 col-form-label">Tickers:</label>
                     </div>
                     <div class="col-sm-4">
@@ -65,7 +65,7 @@ html(lang="en")
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                         <label for="tickerType" class="col-sm-2 col-form-label">Investment horizon(#days):</label>
                     </div>
                     <div class="col-sm-4">
@@ -77,8 +77,36 @@ html(lang="en")
                 </div>
 
                 <div class="row mb-3">
+                    <div class="col-sm-2">
+                        <label for="tickerType" class="col-sm-2 col-form-label">Alpaco Access Key:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        input#horizon.form-control(type='text' name='alp_access' aria-describedby='horizonHelp' value="")
+                    </div>
+                    <div class="col-sm-3">
+                        <span id="horizonHelp" class="form-text">Your Alpaca account's api access key. If you haven't signed up for Alpaca, do it.</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        <label for="tickerType" class="col-sm-2 col-form-label">Alpaco Secret Key:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        input#horizon.form-control(type='text' name='alp_secret' aria-describedby='horizonHelp' value="")
+                    </div>
+                    <div class="col-sm-3">
+                        <span id="horizonHelp" class="form-text">Alpaca secret key.</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
                     <div class="col-sm-5">
-                        <input type="submit" value="Load Ticker" class="btn btn-primary"/> 
+                        //- <input type="submit" value="Load Ticker" class="btn btn-primary"/>
+                        <button type="submit" class="btn btn-primary" id="submit-button">
+                          <span class="spinner-border spinner-border-sm" role="status" style='display:none' id='spinner'></span>
+                          <span>Submit</span>
+                        </button> 
                     </div>
 
                     <div class="col-sm-3">
@@ -104,7 +132,30 @@ html(lang="en")
             </div>
             </div>
             
-            <div class="container-fluid p-10 m-20" id="result">
+            <div id="result-message" class="alert alert-secondary" role="alert">Your trades will appear below: </div>
+            <div class="container-fluid p-10 m-20">
+                <div class="row-fluid mb-10 pb-10">
+                    <button type="button" class="btn btn-primary mb-10" id="submit-trades-button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" style='display:none' id='submit-trades-spinner'></span>
+                        <span>Trade</span>
+                    </button> 
+                </div>
+
+                <table class="table table-bordered" id="result-table">
+                    <thead>
+                        <tr>
+                            <th>Ticker</th>
+                            <th>Price</th>
+                            <th>Buy Confidence</th>
+                            <th>Sell Confidence</th>
+                            <th>Select to trade</th>
+                            <th>Order Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
             </div>
 
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-MH1D22FBST"></script>

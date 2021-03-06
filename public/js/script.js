@@ -265,6 +265,8 @@ function trade(opportunities, callback) {
     dataType: 'json',
     data: {
       opp: opportunities,
+      alp_access_key: window.alp_access,
+      alp_secret_key: window.alp_secret,
     },
     success: function (data) {
       console.log('GOT: ' + JSON.stringify(data));
@@ -278,7 +280,6 @@ function trade(opportunities, callback) {
 
 $(document).ready(function () {
   $('[data-toggle="tooltip"]').tooltip();
-  //var actions = $('table td:last-child').html();
 
   var actions =
     '<a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>' +
@@ -496,6 +497,14 @@ $(document).on('submit', '#startbot', function (e) {
     alert('Select at least one, either popular stocks or enter your own.');
     return;
   }
+  if (o.alp_access === '' || o.alp_secret === '') {
+    alert(
+      'You need to provide your Alpaca access and secret key in order trading bot to run successfully. '
+    );
+    return;
+  }
+  window.alp_access = o.alp_access;
+  window.alp_secret = o.alp_secret;
 
   var tickers = [];
   if (o.popular) {
@@ -503,45 +512,78 @@ $(document).on('submit', '#startbot', function (e) {
   } else {
     tickers = o.tickers.split(',');
   }
-  alert(tickers);
 
   var horizon = o.horizon;
   var opp = {
     buyOpportunities: [],
     sellOpportunities: [],
   };
-  analyzeTicker(tickers, horizon, 0, opp, opp => {
-    console.log('Final opportunities ' + JSON.stringify(opp));
-    executeTrades(opp);
-  });
+  $('#spinner').show();
+  $('#submit-button').attr('disabled', '');
+  $('#result-table tbody').html('');
+  $('#submit-trades-button').attr('disabled', '');
 
-  // var timeoffset = 15000;
-  // var waitTime = 0;
-  // var i = 0;
-  // while (i < tickers.length) {
-  //   window.setTimeout(() => {
-  //     $('#result').append('Ticker: ' + tickers[i]);
-  //   }, waitTime);
-  //   waitTime += timeoffset;
-  //   i++;
-  // }
+  analyzeTicker(tickers, horizon, 0, opp, opp => {
+    $('#spinner').hide();
+    $('#submit-button').removeAttr('disabled');
+    $('#submit-trades-button').removeAttr('disabled');
+    $('#result-message').html(
+      'Done finding all the good opportunities. You can now submit them to trade. Press the trade button below to submit your trades.'
+    );
+
+    console.log('Final opportunities ' + JSON.stringify(opp));
+    window.opportunities = opp;
+  });
 });
 
 function analyzeTicker(tickers, horizon, i, opp, done) {
   var waitTime = i === 0 ? 0 : 15000;
   if (i < tickers.length) {
     window.setTimeout(() => {
-      $('#result').append('Analyzing ticker: ' + tickers[i] + '<br/>');
+      $('#result-message').html(
+        'Analyzing ticker ' + tickers[i] + ', it will take a while..'
+      );
       getOpportunities([tickers[i]], horizon, 80, 80, d => {
-        $('#result').append(
-          'Done: ' + JSON.stringify(d, null, 2) + ' <br/>'
-        );
-        $('#result').append('Sleeping for 15 seconds to reduce load..<br/>');
-        opp.buyOpportunities = opp.buyOpportunities.concat(d.buyOpportunities);
-        opp.sellOpportunities = opp.sellOpportunities.concat(
-          d.sellOpportunities
-        );
+        var o =
+          d.buyOpportunities.length > 0
+            ? d.buyOpportunities[0]
+            : d.sellOpportunities.length > 0
+            ? d.sellOpportunities[0]
+            : null;
 
+        if (o !== null) {
+          $('#result-table tbody').append(
+            '<tr>' +
+              '<td >' +
+              o.symbol +
+              '</td>' +
+              '<td > $' +
+              o.price +
+              '</td>' +
+              '<td >' +
+              o.buyConfidence +
+              '</td>' +
+              '<td >' +
+              o.sellConfidence +
+              '</td>' +
+              '<td > <input type="checkbox" class="form-checkbox" id="checkbox-' +
+              o.symbol +
+              '"checked/> </td>' +
+              '<td id=trade-status-' +
+              o.symbol +
+              '> Not yet </td>' +
+              '</tr>'
+          );
+          $('#result-message').html(
+            'Sleeping for 15 seconds to reduce the load on APIs..'
+          );
+          opp.buyOpportunities = opp.buyOpportunities.concat(
+            d.buyOpportunities
+          );
+          opp.sellOpportunities = opp.sellOpportunities.concat(
+            d.sellOpportunities
+          );
+        }
         i++;
         analyzeTicker(tickers, horizon, i, opp, done);
       });
@@ -552,14 +594,35 @@ function analyzeTicker(tickers, horizon, i, opp, done) {
 }
 
 function executeTrades(opportunities) {
-  $('#result').append('Making trades now.. <br/>');
   trade(opportunities, d => {
-    $('#result').append('Done making trades.. <br/>' + JSON.stringify(d.map((x) => {
-      return {
-        symbol: x.symbol,
-        amount: x.notional
-      }
-    })));
-    $('#result').append('All trades are complete.');
+    $('#submit-trades-button').removeAttr('disabled');
+    $('#submit-trades-spinner').hide();
+
+    var buyo = opportunities.buyOpportunities || [];
+    var sello = opportunities.sellOpportunities || [];
+
+    buyo.forEach(b => {
+      $('#trade-status-' + b.symbol).text('Order submitted.');
+    });
+    sello.forEach(b => {
+      $('#trade-status-' + b.symbol).text('Order submitted.');
+    });
   });
 }
+
+$(document).on('click', '#submit-trades-button', function (e) {
+  $('#submit-trades-spinner').show();
+  $('#submit-trades-button').attr('disabled', '');
+
+  var buyo = window.opportunities.buyOpportunities || [];
+  var sello = window.opportunities.sellOpportunities || [];
+
+  buyo = buyo.filter(b => {
+    return $('#checkbox-' + b.symbol).prop('checked') === true;
+  });
+  sello = sello.filter(s => {
+    return $('#checkbox-' + s.symbol).prop('checked') === true;
+  });
+  var opp = {buyOpportunities: buyo, sellOpportunities: sello};
+  executeTrades(opp);
+});

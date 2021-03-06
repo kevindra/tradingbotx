@@ -2,11 +2,20 @@ import {AlpacaClient} from './client/AlpacaClient';
 import {Opportunities, Opportunity} from './OpportunitiesFinder';
 import {Order} from '@master-chief/alpaca';
 
-var alpacaClient = new AlpacaClient();
-var chalk = require('chalk');
+let chalk = require('chalk');
 
 export class Trader {
-  async performTrades(opportunities: Opportunities, perTradeMaxDollar = 200) {
+  alpacaClient: AlpacaClient;
+  constructor(accessKey: string, secretKey: string) {
+    this.alpacaClient = new AlpacaClient(accessKey, secretKey);
+  }
+
+  async performTrades(
+    opportunities: Opportunities,
+    alpAccessKey: string,
+    alpSecretKey: string,
+    perTradeMaxDollar = 200
+  ) {
     let orders: Order[] = [];
 
     // buy interesting stuff
@@ -29,7 +38,7 @@ export class Trader {
       buyOpportunities.map(async o => {
         this.log(`Buy $${o.symbol} amount $${perTradeMaxDollar}`);
 
-        const order = await alpacaClient.placeOrder({
+        const order = await this.alpacaClient.placeOrder({
           symbol: o.symbol,
           side: 'buy',
           notional: perTradeMaxDollar,
@@ -44,7 +53,7 @@ export class Trader {
   }
 
   private async executeSellTrades(sellOpportunities: Opportunity[]) {
-    let positions = await alpacaClient.getPositions();
+    let positions = await this.alpacaClient.getPositions();
 
     // if account has current positions that are in sell opportunities
     const positionsToSell = positions.filter(p => {
@@ -53,7 +62,7 @@ export class Trader {
 
     return await Promise.all(
       positionsToSell.map(async p => {
-        const order = await alpacaClient.placeOrder({
+        const order = await this.alpacaClient.placeOrder({
           side: 'sell',
           symbol: p.symbol,
           qty: p.qty,
