@@ -630,11 +630,11 @@ function analyzeTicker(tickers, horizon, i, opp, done) {
               o.price +
               '</td>' +
               '<td >' +
-              o.buyConfidence +
-              '</td>' +
+              o.buyConfidence.toFixed(2) +
+              '% </td>' +
               '<td >' +
-              o.sellConfidence +
-              '</td>' +
+              o.sellConfidence.toFixed(2) +
+              '% </td>' +
               '<td > <input type="checkbox" class="form-checkbox" id="checkbox-' +
               o.symbol +
               '"checked/> </td>' +
@@ -664,6 +664,7 @@ function analyzeTicker(tickers, horizon, i, opp, done) {
 
 function executeTrades(opportunities) {
   trade(opportunities, d => {
+    console.log('Trade : ' + JSON.stringify(d, null, 2));
     $('#submit-trades-button').removeAttr('disabled');
     $('#submit-trades-spinner').hide();
 
@@ -671,10 +672,13 @@ function executeTrades(opportunities) {
     var sello = opportunities.sellOpportunities || [];
 
     buyo.forEach(b => {
-      $('#trade-status-' + b.symbol).text('Order submitted.');
+      $('#trade-status-' + b.symbol).text('No order submitted.');
     });
     sello.forEach(b => {
-      $('#trade-status-' + b.symbol).text('Order submitted.');
+      $('#trade-status-' + b.symbol).text('No shares to sell.');
+    });
+    (d.orders || []).forEach(order => {
+      $('#trade-status-' + order.symbol).text('Order submitted.');
     });
   });
 }
@@ -724,8 +728,6 @@ $(document).on('submit', '#edit-watchlist', function (e) {
     o[e.name] = e.value;
   });
   var tickers = o.tickers.split(',').map(t => t.trim());
-
-  alert(o.id + ' ' + o.name + ' ' + o.tickers);
   editWatchlist(o.id, o.name, tickers, data => {
     window.location.replace('/watchlists?id=' + data.id);
   });

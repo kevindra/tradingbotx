@@ -24,11 +24,7 @@ watchlistsApiRouter.post('/', async (req, res) => {
 
   let output;
   if (id) {
-    output = await alpaca.raw().updateWatchlist({
-      uuid: id,
-      name: name,
-      symbols: tickers,
-    });
+    output = await alpaca.updateWatchlist(id, name, tickers);
   } else {
     output = await alpaca.raw().createWatchlist({
       name: name,
