@@ -19,14 +19,18 @@ html(lang="en")
                             <div class="row mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="popular" id="flexRadioDefault1" checked>
-                                <label class="form-check-label" for="flexRadioDefault1">Most Popular 80 Stocks</label>
+                                <label class="form-check-label" for="flexRadioDefault1">Choose a list:</label>
+                                <select name="list">
+                                    each list in lists
+                                        <option value="#{list.id}">#{list.name}</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     
                     <div class="row mb-3">
                         <div class="col-sm-2">
-                            <label for="tickers" class="col-sm-2 col-form-label">Tickers:</label>
+                            <label for="tickers" class="col-sm-2 col-form-label">Or enter tickers:</label>
                         </div>
                         <div class="col-sm-4">
                             //- <input type="text" id="ticker" name="t" class="form-control" aria-describedby="tickerHelp" value=ticker>
@@ -50,40 +54,11 @@ html(lang="en")
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-sm-2">
-                            <label for="tickerType" class="col-sm-2 col-form-label">Alpaco Access Key:</label>
-                        </div>
-                        <div class="col-sm-4">
-                            input#horizon.form-control(type='text' name='alp_access' aria-describedby='horizonHelp' value="")
-                        </div>
-                        <div class="col-sm-3">
-                            <span id="horizonHelp" class="form-text">Your Alpaca paper money account's api access key. If you haven't signed up for Alpaca, do it.</span>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-sm-2">
-                            <label for="tickerType" class="col-sm-2 col-form-label">Alpaco Secret Key:</label>
-                        </div>
-                        <div class="col-sm-4">
-                            input#horizon.form-control(type='text' name='alp_secret' aria-describedby='horizonHelp' value="")
-                        </div>
-                        <div class="col-sm-3">
-                            <span id="horizonHelp" class="form-text">Alpaca secret key.</span>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
                         <div class="col-sm-5">
-                            //- <input type="submit" value="Load Ticker" class="btn btn-primary"/>
                             <button type="submit" class="btn btn-primary" id="submit-button">
                             <span class="spinner-border spinner-border-sm" role="status" style='display:none' id='spinner'></span>
                             <span>Submit</span>
                             </button> 
-                        </div>
-
-                        <div class="col-sm-3">
-                            <span class="form-text">Start evaluating all the stocks.</label>
                         </div>
                     </div>
                 </form>

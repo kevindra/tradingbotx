@@ -10,6 +10,9 @@ import popularTickers = require('./popularTickers.json');
 import bodyParser from 'body-parser';
 import request from 'request';
 import {AlpacaClient} from './client/AlpacaClient';
+import {nextTick} from 'process';
+import {Watchlist} from '@master-chief/alpaca';
+import {watch} from 'fs';
 
 dotenv.config();
 const app = express();
@@ -29,6 +32,19 @@ app.set('view engine', 'pug');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.use((req, res, next) => {
+  console.log('here ' + process.env.ENV);
+  if (process.env.ENV === 'dev') {
+    (req.session as any).tokens = {
+      access_token: 'd6d2a08d-b9c5-4b3e-96e9-6e021a0c52a2',
+      token_type: 'Bearer',
+      scope: 'account:write trading',
+    };
+    console.log('token updated');
+  }
+  next();
+});
+
 app.get('/', (req, res) => {
   res.render('index', {
     title: 'Buy The Dip Club | Quick Analysis',
@@ -43,7 +59,87 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/portfolio', (req, res) => {
+app.get('/watchlists/create', async (req, res) => {
+  var sess: any = req.session;
+  let isAuth = await isAuthenticated(sess.tokens as AccessToken);
+
+  res.render('watchlists', {
+    title: 'Buy The Dip Club | Watchlists',
+    navTitle: NAV_TITLE,
+    message: 'Create watchlist',
+    secondaryMessage:
+      'This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.',
+    isAuth,
+    create: true,
+  });
+});
+
+app.get('/watchlists/edit', async (req, res) => {
+  var sess: any = req.session;
+  let isAuth = await isAuthenticated(sess.tokens as AccessToken);
+  const id = req.query.id as string;
+  const alpaca = new AlpacaClient(sess.tokens);
+  const watchlist = await alpaca.raw().getWatchlist({
+    uuid: id,
+  });
+
+  res.render('watchlists', {
+    title: 'Buy The Dip Club | Watchlists',
+    navTitle: NAV_TITLE,
+    message: 'Edit your watchlist',
+    secondaryMessage:
+      'This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.',
+    isAuth,
+    edit: true,
+    name: watchlist.name,
+    tickers: watchlist.assets
+      .map(a => {
+        return a.symbol;
+      })
+      .join(','),
+    id: watchlist.id,
+  });
+});
+
+app.get('/watchlists', async (req, res) => {
+  var sess: any = req.session;
+  let isAuth = await isAuthenticated(sess.tokens as AccessToken);
+
+  console.log('Trader received: ' + JSON.stringify(req.body));
+  const id = req.query.id as string;
+  const tokens = (req.session as any).tokens;
+  const alpaca = new AlpacaClient(tokens);
+
+  let output;
+  if (id) {
+    output = [
+      await alpaca.raw().getWatchlist({
+        uuid: id,
+      }),
+    ];
+  } else {
+    output = await alpaca.raw().getWatchlists();
+  }
+
+  let watchlists: Watchlist[] = await Promise.all(
+    output.map(async o => {
+      return await alpaca.raw().getWatchlist({uuid: o.id});
+    })
+  );
+
+  res.render('watchlists', {
+    title: 'Buy The Dip Club | Watchlists',
+    navTitle: NAV_TITLE,
+    message: 'Manage your watchlists',
+    secondaryMessage:
+      'This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.',
+    isAuth,
+    list: true,
+    watchlists: watchlists,
+  });
+});
+
+app.get('/portfolio', async (req, res) => {
   res.render('portfolio', {
     title: 'Buy The Dip Club | Portfolio Analysis',
     navTitle: NAV_TITLE,
@@ -61,11 +157,28 @@ app.get('/tradingbot', async (req, res) => {
   var sess: any = req.session;
   let isAuth = await isAuthenticated(sess.tokens as AccessToken);
 
+  // faking a custom list to show popular stocks list
+  let lists: Watchlist[] = [
+    {
+      account_id: '',
+      assets: [],
+      created_at: '',
+      id: 'kevin-popular',
+      name: 'Most Popular 80 Stocks',
+      updated_at: '',
+    },
+  ];
+  if (isAuth) {
+    const alpaca = new AlpacaClient(sess.tokens);
+    lists = lists.concat(await alpaca.raw().getWatchlists());
+  }
+
   res.render('tradingbot', {
     title: 'Buy The Dip Club | Trading Bot',
     navTitle: NAV_TITLE,
     message: SECONDARY_TITLE,
     isAuth,
+    lists,
   });
 });
 
@@ -88,11 +201,8 @@ app.get('/oauth', async (req, res) => {
 
   if (!code) {
     res.send('Login denied!');
-    // res.redirect('/login');
     return;
   }
-  // POST https://api.alpaca.markets/oauth/token
-
   const url = 'https://api.alpaca.markets/oauth/token';
 
   console.log('Making request to the url: ', url);
@@ -214,14 +324,63 @@ app.post('/api/trade', async (req, res) => {
   console.log('Trader received: ' + JSON.stringify(req.body));
   const opp = req.body.opp as Opportunities;
   const tokens = (req.session as any).tokens;
-  // const alpAccessKey = req.body.alp_access_key;
-  // const alpSecretKey = req.body.alp_secret_key;
 
   const trader = new Trader(tokens as AccessToken);
   const orders = await trader.performTrades(opp);
 
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify({orders}));
+});
+
+app.get('/api/watchlists', async (req, res) => {
+  var sess: any = req.session;
+  if (!(await isAuthenticated(sess.tokens as AccessToken))) {
+    sess.tokens = undefined;
+    res.status(403).send('user is not authenticated or session expired.');
+  }
+
+  console.log('Trader received: ' + JSON.stringify(req.body));
+  const id = req.query.id as string;
+  const tokens = (req.session as any).tokens;
+  const alpaca = new AlpacaClient(tokens);
+
+  const output = await alpaca.raw().getWatchlist({
+    uuid: id,
+  });
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(output));
+});
+
+app.post('/api/watchlists', async (req, res) => {
+  var sess: any = req.session;
+  if (!(await isAuthenticated(sess.tokens as AccessToken))) {
+    sess.tokens = undefined;
+    res.status(403).send('user is not authenticated or session expired.');
+  }
+
+  console.log('Trader received: ' + JSON.stringify(req.body));
+  const id = req.body.id as string;
+  const name = req.body.name as string;
+  const tickers = req.body.tickers as string[];
+  const tokens = (req.session as any).tokens;
+  const alpaca = new AlpacaClient(tokens);
+
+  let output;
+  if (id) {
+    output = await alpaca.raw().updateWatchlist({
+      uuid: id,
+      name: name,
+      symbols: tickers,
+    });
+  } else {
+    output = await alpaca.raw().createWatchlist({
+      name: name,
+      symbols: tickers,
+    });
+  }
+
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(output));
 });
 
 async function isAuthenticated(accessToken: AccessToken) {

@@ -278,6 +278,62 @@ function trade(opportunities, callback) {
   });
 }
 
+function getWatchlist(id, callback) {
+  $.ajax({
+    url: '/api/watchlists',
+    dataType: 'json',
+    data: {
+      id: id,
+    },
+    success: function (data) {
+      console.log('GOT: ' + JSON.stringify(data));
+      callback(data);
+    },
+    fail: function () {
+      alert('Error occurred.');
+    },
+  });
+}
+
+function createWatchlist(name, tickers, callback) {
+  $.ajax({
+    url: '/api/watchlists',
+    method: 'POST',
+    dataType: 'json',
+    data: {
+      name: name,
+      tickers: tickers,
+    },
+    success: function (data) {
+      console.log('GOT: ' + JSON.stringify(data));
+      callback(data);
+    },
+    fail: function () {
+      alert('Error occurred.');
+    },
+  });
+}
+
+function editWatchlist(id, name, tickers, callback) {
+  $.ajax({
+    url: '/api/watchlists',
+    method: 'POST',
+    dataType: 'json',
+    data: {
+      id: id,
+      name: name,
+      tickers: tickers,
+    },
+    success: function (data) {
+      console.log('GOT: ' + JSON.stringify(data));
+      callback(data);
+    },
+    fail: function () {
+      alert('Error occurred.');
+    },
+  });
+}
+
 $(document).ready(function () {
   $('[data-toggle="tooltip"]').tooltip();
 
@@ -480,6 +536,24 @@ $(document).on('click', '#refresh', function () {
   });
 });
 
+function getTickersForTrading(o, callback) {
+  if (o.popular) {
+    let listId = o.list;
+
+    if (listId === 'kevin-popular') {
+      tickers = POPULAR;
+    } else {
+      getWatchlist(listId, data => {
+        callback(data.assets.map(a => a.symbol));
+      });
+      return;
+    }
+  } else {
+    tickers = o.tickers.split(',');
+  }
+
+  callback(tickers);
+}
 $(document).on('submit', '#startbot', function (e) {
   e.preventDefault();
 
@@ -491,48 +565,43 @@ $(document).on('submit', '#startbot', function (e) {
 
   // if both on or both off
   if (o.popular === 'on' && o.tickers !== '') {
-    alert('Select only one, either popular stocks or enter your own.');
+    alert('Select only one, either a list or enter your own tickers.');
     return;
   } else if (!o.popular && o.tickers === '') {
-    alert('Select at least one, either popular stocks or enter your own.');
+    alert('Select at least one, either a list or enter your own tickers.');
     return;
   }
-  if (o.alp_access === '' || o.alp_secret === '') {
-    alert(
-      'You need to provide your Alpaca access and secret key in order trading bot to run successfully. '
-    );
-    return;
-  }
-  window.alp_access = o.alp_access;
-  window.alp_secret = o.alp_secret;
+  // if (o.alp_access === '' || o.alp_secret === '') {
+  //   alert(
+  //     'You need to provide your Alpaca access and secret key in order trading bot to run successfully. '
+  //   );
+  //   return;
+  // }
+  // window.alp_access = o.alp_access;
+  // window.alp_secret = o.alp_secret;
 
-  var tickers = [];
-  if (o.popular) {
-    tickers = POPULAR;
-  } else {
-    tickers = o.tickers.split(',');
-  }
+  getTickersForTrading(o, function (tickers) {
+    var horizon = o.horizon;
+    var opp = {
+      buyOpportunities: [],
+      sellOpportunities: [],
+    };
+    $('#spinner').show();
+    $('#submit-button').attr('disabled', '');
+    $('#result-table tbody').html('');
+    $('#submit-trades-button').attr('disabled', '');
 
-  var horizon = o.horizon;
-  var opp = {
-    buyOpportunities: [],
-    sellOpportunities: [],
-  };
-  $('#spinner').show();
-  $('#submit-button').attr('disabled', '');
-  $('#result-table tbody').html('');
-  $('#submit-trades-button').attr('disabled', '');
+    analyzeTicker(tickers, horizon, 0, opp, opp => {
+      $('#spinner').hide();
+      $('#submit-button').removeAttr('disabled');
+      $('#submit-trades-button').removeAttr('disabled');
+      $('#result-message').html(
+        'Done finding all the good opportunities. You can now submit them to trade. Press the trade button below to submit your trades.'
+      );
 
-  analyzeTicker(tickers, horizon, 0, opp, opp => {
-    $('#spinner').hide();
-    $('#submit-button').removeAttr('disabled');
-    $('#submit-trades-button').removeAttr('disabled');
-    $('#result-message').html(
-      'Done finding all the good opportunities. You can now submit them to trade. Press the trade button below to submit your trades.'
-    );
-
-    console.log('Final opportunities ' + JSON.stringify(opp));
-    window.opportunities = opp;
+      console.log('Final opportunities ' + JSON.stringify(opp));
+      window.opportunities = opp;
+    });
   });
 });
 
@@ -625,4 +694,39 @@ $(document).on('click', '#submit-trades-button', function (e) {
   });
   var opp = {buyOpportunities: buyo, sellOpportunities: sello};
   executeTrades(opp);
+});
+
+$(document).on('submit', '#create-watchlist', function (e) {
+  e.preventDefault();
+  $('#create-watchlist-spinner').show();
+  $('#create-watchlist-button').attr('disabled', '');
+
+  var formData = $('#create-watchlist').serializeArray();
+  var o = {};
+  formData.forEach(e => {
+    o[e.name] = e.value;
+  });
+  var tickers = o.tickers.split(',').map(t => t.trim());
+
+  createWatchlist(o.name, tickers, data => {
+    window.location.replace('/watchlists?id=' + data.id);
+  });
+});
+
+$(document).on('submit', '#edit-watchlist', function (e) {
+  e.preventDefault();
+  $('#edit-watchlist-spinner').show();
+  $('#edit-watchlist-button').attr('disabled', '');
+
+  var formData = $('#edit-watchlist').serializeArray();
+  var o = {};
+  formData.forEach(e => {
+    o[e.name] = e.value;
+  });
+  var tickers = o.tickers.split(',').map(t => t.trim());
+
+  alert(o.id + ' ' + o.name + ' ' + o.tickers);
+  editWatchlist(o.id, o.name, tickers, data => {
+    window.location.replace('/watchlists?id=' + data.id);
+  });
 });
