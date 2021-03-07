@@ -10,7 +10,7 @@ html(lang="en")
             div.mb-5
                 span=secondaryMessage
 
-            if tokens
+            if isAuth
                 <div class="alert alert-primary" role="alert">
                     <span>Logged in. Go <a href='/tradingbot'>trade!</a></span>
                 </div>

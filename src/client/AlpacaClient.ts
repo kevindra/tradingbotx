@@ -50,10 +50,6 @@ export class AlpacaClient {
   raw() {
     return this.alpaca;
   }
-
-  async isAuthenticated() {
-    return await this.alpaca.isAuthenticated();
-  }
 }
 
 // module.exports = new AlpacaClient();
