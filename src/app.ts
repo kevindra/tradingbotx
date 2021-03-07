@@ -104,28 +104,31 @@ app.get('/watchlists/edit', async (req, res) => {
 app.get('/watchlists', async (req, res) => {
   var sess: any = req.session;
   let isAuth = await isAuthenticated(sess.tokens as AccessToken);
+  let watchlists: Watchlist[] = [];
 
   console.log('Trader received: ' + JSON.stringify(req.body));
-  const id = req.query.id as string;
-  const tokens = (req.session as any).tokens;
-  const alpaca = new AlpacaClient(tokens);
+  if (isAuth) {
+    const id = req.query.id as string;
+    const tokens = (req.session as any).tokens;
+    const alpaca = new AlpacaClient(tokens);
 
-  let output;
-  if (id) {
-    output = [
-      await alpaca.raw().getWatchlist({
-        uuid: id,
-      }),
-    ];
-  } else {
-    output = await alpaca.raw().getWatchlists();
+    let output;
+    if (id) {
+      output = [
+        await alpaca.raw().getWatchlist({
+          uuid: id,
+        }),
+      ];
+    } else {
+      output = await alpaca.raw().getWatchlists();
+    }
+
+    watchlists = await Promise.all(
+      output.map(async o => {
+        return await alpaca.raw().getWatchlist({uuid: o.id});
+      })
+    );
   }
-
-  let watchlists: Watchlist[] = await Promise.all(
-    output.map(async o => {
-      return await alpaca.raw().getWatchlist({uuid: o.id});
-    })
-  );
 
   res.render('watchlists', {
     title: 'Buy The Dip Club | Watchlists',
