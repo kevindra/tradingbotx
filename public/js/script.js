@@ -691,7 +691,7 @@ function executeTrades(opportunities) {
       $('#trade-status-' + b.symbol).text('No shares to sell.');
     });
     (d.orders || []).forEach(order => {
-      $('#trade-status-' + order.symbol).text('Order submitted.');
+      $('#trade-status-' + order.symbol).text('Order submitted for $' + order.notional);
     });
   });
 }
