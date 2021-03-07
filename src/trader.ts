@@ -27,18 +27,23 @@ export class Trader {
 
     // buy interesting stuff
     const buyOpportunities = opportunities.buyOpportunities || [];
-    orders.push(
-      ...(await this.executeBuyTrades(
+    (
+      await this.executeBuyTrades(
         buyOpportunities,
         minBuyAmount,
         maxBuyAmount,
         buyConfThreshold
-      ))
-    );
+      )
+    ).map(o => {
+      if (o !== undefined) orders.push(o);
+    });
 
     // sell not so interesting stuff
     const sellOpportunities = opportunities.sellOpportunities || [];
-    orders.push(...(await this.executeSellTrades(sellOpportunities)));
+    (await this.executeSellTrades(sellOpportunities)).map(o => {
+      if (o !== undefined) orders.push(o);
+    });
+
     return orders;
   }
 
@@ -60,15 +65,23 @@ export class Trader {
 
         this.log(`Buy $${o.symbol} amount $${weightedAmountToInvest}`);
 
-        const order = await this.alpacaClient.placeOrder({
-          symbol: o.symbol,
-          side: 'buy',
-          notional: weightedAmountToInvest,
-        });
-        this.log(
-          `Created order: $${order.symbol} filled qty: ${order.filled_qty} @ $${order.qty} type: ${order.type}`,
-          'success'
-        );
+        let order;
+        try {
+          order = await this.alpacaClient.placeOrder({
+            symbol: o.symbol,
+            side: 'buy',
+            notional: weightedAmountToInvest,
+          });
+          this.log(
+            `Created order: $${order.symbol} filled qty: ${order.filled_qty} @ $${order.qty} type: ${order.type}`,
+            'success'
+          );
+        } catch (ex) {
+          this.log(
+            `Error submitting order: $${o.symbol} for $${weightedAmountToInvest} type: buy, because ${JSON.stringify(ex, null, 2)}`,
+            'error'
+          );
+        }
         return order;
       })
     );
@@ -84,12 +97,22 @@ export class Trader {
 
     return await Promise.all(
       positionsToSell.map(async p => {
-        const order = await this.alpacaClient.placeOrder({
-          side: 'sell',
-          symbol: p.symbol,
-          qty: p.qty,
-        });
-        console.log(`Sell order submitted: ${JSON.stringify(order, null, 2)}`);
+        let order;
+        try {
+          order = await this.alpacaClient.placeOrder({
+            side: 'sell',
+            symbol: p.symbol,
+            qty: p.qty,
+          });
+          console.log(
+            `Sell order submitted: ${JSON.stringify(order, null, 2)}`
+          );
+        } catch (ex) {
+          this.log(
+            `Error sumbitting order: $${p.symbol} for $${p.qty} type: buy, because ${JSON.stringify(ex, null, 2)}`,
+            'error'
+          );
+        }
         return order;
       })
     );

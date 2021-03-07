@@ -598,7 +598,7 @@ $(document).on('submit', '#startbot', function (e) {
 });
 
 function analyzeTicker(tickers, horizon, i, opp, done) {
-  var waitTime = i === 0 ? 0 : 15000;
+  var waitTime = 1000; //i === 0 ? 0 : 15000;
   if (i < tickers.length) {
     window.setTimeout(() => {
       $('#result-message').html(
@@ -632,6 +632,9 @@ function analyzeTicker(tickers, horizon, i, opp, done) {
                 '<td >' +
                 o.sellConfidence.toFixed(2) +
                 '% </td>' +
+                '<td>' +
+                ((o.buyConfidence > o.sellConfidence) ? "Buy" : "Sell, if own") + 
+                '</td>' +
                 '<td > <input type="checkbox" class="form-checkbox" id="checkbox-' +
                 o.symbol +
                 '"checked/> </td>' +
@@ -641,7 +644,8 @@ function analyzeTicker(tickers, horizon, i, opp, done) {
                 '</tr>'
             );
             $('#result-message').html(
-              'Sleeping for 15 seconds to reduce the load on APIs..'
+              // 'Sleeping for 15 seconds to reduce the load on APIs..'
+              'Finding next good opportunity..'
             );
             opp.buyOpportunities = opp.buyOpportunities.concat(
               d.buyOpportunities
