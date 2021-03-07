@@ -13,6 +13,9 @@ Trading Bot Web Console & APIs. (http://www.buythedipclub.com)
 - [x] Skip orders that are not tradable fractionally
 - [x] Responsive Trade table for mobile
 - [x] Fix list selector styling on the trading page
+- [ ] Delete watchlist support
+- [ ] Watchlist detail page
+- [ ] Trade link on watchlist page
 - [ ] Support for live account (https://alpaca.markets/docs/api-documentation/api-v2/#paper-trading)
 - [ ] Account's page
 - [ ] Account's positions page
