@@ -11,7 +11,8 @@ Trading Bot Web Console & APIs. (http://www.buythedipclub.com)
 - [x] Transaction Type in the Trade Table
 - [x] Premium API support
 - [x] Skip orders that are not tradable fractionally
-- [ ] Responsive Trade table for mobile
+- [x] Responsive Trade table for mobile
+- [x] Fix list selector styling on the trading page
 - [ ] Support for live account (https://alpaca.markets/docs/api-documentation/api-v2/#paper-trading)
 - [ ] Account's page
 - [ ] Account's positions page

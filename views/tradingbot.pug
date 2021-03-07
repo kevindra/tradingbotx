@@ -11,20 +11,24 @@ html(lang="en")
 
             if isAuth
                 <form method="POST" action="/" id="startbot">
-                    <div class="row mb-5">
+                    <div class="row mb-3">
                         <div class="col-sm-2">
                             <label for="tickerSelection" class="col-sm-2 col-form-label">Watchlist:</label>
                         </div>
                         <div class="col-sm-4" aria-describedBy="tickerSelectionHelp">
-                            <div class="row mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="popular" id="flexRadioDefault1" checked>
-                                <label class="form-check-label" for="flexRadioDefault1">Choose a list:</label>
-                                <select name="list">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="popular" checked id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        <span>Choose a list:</span>
+                                    </label>
+                                </div>
+
+                                <select name="list" class="form-select form-select-sm">
                                     each list in lists
                                         <option value="#{list.id}">#{list.name}</option>
                                 </select>
-                            </div>
+                        </div>
+                        <div class="col-sm-3">
                         </div>
                     </div>
                     
@@ -96,7 +100,7 @@ html(lang="en")
                         </button> 
                     </div>
 
-                    <table class="table table-bordered" id="result-table">
+                    <table class="table table-striped table-hover table-sm table-responsive-sm mt-5" id="result-table">
                         <thead>
                             <tr>
                                 <th>Ticker</th>
