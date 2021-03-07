@@ -87,72 +87,61 @@ var getUrlParameter = function getUrlParameter(sParam) {
   }
 };
 
-var ticker = getUrlParameter('t') || 'BTC';
-var currency = getUrlParameter('c') || 'USD';
-var type = getUrlParameter('type') || 'crypto';
+var ticker = getUrlParameter('t') ;
+var currency = getUrlParameter('c');
+var type = getUrlParameter('type');
 var horizon = getUrlParameter('h') || '365';
 
 console.log(ticker, currency, type, horizon);
 var endpoint = `/api/conf?t=${ticker}&c=${currency}&type=${type}&horizon=${horizon}`;
 
 $(function () {
-  var fetchedData;
-  var chart;
-  $.getJSON(endpoint, data => {
-    fetchedData = data;
-    chart = defineChart(data);
-  });
-
-  $('#conf').click(e => {
-    chart.addAxis(
-      {
-        opposite: true,
-        id: 'yA1',
-      },
-      false,
-      false,
-      false
-    );
-
-    console.log(fetchedData.map(v => v[2]));
-    chart.addSeries(
-      {
-        yAxis: 'yA1',
-        name: 'Buy Confidence',
-        data: fetchedData.map(v => [v[0], v[2]]),
-        showInLegend: true,
-      },
-      true,
-      true
-    );
-    e.preventDefault();
-  });
+  if (Highcharts !== undefined && ticker) {
+    $.getJSON(endpoint, data => {
+      $('#conf-ticker').html(ticker);
+      $('#conf-value').html(
+        data[data.length - 2][2].toFixed(2) +
+          '% @ $' +
+          data[data.length - 2][1].toFixed(2)
+      );
+      plotChart(data, ticker);
+    });
+  }
 });
 
-function defineChart(data) {
+function plotChart(data, ticker = '') {
   return new Highcharts.chart('container', {
     chart: {
       zoomType: 'x',
     },
     title: {
-      text: 'Buy Confidence',
+      text: 'Historical Buy Confidence - ' + ticker,
     },
     subtitle: {
       text:
-        document.ontouchstart === undefined
-          ? 'Click and drag in the plot area to zoom in'
-          : 'Pinch the chart to zoom in',
+        'Historical buy confidence value based on dip intensity and movement.',
     },
     xAxis: {
       type: 'datetime',
     },
-    yAxis: {
-      title: {
-        text: 'Price',
+    yAxis: [
+      {
+        title: {
+          text: 'Price',
+        },
+        opposite: true,
       },
+      {
+        title: {
+          text: 'Confidence',
+        },
+      },
+    ],
+    tooltip: {
+      shared: true,
     },
     legend: {
-      enabled: false,
+      enabled: true,
     },
     plotOptions: {
       area: {
@@ -190,21 +179,17 @@ function defineChart(data) {
       {
         type: 'area',
         name: 'Price',
+        yAxis: 0,
         data: data.map(d => [d[0], d[1]]),
+      },
+      {
+        yAxis: 1,
+        name: 'Buy Confidence - ' + ticker,
+        data: data.map(d => [d[0], d[2]]),
       },
     ],
   });
 }
-
-// Highcharts.getJSON(
-//     // 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
-
-//     function (data) {
-//         fetchedData = data;
-//         console.log(data)
-
-//     }
-// );
 
 // Analytics
 window.dataLayer = window.dataLayer || [];
@@ -575,8 +560,8 @@ $(document).on('submit', '#startbot', function (e) {
     alert('Select at least one, either a list or enter your own tickers.');
     return;
   }
-  window.minBuyAmount = o.minBuyAmount
-  window.maxBuyAmount = o.maxBuyAmount
+  window.minBuyAmount = o.minBuyAmount;
+  window.maxBuyAmount = o.maxBuyAmount;
 
   // if (o.alp_access === '' || o.alp_secret === '') {
   //   alert(
@@ -691,7 +676,9 @@ function executeTrades(opportunities) {
       $('#trade-status-' + b.symbol).text('No shares to sell.');
     });
     (d.orders || []).forEach(order => {
-      $('#trade-status-' + order.symbol).text('Order submitted for $' + order.notional);
+      $('#trade-status-' + order.symbol).text(
+        'Order submitted for $' + order.notional
+      );
     });
   });
 }
