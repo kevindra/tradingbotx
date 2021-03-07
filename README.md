@@ -6,8 +6,8 @@ Trading Bot Web Console & APIs. (http://www.buythedipclub.com)
 - [x] Rewrite the project in typescript
 - [x] OAuth Support (https://alpaca.markets/docs/build-apps_services-with-alpaca/oauth-guide/)
 - [x] Trade with watchlists
-- [ ] Watchlist
-- [ ] SSL
+- [x] Watchlist
+- [x] SSL
 - [ ] Support for live account (https://alpaca.markets/docs/api-documentation/api-v2/#paper-trading)
 - [ ] Account's page
 - [ ] Account's positions page
