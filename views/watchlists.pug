@@ -5,9 +5,9 @@ html(lang="en")
         - var watchlistPageActive = 'active'
         include nav.pug 
 
-        if isAuth
-            div(class="container")
-                h1=message
+        div(class="container")
+            h1=message
+            if isAuth
                 if create   
                     div.mb-5.mt-5 
                         <form method="POST" action="/" id="create-watchlist">
@@ -125,11 +125,11 @@ html(lang="en")
                             </div>
                         </div>
                     </div>     
-        else
-            <div class="alert alert-danger" role="alert">
-                <span>To access this page, you first need to <a href='/login'>login!</a></span>
-            </div>
+            else
+                <div class="alert alert-danger" role="alert">
+                    <span>To access this page, you first need to <a href='/login'>login!</a></span>
+                </div>
 
-        include donation.pug
-        include disclaimer.pug
-    include footer.pug
+            include donation.pug
+            include disclaimer.pug
+            include footer.pug
