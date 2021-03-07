@@ -560,17 +560,6 @@ $(document).on('submit', '#startbot', function (e) {
     alert('Select at least one, either a list or enter your own tickers.');
     return;
   }
-  window.minBuyAmount = o.minBuyAmount;
-  window.maxBuyAmount = o.maxBuyAmount;
-
-  // if (o.alp_access === '' || o.alp_secret === '') {
-  //   alert(
-  //     'You need to provide your Alpaca access and secret key in order trading bot to run successfully. '
-  //   );
-  //   return;
-  // }
-  // window.alp_access = o.alp_access;
-  // window.alp_secret = o.alp_secret;
 
   getTickersForTrading(o, function (tickers) {
     var horizon = o.horizon;
@@ -592,13 +581,15 @@ $(document).on('submit', '#startbot', function (e) {
       );
 
       console.log('Final opportunities ' + JSON.stringify(opp));
-      window.opportunities = opp;
     });
+    window.opportunities = opp;
+    window.minBuyAmount = o.minBuyAmount;
+    window.maxBuyAmount = o.maxBuyAmount;
   });
 });
 
 function analyzeTicker(tickers, horizon, i, opp, done) {
-  var waitTime = 1000; //i === 0 ? 0 : 15000;
+  var waitTime = i === 0 ? 0 : 1000;
   if (i < tickers.length) {
     window.setTimeout(() => {
       $('#result-message').html(
