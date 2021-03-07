@@ -5,128 +5,131 @@ html(lang="en")
         - var watchlistPageActive = 'active'
         include nav.pug 
 
-        div(class="container")
-            h1=message
-            if create   
-                div.mb-5.mt-5 
-                    <form method="POST" action="/" id="create-watchlist">
-                        <div class="row mb-3">
-                            <div class="col-sm-2">
-                                <label for="tickerType" class="col-sm-2 col-form-label">Name:</label>
-                            </div>
-                            <div class="col-sm-4">
-                                input#horizon.form-control(type='text' name='name' aria-describedby='horizonHelp' value="")
-                            </div>
-                            <div class="col-sm-3">
-                                <span id="horizonHelp" class="form-text">Name of the watchlist.</span>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-sm-2">
-                                <label for="tickers" class="col-sm-2 col-form-label">Tickers:</label>
-                            </div>
-                            <div class="col-sm-4">
-                                input.form-control(type='text' id='tickers' name='tickers' aria-describedby="tickerHelp" value=tickers)
-                            </div>
-                            <div class="col-sm-3">
-                                <span id="tickerHelp" class="form-text">Must be comma-seperated ticker symbols.</span>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-sm-5">
-                                <button type="submit" class="btn btn-primary" id="create-watchlist-button">
-                                <span class="spinner-border spinner-border-sm" role="status" style='display:none' id='create-watchlist-spinner'></span>
-                                <span>Submit</span>
-                                </button> 
-                            </div>
-                        </div>
-                    </form>
-            if edit
-                div.mb-5.mt-5 
-                    <form method="POST" action="/" id="edit-watchlist">
-                        <input type="hidden" name="id" value="#{id}"/>
-                        <div class="row mb-3">
-                            <div class="col-sm-2">
-                                <label for="tickerType" class="col-sm-2 col-form-label">Name:</label>
-                            </div>
-                            <div class="col-sm-4">
-                                input#horizon.form-control(type='text' name='name' aria-describedby='horizonHelp' value=name)
-                            </div>
-                            <div class="col-sm-3">
-                                <span id="horizonHelp" class="form-text">Name of the watchlist.</span>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-sm-2">
-                                <label for="tickers" class="col-sm-2 col-form-label">Tickers:</label>
-                            </div>
-                            <div class="col-sm-4">
-                                input.form-control(type='text' id='tickers' name='tickers' aria-describedby="tickerHelp" value=tickers)
-                            </div>
-                            <div class="col-sm-3">
-                                <span id="tickerHelp" class="form-text">Must be comma-seperated ticker symbols.</span>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-sm-5">
-                                <button type="submit" class="btn btn-primary" id="edit-watchlist-button">
-                                <span class="spinner-border spinner-border-sm" role="status" style='display:none' id='edit-watchlist-spinner'></span>
-                                <span>Submit</span>
-                                </button> 
-                            </div>
-                        </div>
-                    </form>
-
-            if list
-                <div class="container-lg">
-                    <div class="table-responsive">
-                        <div class="table-wrapper">
-                            <div class="table-title">
-                                <div class="row">
-                                    <div class="col"><h2>Watch lists</b></h2></div>
-                                    <div class="col">
-                                        <a href='/watchlists/create' type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Create new list</a>
-                                    </div>
+        if isAuth
+            div(class="container")
+                h1=message
+                if create   
+                    div.mb-5.mt-5 
+                        <form method="POST" action="/" id="create-watchlist">
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickerType" class="col-sm-2 col-form-label">Name:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    input#horizon.form-control(type='text' name='name' aria-describedby='horizonHelp' value="")
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="horizonHelp" class="form-text">Name of the watchlist.</span>
                                 </div>
                             </div>
 
-                            <div class="row mb-3 d-none">
-                                <div class='col-sm-auto mt-2'><span> Add your portfolio data that you downloaded before: </span></div>
-                                <div class='col-sm-auto mt-2'><textarea id='data-to-load'></textarea></div>
-                                <div class='col-sm-auto mt-2'><button class='btn btn-success' id='load-data-button'>Load</button></div>
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickers" class="col-sm-2 col-form-label">Tickers:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    input.form-control(type='text' id='tickers' name='tickers' aria-describedby="tickerHelp" value=tickers)
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="tickerHelp" class="form-text">Must be comma-seperated ticker symbols.</span>
+                                </div>
                             </div>
 
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>List Name</th>
-                                        <th>Tickers</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    each w in watchlists
-                                        tr
-                                            td=w.name 
-                                            td 
-                                                each asset in w.assets
-                                                    = asset.symbol + ',' 
-                                            td
-                                                <a href="/watchlists/edit?id=#{w.id}">Edit</a>
-                                </tbody>
-                            </table>
+                            <div class="row mb-3">
+                                <div class="col-sm-5">
+                                    <button type="submit" class="btn btn-primary" id="create-watchlist-button">
+                                    <span class="spinner-border spinner-border-sm" role="status" style='display:none' id='create-watchlist-spinner'></span>
+                                    <span>Submit</span>
+                                    </button> 
+                                </div>
+                            </div>
+                        </form>
+                if edit
+                    div.mb-5.mt-5 
+                        <form method="POST" action="/" id="edit-watchlist">
+                            <input type="hidden" name="id" value="#{id}"/>
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickerType" class="col-sm-2 col-form-label">Name:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    input#horizon.form-control(type='text' name='name' aria-describedby='horizonHelp' value=name)
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="horizonHelp" class="form-text">Name of the watchlist.</span>
+                                </div>
+                            </div>
 
-                            <div id='save-string'>
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickers" class="col-sm-2 col-form-label">Tickers:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    input.form-control(type='text' id='tickers' name='tickers' aria-describedby="tickerHelp" value=tickers)
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="tickerHelp" class="form-text">Must be comma-seperated ticker symbols.</span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-5">
+                                    <button type="submit" class="btn btn-primary" id="edit-watchlist-button">
+                                    <span class="spinner-border spinner-border-sm" role="status" style='display:none' id='edit-watchlist-spinner'></span>
+                                    <span>Submit</span>
+                                    </button> 
+                                </div>
+                            </div>
+                        </form>
+
+                if list
+                    <div class="container-lg">
+                        <div class="table-responsive">
+                            <div class="table-wrapper">
+                                <div class="table-title">
+                                    <div class="row">
+                                        <div class="col"><h2>Watch lists</b></h2></div>
+                                        <div class="col">
+                                            <a href='/watchlists/create' type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Create new list</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3 d-none">
+                                    <div class='col-sm-auto mt-2'><span> Add your portfolio data that you downloaded before: </span></div>
+                                    <div class='col-sm-auto mt-2'><textarea id='data-to-load'></textarea></div>
+                                    <div class='col-sm-auto mt-2'><button class='btn btn-success' id='load-data-button'>Load</button></div>
+                                </div>
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>List Name</th>
+                                            <th>Tickers</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        each w in watchlists
+                                            tr
+                                                td=w.name 
+                                                td 
+                                                    each asset in w.assets
+                                                        = asset.symbol + ',' 
+                                                td
+                                                    <a href="/watchlists/edit?id=#{w.id}">Edit</a>
+                                    </tbody>
+                                </table>
+
+                                <div id='save-string'>
+                            </div>
                         </div>
-                    </div>
-                </div>     
+                    </div>     
+        else
+            <div class="alert alert-danger" role="alert">
+                <span>To access this page, you first need to <a href='/login'>login!</a></span>
+            </div>
 
-
-            include donation.pug
-            include disclaimer.pug
-
+        include donation.pug
+        include disclaimer.pug
     include footer.pug
