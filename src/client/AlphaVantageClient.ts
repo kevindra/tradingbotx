@@ -31,14 +31,8 @@ export class AlphaVantageClient {
       outputsize: 'full',
     };
     const url = URL + queryString.stringify(getDataQuery);
-
-    console.log('Making request to the url: ', url);
     const opt = {
       url: url,
-      // ,
-      // headers: {
-      //     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36"
-      // }
     };
 
     return new Promise((resolve, reject) => {

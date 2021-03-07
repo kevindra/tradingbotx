@@ -11,13 +11,12 @@ export interface OrderRequest {
 export class AlpacaClient {
   alpaca;
   constructor(accessToken: AccessToken) {
-    console.log('sending access token: ' + accessToken.access_token);
     this.alpaca = new Alpaca.AlpacaClient({
       credentials: {
         // key: process.env.ALP_API_KEY || accessKey,
         // secret: process.env.ALP_SECURITY_KEY || secretKey,
         access_token: accessToken.access_token,
-        paper: (process.env.ALP_LIVE_MONEY !== 'true'),
+        paper: process.env.ALP_LIVE_MONEY !== 'true',
         // usePolygon: false,
       },
       rate_limit: false,
@@ -51,11 +50,3 @@ export class AlpacaClient {
     return this.alpaca;
   }
 }
-
-// module.exports = new AlpacaClient();
-
-// let ac = new AlpacaClient();
-// ac.placeOrder('AAPL', 1, 'buy').then((o) => console.log(JSON.stringify(o)));
-// ac.placeOrder('AAPL', 1, 'buy').then((o) => console.log(JSON.stringify(o)));
-// ac.placeOrder('AAPL', 1, 'buy').then((o) => console.log(JSON.stringify(o)));
-// ac.placeOrder('AAPL', 1, 'buy').then((o) => console.log(JSON.stringify(o)));

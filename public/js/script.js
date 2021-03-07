@@ -210,7 +210,7 @@ function gtag() {
   dataLayer.push(arguments);
 }
 gtag('js', new Date());
-gtag('config', 'G-MH1D22FBST');
+gtag('config', 'G-HGFNWY883M');
 
 // Dynamic Table
 function getTickerConf(ticker, tickerType, horizon, callback) {

@@ -17,6 +17,7 @@ import {
   authMiddleware,
   devEnvironmentMiddleware,
   loggerMiddleware,
+  googleAnalyticsMiddleware,
 } from './common';
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(authMiddleware);
 app.use(loggerMiddleware);
 app.use(devEnvironmentMiddleware);
+app.use(googleAnalyticsMiddleware);
 
 app.use('/', rootRouter);
 app.use('/watchlists', watchlistsRouter);

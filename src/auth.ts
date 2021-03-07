@@ -5,8 +5,6 @@ import {AccessToken} from './trader';
  * Check if user is authenticated - in session as well as in the Alpaca
  */
 export async function isAuthenticated(accessToken: AccessToken) {
-  console.log(accessToken);
-
   if (!accessToken) {
     return false;
   }
