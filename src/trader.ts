@@ -1,13 +1,14 @@
 import {AlpacaClient} from './client/AlpacaClient';
 import {Opportunities, Opportunity} from './OpportunitiesFinder';
 import {Order} from '@master-chief/alpaca';
+import {min} from 'lodash';
 
 let chalk = require('chalk');
 
 export interface AccessToken {
-  access_token: string,
-  token_type: string,
-  scope: string
+  access_token: string;
+  token_type: string;
+  scope: string;
 }
 export class Trader {
   alpacaClient: AlpacaClient;
@@ -17,14 +18,22 @@ export class Trader {
 
   async performTrades(
     opportunities: Opportunities,
-    perTradeMaxDollar = 200
+    minBuyAmount: number,
+    maxBuyAmount: number,
+    buyConfThreshold: number,
+    sellConfThreshold: number
   ) {
     let orders: Order[] = [];
 
     // buy interesting stuff
     const buyOpportunities = opportunities.buyOpportunities || [];
     orders.push(
-      ...(await this.executeBuyTrades(buyOpportunities, perTradeMaxDollar))
+      ...(await this.executeBuyTrades(
+        buyOpportunities,
+        minBuyAmount,
+        maxBuyAmount,
+        buyConfThreshold
+      ))
     );
 
     // sell not so interesting stuff
@@ -35,16 +44,26 @@ export class Trader {
 
   private async executeBuyTrades(
     buyOpportunities: Opportunity[],
-    perTradeMaxDollar = 200
+    minBuyAmount: number,
+    maxBuyAmount: number,
+    buyConfThreshold: number
   ) {
     return await Promise.all(
       buyOpportunities.map(async o => {
-        this.log(`Buy $${o.symbol} amount $${perTradeMaxDollar}`);
+        // normalize the amount based on min,max amount & min,max confidence
+        let weightedAmountToInvest =
+          minBuyAmount +
+          ((o.buyConfidence - buyConfThreshold) *
+            (maxBuyAmount - minBuyAmount)) /
+            (100 - buyConfThreshold);
+        weightedAmountToInvest = Math.floor(weightedAmountToInvest);
+
+        this.log(`Buy $${o.symbol} amount $${weightedAmountToInvest}`);
 
         const order = await this.alpacaClient.placeOrder({
           symbol: o.symbol,
           side: 'buy',
-          notional: perTradeMaxDollar,
+          notional: weightedAmountToInvest,
         });
         this.log(
           `Created order: $${order.symbol} filled qty: ${order.filled_qty} @ $${order.qty} type: ${order.type}`,

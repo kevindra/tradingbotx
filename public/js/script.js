@@ -67,6 +67,8 @@ const POPULAR = [
   'RCL',
   'GOOGL',
 ];
+const MIN_BUY_CONFIDENCE = 80;
+const MIN_SELL_CONFIDENCE = 80;
 
 var getUrlParameter = function getUrlParameter(sParam) {
   var sPageURL = window.location.search.substring(1),
@@ -265,8 +267,10 @@ function trade(opportunities, callback) {
     dataType: 'json',
     data: {
       opp: opportunities,
-      alp_access_key: window.alp_access,
-      alp_secret_key: window.alp_secret,
+      minBuyAmount: window.minBuyAmount,
+      maxBuyAmount: window.maxBuyAmount,
+      buyConfThreshold: MIN_BUY_CONFIDENCE,
+      sellConfThreshold: MIN_SELL_CONFIDENCE,
     },
     success: function (data) {
       console.log('GOT: ' + JSON.stringify(data));
@@ -571,6 +575,9 @@ $(document).on('submit', '#startbot', function (e) {
     alert('Select at least one, either a list or enter your own tickers.');
     return;
   }
+  window.minBuyAmount = o.minBuyAmount
+  window.maxBuyAmount = o.maxBuyAmount
+
   // if (o.alp_access === '' || o.alp_secret === '') {
   //   alert(
   //     'You need to provide your Alpaca access and secret key in order trading bot to run successfully. '
@@ -612,50 +619,56 @@ function analyzeTicker(tickers, horizon, i, opp, done) {
       $('#result-message').html(
         'Analyzing ticker ' + tickers[i] + ', it will take a while..'
       );
-      getOpportunities([tickers[i]], horizon, 80, 80, d => {
-        var o =
-          d.buyOpportunities.length > 0
-            ? d.buyOpportunities[0]
-            : d.sellOpportunities.length > 0
-            ? d.sellOpportunities[0]
-            : null;
+      getOpportunities(
+        [tickers[i]],
+        horizon,
+        MIN_BUY_CONFIDENCE,
+        MIN_SELL_CONFIDENCE,
+        d => {
+          var o =
+            d.buyOpportunities.length > 0
+              ? d.buyOpportunities[0]
+              : d.sellOpportunities.length > 0
+              ? d.sellOpportunities[0]
+              : null;
 
-        if (o !== null) {
-          $('#result-table tbody').append(
-            '<tr>' +
-              '<td >' +
-              o.symbol +
-              '</td>' +
-              '<td > $' +
-              o.price +
-              '</td>' +
-              '<td >' +
-              o.buyConfidence.toFixed(2) +
-              '% </td>' +
-              '<td >' +
-              o.sellConfidence.toFixed(2) +
-              '% </td>' +
-              '<td > <input type="checkbox" class="form-checkbox" id="checkbox-' +
-              o.symbol +
-              '"checked/> </td>' +
-              '<td id=trade-status-' +
-              o.symbol +
-              '> Not yet </td>' +
-              '</tr>'
-          );
-          $('#result-message').html(
-            'Sleeping for 15 seconds to reduce the load on APIs..'
-          );
-          opp.buyOpportunities = opp.buyOpportunities.concat(
-            d.buyOpportunities
-          );
-          opp.sellOpportunities = opp.sellOpportunities.concat(
-            d.sellOpportunities
-          );
+          if (o !== null) {
+            $('#result-table tbody').append(
+              '<tr>' +
+                '<td >' +
+                o.symbol +
+                '</td>' +
+                '<td > $' +
+                o.price +
+                '</td>' +
+                '<td >' +
+                o.buyConfidence.toFixed(2) +
+                '% </td>' +
+                '<td >' +
+                o.sellConfidence.toFixed(2) +
+                '% </td>' +
+                '<td > <input type="checkbox" class="form-checkbox" id="checkbox-' +
+                o.symbol +
+                '"checked/> </td>' +
+                '<td id=trade-status-' +
+                o.symbol +
+                '> Not yet </td>' +
+                '</tr>'
+            );
+            $('#result-message').html(
+              'Sleeping for 15 seconds to reduce the load on APIs..'
+            );
+            opp.buyOpportunities = opp.buyOpportunities.concat(
+              d.buyOpportunities
+            );
+            opp.sellOpportunities = opp.sellOpportunities.concat(
+              d.sellOpportunities
+            );
+          }
+          i++;
+          analyzeTicker(tickers, horizon, i, opp, done);
         }
-        i++;
-        analyzeTicker(tickers, horizon, i, opp, done);
-      });
+      );
     }, waitTime);
   } else {
     done(opp);

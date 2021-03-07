@@ -49,7 +49,31 @@ html(lang="en")
                             input#horizon.form-control(type='text' name='horizon' aria-describedby='horizonHelp' value="365")
                         </div>
                         <div class="col-sm-3">
-                            <span id="horizonHelp" class="form-text">Buy confidence is relative to past event. This is number of days in the past you want to look into. Try something like 365-720 (1-2 years) to get better sample data of the price.</span>
+                            <span id="horizonHelp" class="form-text">Buy confidence is relative to past price patterns. This is number of days in the past you want to look into the past. Try something like 365-720 (1-2 years) to get better sample data of the price.</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-2">
+                            <label for="tickerType" class="col-sm-2 col-form-label">Minimum $/trade:</label>
+                        </div>
+                        <div class="col-sm-4">
+                            input#horizon.form-control(type='text' name='minBuyAmount' aria-describedby='horizonHelp' value="60")
+                        </div>
+                        <div class="col-sm-3">
+                            <span id="horizonHelp" class="form-text">Minimum amount($) to buy per trade. Final investment amount is weighted based on the buy signal.</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-2">
+                            <label for="tickerType" class="col-sm-2 col-form-label">Maximum $/trade:</label>
+                        </div>
+                        <div class="col-sm-4">
+                            input#horizon.form-control(type='text' name='maxBuyAmount' aria-describedby='horizonHelp' value="100")
+                        </div>
+                        <div class="col-sm-3">
+                            <span id="horizonHelp" class="form-text">Maximum amount($) to buy per trade. Final investment amount is weighted based on the buy signal.</span>
                         </div>
                     </div>
 
@@ -62,8 +86,6 @@ html(lang="en")
                         </div>
                     </div>
                 </form>
-
-                include donation.pug
                 
                 <div id="result-message" class="alert alert-secondary" role="alert">Your trades will appear below: </div>
                 <div class="container-fluid p-10 m-20">
@@ -95,5 +117,6 @@ html(lang="en")
                     <span>To access trading page, you need to <a href='/login'>login</a> first.</span>
                 </div>
 
+            include donation.pug
             include disclaimer.pug
     include footer.pug

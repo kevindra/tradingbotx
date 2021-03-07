@@ -32,7 +32,7 @@ export class AlpacaClient {
     try {
       return await this.alpaca.placeOrder({
         symbol: order.symbol,
-        qty: order.qty,
+        // qty: order.qty,
         notional: order.notional,
         side: order.side,
         type: 'market',

@@ -1,5 +1,6 @@
 import Bottleneck from 'bottleneck';
 import {ConfidenceCalculator} from './ConfidenceCalculator';
+import { BUY_CONFIDENCE_THRESHOLD, SELL_CONFIDENCE_THRESHOLD } from './consts';
 const confidenceCalculator = new ConfidenceCalculator();
 
 export interface Opportunity {
@@ -20,8 +21,8 @@ export class OpportunitiesFinder {
   async findOpportunities(
     symbols: string[],
     horizon: number,
-    buyConfidenceThreshold = 40,
-    sellConfidenceThreshold = 40
+    buyConfidenceThreshold = BUY_CONFIDENCE_THRESHOLD,
+    sellConfidenceThreshold = SELL_CONFIDENCE_THRESHOLD
   ) {
     // 1 request per 15 seconds
     // api allows 5 requests per minute, 500 per day
