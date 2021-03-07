@@ -18,11 +18,14 @@ import {
   devEnvironmentMiddleware,
   loggerMiddleware,
   googleAnalyticsMiddleware,
+  httpsMiddleware,
 } from './common';
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(httpsMiddleware)
 app.use(
   session({secret: 'ssshhhhhhhhhhhh', saveUninitialized: true, resave: true})
 );
@@ -32,9 +35,9 @@ app.set('view engine', 'pug');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.use(devEnvironmentMiddleware);
 app.use(authMiddleware);
 app.use(loggerMiddleware);
-app.use(devEnvironmentMiddleware);
 app.use(googleAnalyticsMiddleware);
 
 app.use('/', rootRouter);

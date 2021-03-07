@@ -105,9 +105,23 @@ googleAnalyticsMiddleware.use(async (req, res, next) => {
   next();
 });
 
+const httpsMiddleware = Router();
+httpsMiddleware.use(async (req, res, next) => {
+  if (process.env.ENV === 'prod') {
+    if (req.header('x-forwarded-proto') !== 'https') {
+      res.redirect(`https://${req.header('host')}${req.url}`);
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
 export {
   authMiddleware,
   loggerMiddleware,
   devEnvironmentMiddleware,
   googleAnalyticsMiddleware,
+  httpsMiddleware,
 };
