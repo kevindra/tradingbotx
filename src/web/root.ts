@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
   // Default
   if(!req.query.t) {
     req.query.t = 'BTC'
-    req.query.tickerType = 'crypto'
+    req.query.type = 'crypto'
   }
   req.query.h = '100'
 
