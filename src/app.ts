@@ -20,12 +20,13 @@ import {
   googleAnalyticsMiddleware,
   httpsMiddleware,
 } from './common';
+import {termsPrivacyRouter} from './web/terms-privacy';
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(httpsMiddleware)
+app.use(httpsMiddleware);
 app.use(
   session({secret: 'ssshhhhhhhhhhhh', saveUninitialized: true, resave: true})
 );
@@ -46,6 +47,7 @@ app.use('/portfolio', portfolioRouter);
 app.use('/tradingbot', tradingbotRouter);
 app.use('/login', loginRouter);
 app.use('/oauth', oauthRouter);
+app.use('/terms-and-privacy', termsPrivacyRouter);
 
 /** APIs */
 app.use('/api', apisRouter);
