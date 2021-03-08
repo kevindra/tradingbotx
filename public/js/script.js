@@ -87,7 +87,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
   }
 };
 
-var ticker = getUrlParameter('t') ;
+var ticker = getUrlParameter('t');
 var currency = getUrlParameter('c');
 var type = getUrlParameter('type');
 var horizon = getUrlParameter('h') || '365';
@@ -624,7 +624,7 @@ function analyzeTicker(tickers, horizon, i, opp, done) {
                 o.sellConfidence.toFixed(2) +
                 '% </td>' +
                 '<td>' +
-                ((o.buyConfidence > o.sellConfidence) ? "Buy" : "Sell, if own") + 
+                (o.buyConfidence > o.sellConfidence ? 'Buy' : 'Sell, if own') +
                 '</td>' +
                 '<td > <input type="checkbox" class="form-checkbox" id="checkbox-' +
                 o.symbol +
@@ -726,4 +726,9 @@ $(document).on('submit', '#edit-watchlist', function (e) {
   editWatchlist(o.id, o.name, tickers, data => {
     window.location.replace('/watchlists?id=' + data.id);
   });
+});
+
+$(document).on('click', '#livemoneytogglediv', (e) => {
+  alert('Live money trading is not yet supported on this website.');
+  e.preventDefault()
 });

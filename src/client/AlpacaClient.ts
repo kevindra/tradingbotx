@@ -2,12 +2,14 @@ import Alpaca from '@master-chief/alpaca';
 import {AccessToken} from '../trader';
 import {OrderSide} from '../types';
 import request from 'request';
+
 export interface OrderRequest {
   symbol: string;
   side: OrderSide;
   qty?: number;
   notional?: number;
 }
+
 export class AlpacaClient {
   alpaca;
   accessToken;
