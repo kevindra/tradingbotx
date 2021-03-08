@@ -7,6 +7,7 @@ const tradingbotRouter = express.Router();
 tradingbotRouter.get('/', async (req, res) => {
   var sess: any = req.session;
   let isAuth: boolean = res.locals['isAuth'];
+  const isLiveMoney: boolean = (req.session as any).liveMoney;
 
   // faking a custom list to show popular stocks list
   let lists: Watchlist[] = [
@@ -20,7 +21,7 @@ tradingbotRouter.get('/', async (req, res) => {
     },
   ];
   if (isAuth) {
-    const alpaca = new AlpacaClient(sess.tokens);
+    const alpaca = new AlpacaClient(sess.tokens, isLiveMoney);
     lists = lists.concat(await alpaca.raw().getWatchlists());
   }
 

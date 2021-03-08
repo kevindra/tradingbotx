@@ -17,7 +17,9 @@ authMiddleware.use(async (req, res, next) => {
   ];
 
   let sess: any = req.session;
-  let isAuth = await isAuthenticated(sess.tokens as AccessToken);
+  const isLiveMoney: boolean = (req.session as any).liveMoney;
+
+  let isAuth = await isAuthenticated(sess.tokens as AccessToken, isLiveMoney);
   res.locals['isAuth'] = isAuth;
 
   let pathRequiresAuth =

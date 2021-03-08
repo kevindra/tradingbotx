@@ -17,8 +17,9 @@ tradeApiRouter.post('/', async (req, res) => {
   const sellConfThreshold = parseInt(
     (req.body.sellConfThreshold as string) || `${SELL_CONFIDENCE_THRESHOLD}`
   );
+  const isLiveMoney: boolean = (req.session as any).liveMoney;
 
-  const trader = new Trader(tokens as AccessToken);
+  const trader = new Trader(tokens as AccessToken, isLiveMoney);
   const orders = await trader.performTrades(opp, minBuyAmount, maxBuyAmount, buyConfThreshold, sellConfThreshold);
 
   res.setHeader('Content-Type', 'application/json');

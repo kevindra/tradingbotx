@@ -13,13 +13,13 @@ export interface OrderRequest {
 export class AlpacaClient {
   alpaca;
   accessToken;
-  constructor(accessToken: AccessToken) {
+  constructor(accessToken: AccessToken, isLiveMoney: boolean) {
     this.alpaca = new Alpaca.AlpacaClient({
       credentials: {
         // key: process.env.ALP_API_KEY || accessKey,
         // secret: process.env.ALP_SECURITY_KEY || secretKey,
         access_token: accessToken.access_token,
-        paper: process.env.ALP_LIVE_MONEY !== 'true',
+        paper: !isLiveMoney,
         // usePolygon: false,
       },
       rate_limit: false,
@@ -47,9 +47,14 @@ export class AlpacaClient {
   }
 
   // update watchlist in the sdk doesn't work.. so i wrote my own
-  async updateWatchlist(id: string, name: string, tickers: string[]) {
+  async updateWatchlist(
+    id: string,
+    name: string,
+    tickers: string[],
+    isLiveMoney: boolean
+  ) {
     const url =
-      (process.env.ALP_LIVE_MONEY === 'true'
+      (isLiveMoney
         ? `https://api.alpaca.markets/v2/watchlists/`
         : `https://paper-api.alpaca.markets/v2/watchlists/`) + id;
 

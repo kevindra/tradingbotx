@@ -20,7 +20,8 @@ watchlistsRouter.get('/create', async (req, res) => {
 watchlistsRouter.get('/edit', async (req, res) => {
   var sess: any = req.session;
   const id = req.query.id as string;
-  const alpaca = new AlpacaClient(sess.tokens);
+  const isLiveMoney: boolean = (req.session as any).liveMoney;
+  const alpaca = new AlpacaClient(sess.tokens, isLiveMoney);
   const watchlist = await alpaca.raw().getWatchlist({
     uuid: id,
   });
@@ -50,7 +51,8 @@ watchlistsRouter.get('/', async (req, res) => {
   if (res.locals['isAuth']) {
     const id = req.query.id as string;
     const tokens = (req.session as any).tokens;
-    const alpaca = new AlpacaClient(tokens);
+    const isLiveMoney: boolean = (req.session as any).liveMoney;
+    const alpaca = new AlpacaClient(tokens, isLiveMoney);
 
     let output;
     if (id) {

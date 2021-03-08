@@ -12,8 +12,8 @@ export interface AccessToken {
 }
 export class Trader {
   alpacaClient: AlpacaClient;
-  constructor(accessToken: AccessToken) {
-    this.alpacaClient = new AlpacaClient(accessToken);
+  constructor(accessToken: AccessToken, isLiveMoney: boolean) {
+    this.alpacaClient = new AlpacaClient(accessToken, isLiveMoney);
   }
 
   async performTrades(
@@ -78,7 +78,13 @@ export class Trader {
           );
         } catch (ex) {
           this.log(
-            `Error submitting order: $${o.symbol} for $${weightedAmountToInvest} type: buy, because ${JSON.stringify(ex, null, 2)}`,
+            `Error submitting order: $${
+              o.symbol
+            } for $${weightedAmountToInvest} type: buy, because ${JSON.stringify(
+              ex,
+              null,
+              2
+            )}`,
             'error'
           );
         }
@@ -109,7 +115,9 @@ export class Trader {
           );
         } catch (ex) {
           this.log(
-            `Error sumbitting order: $${p.symbol} for $${p.qty} type: buy, because ${JSON.stringify(ex, null, 2)}`,
+            `Error sumbitting order: $${p.symbol} for $${
+              p.qty
+            } type: buy, because ${JSON.stringify(ex, null, 2)}`,
             'error'
           );
         }
