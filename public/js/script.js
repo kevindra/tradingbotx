@@ -100,9 +100,9 @@ $(function () {
     $.getJSON(endpoint, data => {
       $('#conf-ticker').html(ticker);
       $('#conf-value').html(
-        data[data.length - 2][2].toFixed(2) +
+        data[data.length - 1][2].toFixed(2) +
           '% @ $' +
-          data[data.length - 2][1].toFixed(2)
+          data[data.length - 1][1].toFixed(2)
       );
       plotChart(data, ticker);
     });

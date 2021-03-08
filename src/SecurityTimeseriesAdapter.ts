@@ -28,7 +28,7 @@ export class SecurityTimeseriesAdapter {
     const prices = rawData.map(d => {
       return <Price>{
         price: d.close,
-        timestamp: d.time,
+        timestamp: d.time * 1000,
       };
     });
 

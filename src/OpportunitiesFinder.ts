@@ -38,9 +38,9 @@ export class OpportunitiesFinder {
         );
         return <Opportunity>{
           symbol: symbol,
-          buyConfidence: conf[conf.length - 2][2],
-          sellConfidence: 100 - conf[conf.length - 2][2]!,
-          price: conf[conf.length - 2][1],
+          buyConfidence: conf[conf.length - 1][2],
+          sellConfidence: 100 - conf[conf.length - 1][2]!,
+          price: conf[conf.length - 1][1],
         };
       })
     );

@@ -15,7 +15,7 @@ latestConfApiRouter.get('/', async (req, res, next) => {
     if (type === 'stocks') {
       const data = await confidenceCalculator.stockBuyerConf(ticker, horizon);
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(data[data.length - 2]));
+      res.end(JSON.stringify(data[data.length - 1]));
     } else if (type === 'crypto') {
       const data = await confidenceCalculator.cryptoBuyerConf(
         ticker,
@@ -23,7 +23,7 @@ latestConfApiRouter.get('/', async (req, res, next) => {
         horizon
       );
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(data[data.length - 2]));
+      res.end(JSON.stringify(data[data.length - 1]));
     } else {
       res.end('Not found');
     }
