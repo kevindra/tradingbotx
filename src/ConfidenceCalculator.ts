@@ -18,7 +18,6 @@ export class ConfidenceCalculator {
     });
 
     const confidences = _.map(events, 'normalizedDropIntensity');
-
     return prices.map((row, index) => {
       return [row.timestamp, row.price, confidences[index]];
     });
@@ -37,6 +36,7 @@ export class ConfidenceCalculator {
     });
 
     const confidences = _.map(events, 'normalizedDropIntensity');
+
     return prices.map((row, index) => {
       return [row.timestamp, row.price, confidences[index]];
     });

@@ -7,8 +7,8 @@ router.get('/', (req, res) => {
   if(!req.query.t) {
     req.query.t = 'BTC'
     req.query.type = 'crypto'
+    req.query.h = '100'
   }
-  req.query.h = '100'
 
   res.render('index', {
     title: 'Buy The Dip Club | Quick Analysis',

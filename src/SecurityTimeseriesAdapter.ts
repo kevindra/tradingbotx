@@ -1,6 +1,6 @@
 import {CryptoData, CryptoGetDataResult} from './client/CryptoClient';
 import {AVDailyTimeSeries, AVGetDataResult} from './client/AlphaVantageClient';
-import moment from 'moment';
+import momenttz from 'moment-timezone';
 import _ from 'lodash';
 
 const AV_TS_DAILY = 'Time Series (Daily)';
@@ -44,7 +44,8 @@ export class SecurityTimeseriesAdapter {
   ): PriceTimeSeriesData {
     const rawData: AVDailyTimeSeries = avData[AV_TS_DAILY];
     let dates: string[] = Object.keys(rawData);
-    const startDate = moment()
+    const startDate = momenttz()
+      .tz('America/Toronto')
       .subtract(periodInDays, 'days')
       .format('YYYY-MM-DD');
 

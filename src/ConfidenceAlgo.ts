@@ -14,6 +14,8 @@ export interface Event {
   dropIntensity: number;
   normalizedDropIntensity?: number;
   normalizedAvgDropPerInterval?: number;
+  maxAvgDropPerInterval?: number;
+  maxDropIntensity?: number;
 }
 
 export class ConfidenceAlgo {
@@ -34,6 +36,23 @@ export class ConfidenceAlgo {
     let lastMaxPriceIndex = 0;
     let maxAvgDropPerInterval = 0;
     let maxDropIntensity = -1;
+
+    // First event for the first price data point
+    events.push({
+      currentIndex: 0,
+      lastMaxPriceIndex: lastMaxPriceIndex,
+      currentPrice: algoInput.prices[0],
+      lastMaxPrice: lastMaxPrice,
+      drop: 0,
+      dropPercent: 0,
+      dropDuration: 0,
+      avgDropPerInterval: 0,
+      dropIntensity: 0,
+      maxAvgDropPerInterval: 0,
+      maxDropIntensity: 0,
+      normalizedAvgDropPerInterval: 0,
+      normalizedDropIntensity: 0
+    })
 
     while (n < algoInput.prices.length) {
       if (algoInput.prices[n] > algoInput.prices[n - 1]) {
@@ -62,7 +81,9 @@ export class ConfidenceAlgo {
         maxAvgDropPerInterval
       );
       maxDropIntensity = Math.max(e.dropIntensity, maxDropIntensity);
-
+      e.maxAvgDropPerInterval = maxAvgDropPerInterval
+      e.maxDropIntensity = maxDropIntensity
+      
       events.push(e);
       n++;
     }
@@ -108,3 +129,14 @@ export class ConfidenceAlgo {
 // const bp = new BuyPredictor();
 // const buySignals = bp.predict(spd.dailyClose());
 // console.log(buySignals);
+
+// let c = new ConfidenceAlgo();
+// console.log(
+//   c.predict(
+//     {
+//       prices: [1, 2, 3, 4, 1, 2, 3, 4],
+//     },
+//     0.5,
+//     0
+//   )
+// );
