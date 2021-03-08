@@ -1,7 +1,7 @@
 import express from 'express';
 
 const liveMoneyRouter = express.Router();
-liveMoneyRouter.get('/', async (req, res) => {
+liveMoneyRouter.get('/', (req, res) => {
   let sess: any = req.session;
   const liveMoney = req.query.v as string;
   if (liveMoney === 'true') {

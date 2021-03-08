@@ -19,8 +19,9 @@ import {
   loggerMiddleware,
   googleAnalyticsMiddleware,
   httpsMiddleware,
-} from './common';
+} from './common.middleware';
 import {termsPrivacyRouter} from './web/terms-privacy';
+import {errorMiddleware} from './error.middleware';
 
 dotenv.config();
 const app = express();
@@ -51,5 +52,8 @@ app.use('/terms-and-privacy', termsPrivacyRouter);
 
 /** APIs */
 app.use('/api', apisRouter);
+
+/** Error handling */
+app.use(errorMiddleware);
 
 app.listen(port, () => console.log(`Server started on port ${port}...`));

@@ -14,6 +14,8 @@ Trading Bot Web Console & APIs. (http://www.buythedipclub.com)
 - [x] Responsive Trade table for mobile
 - [x] Fix list selector styling on the trading page
 - [x] Support for live account (https://alpaca.markets/docs/api-documentation/api-v2/#paper-trading)
+- [ ] Error handling layer for both sync & async
+- [ ] Strong Validations (https://wanago.io/2018/12/17/typescript-express-error-handling-validation/)
 - [ ] Live money trading approval by Alpaca
 - [ ] Delete watchlist support
 - [ ] Watchlist detail page

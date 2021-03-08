@@ -3,6 +3,13 @@ import {NAV_TITLE, SECONDARY_TITLE} from '../consts';
 const router = express.Router();
 
 router.get('/', (req, res) => {
+  // Default
+  if(!req.query.t) {
+    req.query.t = 'BTC'
+    req.query.tickerType = 'crypto'
+  }
+  req.query.h = '100'
+
   res.render('index', {
     title: 'Buy The Dip Club | Quick Analysis',
     navTitle: NAV_TITLE,
@@ -12,7 +19,7 @@ router.get('/', (req, res) => {
     ticker: req.query.t,
     tickerType: req.query.type,
     horizon: req.query.h,
-    isAuth: res.locals['isAuth'],
+    isAuth: res.locals['isAuth']
   });
 });
 

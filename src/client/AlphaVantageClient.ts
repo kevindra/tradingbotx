@@ -31,6 +31,8 @@ export class AlphaVantageClient {
       outputsize: 'full',
     };
     const url = URL + queryString.stringify(getDataQuery);
+
+    console.log(`URL: ${url}`)
     const opt = {
       url: url,
     };

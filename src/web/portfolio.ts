@@ -6,7 +6,7 @@ import {NAV_TITLE, SECONDARY_TITLE} from '../consts';
 import {AccessToken} from '../trader';
 const portfolioRouter = express.Router();
 
-portfolioRouter.get('/', async (req, res) => {
+portfolioRouter.get('/', (req, res) => {
   res.render('portfolio', {
     title: 'Buy The Dip Club | Portfolio Analysis',
     navTitle: NAV_TITLE,

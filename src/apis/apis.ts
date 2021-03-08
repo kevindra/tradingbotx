@@ -1,6 +1,4 @@
 import express from 'express';
-import {isAuthenticated} from '../auth';
-import {AccessToken} from '../trader';
 import {confApiRouter} from './conf';
 import {latestConfApiRouter} from './latestconf';
 import {liveMoneyRouter} from './livemoney';

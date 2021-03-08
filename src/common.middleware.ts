@@ -4,45 +4,48 @@ import {AccessToken} from './trader';
 import fetch, {RequestInit} from 'node-fetch';
 import {GA_TRACKING_ID} from './consts';
 import queryString from 'query-string';
+import {withTryCatchNext} from './util';
 
 const authMiddleware = express.Router();
 authMiddleware.use(async (req, res, next) => {
-  const excludedPathsFromAuthCheck = [
-    '/api/conf',
-    '/api/opportunities',
-    '/api/latestconf',
-    '/',
-    '/portfolio',
-    '/login',
-  ];
+  await withTryCatchNext(req, res, next, async (req, res, next) => {
+    const excludedPathsFromAuthCheck = [
+      '/api/conf',
+      '/api/opportunities',
+      '/api/latestconf',
+      '/',
+      '/portfolio',
+      '/login',
+    ];
 
-  let sess: any = req.session;
-  const isLiveMoney: boolean = (req.session as any).liveMoney;
+    let sess: any = req.session;
+    const isLiveMoney: boolean = (req.session as any).liveMoney;
 
-  let isAuth = await isAuthenticated(sess.tokens as AccessToken, isLiveMoney);
-  res.locals['isAuth'] = isAuth;
+    let isAuth = await isAuthenticated(sess.tokens as AccessToken, isLiveMoney);
+    res.locals['isAuth'] = isAuth;
 
-  let pathRequiresAuth =
-    excludedPathsFromAuthCheck.filter(p => p === req.path).length === 0;
-  console.log(
-    `Authentication check, path ${
-      req.path
-    }, isAuth: ${isAuth}, isAuthRequired: ${pathRequiresAuth}, authToken: ${JSON.stringify(
-      sess.tokens
-    )}`
-  );
+    let pathRequiresAuth =
+      excludedPathsFromAuthCheck.filter(p => p === req.path).length === 0;
+    console.log(
+      `Authentication check, path ${
+        req.path
+      }, isAuth: ${isAuth}, isAuthRequired: ${pathRequiresAuth}, authToken: ${JSON.stringify(
+        sess.tokens
+      )}`
+    );
 
-  if (pathRequiresAuth && !isAuth) {
-    if (req.path.startsWith('/api')) {
-      sess.tokens = undefined;
-      res.status(403).send('user is not authenticated or session expired.');
+    if (pathRequiresAuth && !isAuth) {
+      if (req.path.startsWith('/api')) {
+        sess.tokens = undefined;
+        res.status(403).send('user is not authenticated or session expired.');
+      }
     }
-  }
-  next();
+    next();
+  });
 });
 
 const loggerMiddleware = Router();
-loggerMiddleware.use(async (req, res, next) => {
+loggerMiddleware.use((req, res, next) => {
   console.log(`env: ${process.env.ENV}`);
   console.log(
     `${req.method}: ${req.url} query: ${JSON.stringify(
@@ -69,7 +72,7 @@ devEnvironmentMiddleware.use((req, res, next) => {
 });
 
 const googleAnalyticsMiddleware = Router();
-googleAnalyticsMiddleware.use(async (req, res, next) => {
+googleAnalyticsMiddleware.use((req, res, next) => {
   const params = {
     // API Version.
     v: '1',
@@ -108,7 +111,7 @@ googleAnalyticsMiddleware.use(async (req, res, next) => {
 });
 
 const httpsMiddleware = Router();
-httpsMiddleware.use(async (req, res, next) => {
+httpsMiddleware.use((req, res, next) => {
   if (process.env.ENV === 'prod') {
     if (req.header('x-forwarded-proto') !== 'https') {
       res.redirect(`https://${req.header('host')}${req.url}`);
