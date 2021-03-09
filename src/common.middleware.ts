@@ -10,9 +10,9 @@ const authMiddleware = express.Router();
 authMiddleware.use(async (req, res, next) => {
   await withTryCatchNext(req, res, next, async (req, res, next) => {
     const excludedPathsFromAuthCheck = [
-      '/api/conf',
+      '/api/indicators/current',
       '/api/opportunities',
-      '/api/latestconf',
+      '/api/indicators/history',
       '/',
       '/portfolio',
       '/login',
