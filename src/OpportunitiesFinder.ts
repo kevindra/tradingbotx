@@ -1,19 +1,23 @@
 import Bottleneck from 'bottleneck';
-import {ConfidenceCalculator} from './ConfidenceCalculator';
-import { BUY_CONFIDENCE_THRESHOLD, SELL_CONFIDENCE_THRESHOLD } from './consts';
-const confidenceCalculator = new ConfidenceCalculator();
+import {Algo} from './algo/algo';
+import {AlgoExecutor} from './AlgoExecutor';
 
 export interface Opportunity {
   symbol: string;
-  buyConfidence: number;
-  sellConfidence: number;
+  indicatorValues: number[];
+  // sellConfidence: number;
   price: number;
+  type: OpportunityType;
 }
 
+export type OpportunityType = 'buy' | 'sell';
+
 export interface Opportunities {
-  buyOpportunities: Opportunity[];
-  sellOpportunities: Opportunity[];
+  opportunities: Opportunity[];
+  // sellOpportunities: Opportunity[];
 }
+
+const algoExecutor = new AlgoExecutor();
 
 export class OpportunitiesFinder {
   constructor() {}
@@ -21,53 +25,54 @@ export class OpportunitiesFinder {
   async findOpportunities(
     symbols: string[],
     horizon: number,
-    buyConfidenceThreshold = BUY_CONFIDENCE_THRESHOLD,
-    sellConfidenceThreshold = SELL_CONFIDENCE_THRESHOLD
+    algo: Algo,
+    indicatorIndex: number,
+    minIndicatorValue: number,
+    maxIndicatorValue: number,
+    opportunityType: OpportunityType
   ) {
-    // 1 request per 15 seconds
+    // 75 requests per 1 minute
     // api allows 5 requests per minute, 500 per day
     const limiter = new Bottleneck({
       maxConcurrent: 1,
-      minTime: 15000,
+      minTime: 1000,
     });
 
     const allOpportunities = await Promise.all(
       symbols.map(async symbol => {
         const conf = await limiter.schedule(
-          async () => await confidenceCalculator.stockBuyerConf(symbol, horizon)
+          async () =>
+            await algoExecutor.executeAlgoOnStock(symbol, horizon, [algo])
         );
         return <Opportunity>{
           symbol: symbol,
-          buyConfidence: conf[conf.length - 1][2],
-          sellConfidence: 100 - conf[conf.length - 1][2]!,
-          price: conf[conf.length - 1][1],
+          // buyConfidence: conf[conf.length - 1][2],
+          indicatorValues: [
+            conf.timestamps[conf.timestamps.length - 1].algoOutputs[0][
+              indicatorIndex
+            ],
+          ],
+          // sellConfidence: 100, // 100 - conf[conf.length - 1][2]!, // TODO
+          // price: conf[conf.length - 1][1],
+          price: conf.timestamps[conf.timestamps.length - 1].price,
+          type: opportunityType,
         };
       })
     );
 
-    const buyOpportunities: Opportunity[] = allOpportunities
-      .filter(o => o.buyConfidence > buyConfidenceThreshold)
+    const filteredOpportunities: Opportunity[] = allOpportunities
+      .filter(o => o.indicatorValues[0] >= minIndicatorValue)
+      .filter(o => o.indicatorValues[0] <= maxIndicatorValue)
       .sort((a, b) =>
-        a.buyConfidence < b.buyConfidence
+        a.indicatorValues[0] < b.indicatorValues[0]
           ? 1
-          : a.buyConfidence > b.buyConfidence
-          ? -1
-          : 0
-      );
-
-    const sellOpportunities: Opportunity[] = allOpportunities
-      .filter(o => o.sellConfidence > sellConfidenceThreshold)
-      .sort((a, b) =>
-        a.sellConfidence < b.sellConfidence
-          ? 1
-          : a.sellConfidence > b.sellConfidence
+          : a.indicatorValues[0] > b.indicatorValues[0]
           ? -1
           : 0
       );
 
     return <Opportunities>{
-      buyOpportunities,
-      sellOpportunities,
+      opportunities: filteredOpportunities,
     };
   }
 }

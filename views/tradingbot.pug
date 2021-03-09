@@ -82,6 +82,20 @@ html(lang="en")
                     </div>
 
                     <div class="row mb-3">
+                        <div class="col-sm-2">
+                            <label for="tickerType" class="col-sm-2 col-form-label">Choose an algorithm:</label>
+                        </div>
+                        <div class="col-sm-4">
+                        <select class="form-select" name="algoId">
+                            <option value="buy-the-dip" selected>Buy Low</option>
+                            <option value="sell-the-peak">Sell High</option>
+                        </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <span id="horizonHelp" class="form-text">Pick an algorithm to find the buy/sell/hold opportunities.</span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-sm-5">
                             <button type="submit" class="btn btn-primary" id="submit-button">
                             <span class="spinner-border spinner-border-sm" role="status" style='display:none' id='spinner'></span>
@@ -89,6 +103,10 @@ html(lang="en")
                             </button> 
                         </div>
                     </div>
+
+                    <input type="hidden" name="indicator" value="0"/>
+                    <input type="hidden" name="minIndicatorValue" value="80"/>
+                    <input type="hidden" name="maxIndicatorValue" value="100"/>
                 </form>
                 
                 <div id="result-message" class="alert alert-secondary" role="alert">Your trades will appear below: </div>
@@ -106,7 +124,6 @@ html(lang="en")
                                 <th>Ticker</th>
                                 <th>Price</th>
                                 <th>Buy Confidence</th>
-                                <th>Sell Confidence</th>
                                 <th>Type</th>
                                 <th>Select to trade</th>
                                 <th>Order Submitted</th>

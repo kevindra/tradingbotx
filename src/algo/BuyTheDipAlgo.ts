@@ -1,6 +1,4 @@
-export interface AlgoInput {
-  prices: number[];
-}
+import {Algo, AlgoInput, AlgoOutput} from './algo';
 
 export interface Event {
   currentIndex: number;
@@ -18,18 +16,13 @@ export interface Event {
   maxDropIntensity?: number;
 }
 
-export class ConfidenceAlgo {
+export class BuyTheDipAlgo implements Algo {
   /*
    * If stock price is significantly down from its previous high,
    * and if that downturn happens very fast (2-3 months and ~40%+ down, the company usually becomes under value)
    * we should consider buying at that price.
    */
-  predict(
-    algoInput: AlgoInput,
-    minDropPercent = 0.5,
-    maxDropDuration = 60
-  ): Event[] {
-    const eventsOfInterest = [];
+  async run(algoInput: AlgoInput): Promise<AlgoOutput> {
     const events: Event[] = [];
     let n = 1;
     let lastMaxPrice = algoInput.prices[0];
@@ -51,8 +44,8 @@ export class ConfidenceAlgo {
       maxAvgDropPerInterval: 0,
       maxDropIntensity: 0,
       normalizedAvgDropPerInterval: 0,
-      normalizedDropIntensity: 0
-    })
+      normalizedDropIntensity: 0,
+    });
 
     while (n < algoInput.prices.length) {
       if (algoInput.prices[n] > algoInput.prices[n - 1]) {
@@ -81,9 +74,9 @@ export class ConfidenceAlgo {
         maxAvgDropPerInterval
       );
       maxDropIntensity = Math.max(e.dropIntensity, maxDropIntensity);
-      e.maxAvgDropPerInterval = maxAvgDropPerInterval
-      e.maxDropIntensity = maxDropIntensity
-      
+      e.maxAvgDropPerInterval = maxAvgDropPerInterval;
+      e.maxDropIntensity = maxDropIntensity;
+
       events.push(e);
       n++;
     }
@@ -99,36 +92,15 @@ export class ConfidenceAlgo {
       if (e.dropIntensity > maxDropIntensity) {
         console.log('ERROR', e.dropIntensity, maxDropIntensity);
       }
-      e.normalizedDropIntensity = 100 * (e.dropIntensity / maxDropIntensity); // TODO, not being used in the histogram yet.
-
-      // const bucket = Math.round(e.normalizedAvgDropPerInterval * 100);
-      // if (hist[bucket] === undefined) {
-      //   hist[bucket] = 1;
-      // } else {
-      //   hist[bucket] += 1;
-      // }
+      e.normalizedDropIntensity = 100 * (e.dropIntensity / maxDropIntensity);
       n++;
     }
 
-    // n = 0;
-    // while (n < events.length) {
-    //   const e = events[n];
-    //   const bucket = Math.round(e.normalizedAvgDropPerInterval! * 100);
-    //   e.confidence = hist[bucket] / events.length;
-    //   eventsOfInterest.push(e);
-    //   n++;
-    // }
-    return events;
+    return {
+      indicators: [events.map(e => e.normalizedDropIntensity || 0)],
+    };
   }
 }
-
-// module.exports = new BuyPredictor();
-// const StockPriceData = require('../manager/StockPriceData');
-// const spd = new StockPriceData(require('../data/timeseries/AMZN.json'));
-
-// const bp = new BuyPredictor();
-// const buySignals = bp.predict(spd.dailyClose());
-// console.log(buySignals);
 
 // let c = new ConfidenceAlgo();
 // console.log(

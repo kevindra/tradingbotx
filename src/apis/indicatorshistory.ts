@@ -1,27 +1,33 @@
 import express from 'express';
 import {SecurityType} from '../types';
-import {ConfidenceCalculator} from '../ConfidenceCalculator';
-import { withTryCatchNext } from '../util';
+import {AlgoExecutor} from '../AlgoExecutor';
+import {getAlgosFromRequest, withTryCatchNext} from '../util';
 
-const confApiRouter = express.Router();
-const confidenceCalculator = new ConfidenceCalculator();
+const indicatorsHistoryApiRouter = express.Router();
+const algoExecutor = new AlgoExecutor();
 
-confApiRouter.get('/', async (req, res, next) => {
+indicatorsHistoryApiRouter.get('/', async (req, res, next) => {
   await withTryCatchNext(req, res, next, async (req, res, next) => {
     const ticker = req.query.t as string;
-    const currency = req.query.c as string;
+    const currency = req.query.c as string || 'USD';
     const type = req.query.type as SecurityType;
     const horizon = parseInt((req.query.horizon as string) || '365');
+    const algosToRun = getAlgosFromRequest(req);
 
     if (type === 'stocks') {
-      const data = await confidenceCalculator.stockBuyerConf(ticker, horizon);
+      const data = await algoExecutor.executeAlgoOnStock(
+        ticker,
+        horizon,
+        algosToRun
+      );
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(data));
     } else if (type === 'crypto') {
-      const data = await confidenceCalculator.cryptoBuyerConf(
+      const data = await algoExecutor.executeAlgoOnCrypto(
         ticker,
         currency,
-        horizon
+        horizon,
+        algosToRun
       );
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(data));
@@ -31,4 +37,4 @@ confApiRouter.get('/', async (req, res, next) => {
   });
 });
 
-export {confApiRouter};
+export {indicatorsHistoryApiRouter as confApiRouter};

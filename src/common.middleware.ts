@@ -59,7 +59,7 @@ const devEnvironmentMiddleware = Router();
 devEnvironmentMiddleware.use((req, res, next) => {
   if (process.env.ENV === 'dev') {
     (req.session as any).tokens = {
-      access_token: 'd6d2a08d-b9c5-4b3e-96e9-6e021a0c52a2',
+      access_token: '96a7eea7-0946-4e10-b6fd-b948544ad2f2',
       token_type: 'Bearer',
       scope: 'account:write trading',
     };

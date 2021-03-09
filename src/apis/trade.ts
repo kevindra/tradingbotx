@@ -8,25 +8,25 @@ const tradeApiRouter = express.Router();
 
 tradeApiRouter.post('/', async (req, res, next) => {
   await withTryCatchNext(req, res, next, async (req, res, next) => {
-    const opp = req.body.opp as Opportunities;
+    const opp = req.body.opportunities as Opportunities;
     const tokens = (req.session as any).tokens;
-    const minBuyAmount = parseInt((req.body.minBuyAmount as string) || '40');
-    const maxBuyAmount = parseInt((req.body.maxBuyAmount as string) || '100');
-    const buyConfThreshold = parseInt(
-      (req.body.buyConfThreshold as string) || `${BUY_CONFIDENCE_THRESHOLD}`
+    const minTradeAmount = parseInt((req.body.minTradeAmount as string) || '40');
+    const maxTradeAmount = parseInt((req.body.maxTradeAmount as string) || '100');
+    const indicatorMinValue = parseInt(
+      (req.body.indicatorMinValue as string) || `${BUY_CONFIDENCE_THRESHOLD}`
     );
-    const sellConfThreshold = parseInt(
-      (req.body.sellConfThreshold as string) || `${SELL_CONFIDENCE_THRESHOLD}`
+    const indicatorMaxValue = parseInt(
+      (req.body.indicatorMaxValue as string) || `${SELL_CONFIDENCE_THRESHOLD}`
     );
     const isLiveMoney: boolean = (req.session as any).liveMoney;
 
     const trader = new Trader(tokens as AccessToken, isLiveMoney);
     const orders = await trader.performTrades(
       opp,
-      minBuyAmount,
-      maxBuyAmount,
-      buyConfThreshold,
-      sellConfThreshold
+      minTradeAmount,
+      maxTradeAmount,
+      indicatorMinValue,
+      indicatorMaxValue
     );
 
     res.setHeader('Content-Type', 'application/json');

@@ -12,7 +12,7 @@ html(lang="en")
 
             <form method="GET" action="/">
                 <div class="row mb-3">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                         <label for="ticker" class="col-sm-2 col-form-label">Ticker:</label>
                     </div>
                     <div class="col-sm-4">
@@ -26,7 +26,7 @@ html(lang="en")
                 </div>
                 
                 <div class="row mb-3">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                         <label for="tickerType" class="col-sm-2 col-form-label">Type:</label>
                     </div>
                     <div class="col-sm-4">
@@ -40,7 +40,7 @@ html(lang="en")
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                         <label for="tickerType" class="col-sm-2 col-form-label">Investment horizon(#days):</label>
                     </div>
                     <div class="col-sm-4">
@@ -52,7 +52,24 @@ html(lang="en")
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-sm-5">
+                    <div class="col-sm-2">
+                        <label for="tickerType" class="col-sm-2 col-form-label">Choose Algorithm (s):</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <select class="form-select" multiple name="algoIds">
+                            <option value="buy-the-dip" selected>Buy Low</option>
+                            <option value="sell-the-peak">Sell High</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <span id="horizonHelp" class="form-text">Pick one or more algorithms. All selected algorithms will be executed on the stock/crypto.</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                    </div>
+                    <div class="col-sm-4">
                         <input type="submit" value="Analyze" class="btn btn-primary"/> 
                     </div>
 
@@ -60,6 +77,7 @@ html(lang="en")
                         <span class="form-text">First load the ticker and then hit "Get Confidence" to calculate buy confidence.</label>
                     </div>
                 </div>
+
             </form>
 
             //- <button id="conf" class="btn btn-secondary"> Get Confidence </button>
