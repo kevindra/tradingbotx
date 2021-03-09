@@ -45,14 +45,11 @@ export class OpportunitiesFinder {
         );
         return <Opportunity>{
           symbol: symbol,
-          // buyConfidence: conf[conf.length - 1][2],
           indicatorValues: [
             conf.timestamps[conf.timestamps.length - 1].algoOutputs[0][
               indicatorIndex
             ],
           ],
-          // sellConfidence: 100, // 100 - conf[conf.length - 1][2]!, // TODO
-          // price: conf[conf.length - 1][1],
           price: conf.timestamps[conf.timestamps.length - 1].price,
           type: algo.actionType(),
         };

@@ -98,28 +98,78 @@ var currency = getUrlParameter('c');
 var type = getUrlParameter('type');
 var form = getUrlParameter('h') || '365';
 var algoIds = getUrlParameter('algoIds') || 'buy-the-dip';
+var algoIdsList = typeof algoIds === 'string' ? [algoIds] : algoIds;
 
 console.log(ticker, currency, type, form, algoIds);
-var endpoint = `/api/indicators/history?t=${ticker}&c=${currency}&type=${type}&horizon=${form}&algosToRun=${algoIds.join(',')}`;
-
+var endpoint = `/api/indicators/history?t=${ticker}&c=${currency}&type=${type}&horizon=${form}&algosToRun=${algoIdsList.join(
+  ','
+)}`;
+// TODO add algo name support
+function printAlgoResult(algoResult, algoIndex) {
+  return (
+    algoResult.timestamps[algoResult.timestamps.length - 1].algoOutputs[
+      algoIndex
+    ][0].toFixed(2) +
+    '% ' +
+    algoResult.types[algoIndex] +
+    ' @ $' +
+    algoResult.timestamps[algoResult.timestamps.length - 1].price.toFixed(2)
+  );
+}
 $(function () {
   if (Highcharts !== undefined && ticker) {
     $.getJSON(endpoint, data => {
       $('#conf-ticker').html(ticker);
       $('#conf-value').html(
         // indicator value (just showing the first indicator for now)
-        data.timestamps[data.timestamps.length - 1].algoOutputs[0][0].toFixed(
-          2
-        ) +
-          '% @ $' +
-          data.timestamps[data.timestamps.length - 1].price.toFixed(2)
+        algoIdsList
+          .map((a, i) => {
+            return printAlgoResult(data, i);
+          })
+          .join('<br/>')
       );
       plotChart(data, ticker);
     });
   }
 });
 
+// TODO it plots only the first indicator of an Algo
 function plotChart(data, ticker = '') {
+  var yAxis = [
+    {
+      title: {
+        text: 'Price',
+      },
+      opposite: true,
+    },
+  ];
+  // add algo name as axis
+  data.algoNames.forEach(an => {
+    yAxis.push({
+      title: {
+        text: an,
+      },
+    });
+  });
+
+  var series = [
+    // price
+    {
+      type: 'area',
+      name: 'Price',
+      yAxis: 0,
+      data: data.timestamps.map(d => [d.timestamp, d.price]),
+    },
+  ];
+
+  data.algoNames.forEach((an, i) => {
+    series.push({
+      yAxis: i + 1,
+      name: an + ' - ' + data.types[i] + '% (' + ticker + ')',
+      data: data.timestamps.map(d => [d.timestamp, d.algoOutputs[i][0]]),
+    });
+  });
+
   return new Highcharts.chart('container', {
     chart: {
       zoomType: 'x',
@@ -134,19 +184,7 @@ function plotChart(data, ticker = '') {
     xAxis: {
       type: 'datetime',
     },
-    yAxis: [
-      {
-        title: {
-          text: 'Price',
-        },
-        opposite: true,
-      },
-      {
-        title: {
-          text: 'Confidence',
-        },
-      },
-    ],
+    yAxis: yAxis,
     tooltip: {
       shared: true,
     },
@@ -185,19 +223,7 @@ function plotChart(data, ticker = '') {
       },
     },
 
-    series: [
-      {
-        type: 'area',
-        name: 'Price',
-        yAxis: 0,
-        data: data.timestamps.map(d => [d.timestamp, d.price]),
-      },
-      {
-        yAxis: 1,
-        name: 'Buy Confidence - ' + ticker,
-        data: data.timestamps.map(d => [d.timestamp, d.algoOutputs[0][0]]),
-      },
-    ],
+    series: series,
   });
 }
 
@@ -249,7 +275,7 @@ function getOpportunities(
       algoId: algoId,
       indicator: indicator,
       minIndicatorValue: minIndicatorValue,
-      maxIndicatorValue: maxIndicatorValue
+      maxIndicatorValue: maxIndicatorValue,
     },
     success: function (data) {
       console.log('GOT: ' + JSON.stringify(data));

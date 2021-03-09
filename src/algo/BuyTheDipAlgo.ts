@@ -104,6 +104,10 @@ export class BuyTheDipAlgo implements Algo {
   actionType(): AlgoActionType {
     return 'buy';
   }
+
+  name(): string {
+    return 'Buy Low';
+  }
 }
 
 // let c = new ConfidenceAlgo();

@@ -14,7 +14,7 @@ opportunitiesApiRouter.get('/', async (req, res, next) => {
     const flatTickers = (req.query.tickers as string) || '';
     let tickers: string[] = flatTickers.split(',');
     const horizon = parseInt((req.query.horizon as string) || '365');
-    // TODO - each algo will have their own configuration
+    // TODO - this is fine for now.. but we may need to evolve it to allow more query mechanisms
     const minIndicatorValue = parseFloat(
       (req.query.minIndicatorValue as string) || '80'
     );

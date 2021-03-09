@@ -4,6 +4,7 @@
 export interface Algo {
   run(algoInput: AlgoInput): Promise<AlgoOutput>;
   actionType(): AlgoActionType;
+  name(): string;
 }
 
 /**

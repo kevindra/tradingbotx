@@ -8,6 +8,7 @@ const timeseriesManager = new SecurityTimeseriesManager();
 interface AlgoExecutorResponse {
   timestamps: AlgoExecutorTimestampResponse[];
   types: AlgoActionType[];
+  algoNames: string[];
 }
 
 interface AlgoExecutorTimestampResponse {
@@ -55,9 +56,8 @@ export class AlgoExecutor {
 
     let algoExecutorResponse: AlgoExecutorResponse = {
       timestamps: timestamps,
-      types: algos.map(a => {
-        return a.actionType();
-      }),
+      types: algos.map(a => a.actionType()),
+      algoNames: algos.map(a => a.name()),
     };
     return algoExecutorResponse;
   }
@@ -105,6 +105,7 @@ export class AlgoExecutor {
     let algoExecutorResponse: AlgoExecutorResponse = {
       timestamps: timestamps,
       types: algos.map(a => a.actionType()),
+      algoNames: algos.map(a => a.name()),
     };
     return algoExecutorResponse;
   }
