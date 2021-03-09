@@ -104,6 +104,7 @@ console.log(ticker, currency, type, form, algoIds);
 var endpoint = `/api/indicators/history?t=${ticker}&c=${currency}&type=${type}&horizon=${form}&algoIds=${algoIdsList.join(
   ','
 )}`;
+console.log(endpoint)
 function printAlgoResult(algoResult, algoIndex) {
   return (
     algoResult.algoNames[algoIndex] +
@@ -117,7 +118,7 @@ function printAlgoResult(algoResult, algoIndex) {
     algoResult.timestamps[algoResult.timestamps.length - 1].price.toFixed(2)
   );
 }
-$(function () {
+$(document).ready(function () {
   if (Highcharts !== undefined && ticker) {
     $.getJSON(endpoint, data => {
       $('#conf-ticker').html(ticker);
