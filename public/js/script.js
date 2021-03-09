@@ -97,16 +97,17 @@ var ticker = getUrlParameter('t');
 var currency = getUrlParameter('c');
 var type = getUrlParameter('type');
 var form = getUrlParameter('h') || '365';
-var algoIds = getUrlParameter('algoIds') || 'buy-the-dip';
+var algoIds = getUrlParameter('algoIds') || 'buy-low';
 var algoIdsList = typeof algoIds === 'string' ? [algoIds] : algoIds;
 
 console.log(ticker, currency, type, form, algoIds);
-var endpoint = `/api/indicators/history?t=${ticker}&c=${currency}&type=${type}&horizon=${form}&algosToRun=${algoIdsList.join(
+var endpoint = `/api/indicators/history?t=${ticker}&c=${currency}&type=${type}&horizon=${form}&algoIds=${algoIdsList.join(
   ','
 )}`;
-// TODO add algo name support
 function printAlgoResult(algoResult, algoIndex) {
   return (
+    algoResult.algoNames[algoIndex] +
+    ' Algo: ' +
     algoResult.timestamps[algoResult.timestamps.length - 1].algoOutputs[
       algoIndex
     ][0].toFixed(2) +
@@ -142,8 +143,14 @@ function plotChart(data, ticker = '') {
       },
       opposite: true,
     },
+    // {
+    //   title: {
+    //     text: 'Algo Result (0-100%)',
+    //   },
+    // },
   ];
-  // add algo name as axis
+
+  // uncomment me if need separate axis for each algo
   data.algoNames.forEach(an => {
     yAxis.push({
       title: {
@@ -175,11 +182,10 @@ function plotChart(data, ticker = '') {
       zoomType: 'x',
     },
     title: {
-      text: 'Historical Buy Confidence - ' + ticker,
+      text: 'Historical Algo Results - ' + ticker,
     },
     subtitle: {
-      text:
-        'Historical buy confidence value based on dip intensity and movement.',
+      text: 'Historical algo result values based on the past price movements.',
     },
     xAxis: {
       type: 'datetime',

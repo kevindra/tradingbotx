@@ -17,6 +17,8 @@ Trading Bot Web Console & APIs. (http://www.buythedipclub.com)
 - [x] Error handling layer for both sync & async
 - [x] Timezone fix (changed to EST)
 - [x] Intraday price support for stocks (confidence is now realtime)
+- [x] Generic Algo Execution interfaces
+- [x] Multiple Algo Support - Buy & Sell basic
 - [ ] Strong Validations (https://wanago.io/2018/12/17/typescript-express-error-handling-validation/)
 - [ ] Live money trading approval by Alpaca
 - [ ] Delete watchlist support

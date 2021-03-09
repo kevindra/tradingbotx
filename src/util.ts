@@ -18,9 +18,9 @@ export const withTryCatchNext = async (
 };
 
 export const getAlgosFromRequest = (req: Request) => {
-  const algoIds: AlgoId[] = (
-    (req.query.algoIds as string) || 'buy-the-dip'
-  ).split(',') as AlgoId[];
+  const algoIds: AlgoId[] = ((req.query.algoIds as string) || 'buy-low').split(
+    ','
+  ) as AlgoId[];
 
   const algosToRun = algoIds.map(a => {
     const algo = getAlgoById(a);
@@ -32,8 +32,7 @@ export const getAlgosFromRequest = (req: Request) => {
 };
 
 export const getAlgoFromRequest = (req: Request) => {
-  const algoId: AlgoId = ((req.query.algoId as string) ||
-    'buy-the-dip') as AlgoId;
+  const algoId: AlgoId = ((req.query.algoId as string) || 'buy-low') as AlgoId;
 
   const algo = getAlgoById(algoId);
   if (!algo) throw new Error(`Invalid algo name ${algoId}`);

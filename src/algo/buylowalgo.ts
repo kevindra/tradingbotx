@@ -16,7 +16,7 @@ export interface Event {
   maxDropIntensity?: number;
 }
 
-export class BuyTheDipAlgo implements Algo {
+export class BuyLowAlgo implements Algo {
   /*
    * If stock price is significantly down from its previous high,
    * and if that downturn happens very fast (2-3 months and ~40%+ down, the company usually becomes under value)
