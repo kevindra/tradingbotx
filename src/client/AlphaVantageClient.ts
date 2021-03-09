@@ -1,6 +1,6 @@
 import request from 'request';
 import queryString from 'query-string';
-import momenttz from 'moment-timezone';
+import moment from 'moment-timezone';
 export interface GetData {
   symbol: string;
   apikey: string;
@@ -78,7 +78,8 @@ export class AlphaVantageClient {
       });
     });
 
-    var today = momenttz(new Date()).tz('America/Toronto');
+    var today = moment(new Date()).tz('America/Toronto')
+
     // if today is not weekend, get the latest price as well to get real time confidence values
     if (!(today.day() == 6 || today.day() == 7)) {
       let quote = (await this.getQuote(symbol))['Global Quote'];

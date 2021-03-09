@@ -1,7 +1,7 @@
 import {CryptoData, CryptoGetDataResult} from './client/CryptoClient';
 import {AVDailyTimeSeries, AVGetDataResult} from './client/AlphaVantageClient';
-import momenttz from 'moment-timezone';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 
 const AV_TS_DAILY = 'Time Series (Daily)';
 const AV_ADJ_CLOSE_PRICE = '5. adjusted close';
@@ -44,12 +44,14 @@ export class SecurityTimeseriesAdapter {
   ): PriceTimeSeriesData {
     const rawData: AVDailyTimeSeries = avData[AV_TS_DAILY];
     let dates: string[] = Object.keys(rawData);
-    const startDate = momenttz()
-      .tz('America/Toronto')
-      .subtract(periodInDays, 'days')
-      .format('YYYY-MM-DD');
 
-    dates = _.reverse(dates);
+    console.log(moment().toISOString() + "  " + periodInDays)
+    const startDate = moment()
+      .tz('America/Toronto')
+      .subtract(periodInDays, 'day')
+      .format('YYYY-MM-DD');
+    dates = dates.sort();
+
     console.log('Start date : ', startDate, ', filter: ', AV_ADJ_CLOSE_PRICE);
     const startIndex = dates.findIndex(e => e >= startDate);
     if (startIndex === -1) {
