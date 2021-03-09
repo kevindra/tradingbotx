@@ -238,7 +238,6 @@ function getOpportunities(
   indicator,
   minIndicatorValue,
   maxIndicatorValue,
-  opportunityType,
   callback
 ) {
   $.ajax({
@@ -250,8 +249,7 @@ function getOpportunities(
       algoId: algoId,
       indicator: indicator,
       minIndicatorValue: minIndicatorValue,
-      maxIndicatorValue: maxIndicatorValue,
-      opportunityType: opportunityType,
+      maxIndicatorValue: maxIndicatorValue
     },
     success: function (data) {
       console.log('GOT: ' + JSON.stringify(data));
@@ -441,7 +439,6 @@ function analyzeTicker(tickers, form, i, opp, done) {
         form.indicator,
         form.minIndicatorValue,
         form.maxIndicatorValue,
-        form.opportunityType,
         opportunities => {
           opportunities = opportunities.opportunities;
           // because we're looking for only one stock

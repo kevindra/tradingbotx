@@ -21,9 +21,6 @@ opportunitiesApiRouter.get('/', async (req, res, next) => {
     const maxIndicatorValue = parseFloat(
       (req.query.maxIndicatorValue as string) || '100'
     );
-    // if indicator value is in the input range, would you buy or sell the ticker
-    const opportunityType =
-      (req.query.opportunityType as OpportunityType) || 'buy';
 
     // algo to run
     const algoToRun = getAlgoFromRequest(req);
@@ -36,8 +33,7 @@ opportunitiesApiRouter.get('/', async (req, res, next) => {
       algoToRun,
       indicator,
       minIndicatorValue,
-      maxIndicatorValue,
-      opportunityType
+      maxIndicatorValue
     );
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(opportunities));

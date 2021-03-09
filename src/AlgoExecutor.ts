@@ -1,12 +1,13 @@
 import _ from 'lodash';
 import {SecurityTimeseriesManager} from './SecurityTimeseriesManager';
 import {PriceTimeSeriesData} from './SecurityTimeseriesAdapter';
-import {Algo, AlgoOutput} from './algo/algo';
+import {Algo, AlgoActionType, AlgoOutput} from './algo/algo';
 
 const timeseriesManager = new SecurityTimeseriesManager();
 
 interface AlgoExecutorResponse {
   timestamps: AlgoExecutorTimestampResponse[];
+  types: AlgoActionType[];
 }
 
 interface AlgoExecutorTimestampResponse {
@@ -54,6 +55,9 @@ export class AlgoExecutor {
 
     let algoExecutorResponse: AlgoExecutorResponse = {
       timestamps: timestamps,
+      types: algos.map(a => {
+        return a.actionType();
+      }),
     };
     return algoExecutorResponse;
   }
@@ -100,6 +104,7 @@ export class AlgoExecutor {
 
     let algoExecutorResponse: AlgoExecutorResponse = {
       timestamps: timestamps,
+      types: algos.map(a => a.actionType()),
     };
     return algoExecutorResponse;
   }

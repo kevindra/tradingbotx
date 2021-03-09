@@ -28,8 +28,7 @@ export class OpportunitiesFinder {
     algo: Algo,
     indicatorIndex: number,
     minIndicatorValue: number,
-    maxIndicatorValue: number,
-    opportunityType: OpportunityType
+    maxIndicatorValue: number
   ) {
     // 75 requests per 1 minute
     // api allows 5 requests per minute, 500 per day
@@ -55,7 +54,7 @@ export class OpportunitiesFinder {
           // sellConfidence: 100, // 100 - conf[conf.length - 1][2]!, // TODO
           // price: conf[conf.length - 1][1],
           price: conf.timestamps[conf.timestamps.length - 1].price,
-          type: opportunityType,
+          type: algo.actionType(),
         };
       })
     );

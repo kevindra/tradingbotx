@@ -47,13 +47,13 @@ html(lang="en")
                         input#horizon.form-control(type='text' name='h' aria-describedby='horizonHelp' value=horizon)
                     </div>
                     <div class="col-sm-3">
-                        <span id="horizonHelp" class="form-text">Buy confidence is relative to past event. This is number of days in the past you want to look into. Try something like 365-720 (1-2 years) to get better sample data of the price.</span>
+                        <span id="horizonHelp" class="form-text">Algo results are relative to past price patterns within a given timeframe. This is number of days in the past you want to look into. Try something like 365-720 (1-2 years) to get better sample data of the price.</span>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-sm-2">
-                        <label for="tickerType" class="col-sm-2 col-form-label">Choose Algorithm (s):</label>
+                        <label for="tickerType" class="col-sm-2 col-form-label">Choose Algorithm(s):</label>
                     </div>
                     <div class="col-sm-4">
                         <select class="form-select" multiple name="algoIds">
@@ -74,19 +74,16 @@ html(lang="en")
                     </div>
 
                     <div class="col-sm-3">
-                        <span class="form-text">First load the ticker and then hit "Get Confidence" to calculate buy confidence.</label>
+                        <span class="form-text">Hit Analyze to analyze the stock using the selected algorithms.</label>
                     </div>
                 </div>
-
             </form>
-
-            //- <button id="conf" class="btn btn-secondary"> Get Confidence </button>
 
             <div class="d-flex justify-content-center bg-light mt-5">
                 <div class="pt-4">
-                    <h4 style="text-align: center;">Buy Confidence <span id="conf-ticker"></span> </h4>
+                    <h4 style="text-align: center;">Algorithm Results<span id="conf-ticker"></span> </h4>
                     <p style="font-size: 40px; font-weight: 700; text-align: center;" id="conf-value">..</p>
-                    <p style="text-align: center;">Confidence depends on the time period you choose as well as intensity and momentum of the dips compared to previous dips in that timeframe.</p>
+                    <p style="text-align: center;">Algorithm results value depends on which algorithm you use. For example - buy-low algorithm result means the buy strength based on the current price dip relative to previous price pattern and vice versa for sell-high algorithm.</p>
                 </div>
             </div>
 

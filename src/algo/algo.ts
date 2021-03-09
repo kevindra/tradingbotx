@@ -3,6 +3,7 @@
  */
 export interface Algo {
   run(algoInput: AlgoInput): Promise<AlgoOutput>;
+  actionType(): AlgoActionType;
 }
 
 /**
@@ -15,3 +16,5 @@ export interface AlgoInput {
 export interface AlgoOutput {
   indicators: number[][];
 }
+
+export type AlgoActionType = 'buy' | 'sell';

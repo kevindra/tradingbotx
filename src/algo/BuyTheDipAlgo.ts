@@ -1,4 +1,4 @@
-import {Algo, AlgoInput, AlgoOutput} from './algo';
+import {Algo, AlgoInput, AlgoOutput, AlgoActionType} from './algo';
 
 export interface Event {
   currentIndex: number;
@@ -99,6 +99,10 @@ export class BuyTheDipAlgo implements Algo {
     return {
       indicators: [events.map(e => e.normalizedDropIntensity || 0)],
     };
+  }
+
+  actionType(): AlgoActionType {
+    return 'buy';
   }
 }
 
