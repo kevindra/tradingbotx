@@ -104,7 +104,7 @@ console.log(ticker, currency, type, form, algoIds);
 var endpoint = `/api/indicators/history?t=${ticker}&c=${currency}&type=${type}&horizon=${form}&algoIds=${algoIdsList.join(
   ','
 )}`;
-console.log(endpoint)
+console.log(endpoint);
 function printAlgoResult(algoResult, algoIndex) {
   return (
     algoResult.algoNames[algoIndex] +
@@ -119,8 +119,18 @@ function printAlgoResult(algoResult, algoIndex) {
   );
 }
 $(document).ready(function () {
-  if (Highcharts !== undefined && ticker) {
+  // temp
+  ticker = getUrlParameter('t');
+  currency = getUrlParameter('c');
+  type = getUrlParameter('type');
+  form = getUrlParameter('h') || '365';
+  algoIds = getUrlParameter('algoIds') || 'buy-low';
+  algoIdsList = typeof algoIds === 'string' ? [algoIds] : algoIds;
+
+  if (Highcharts !== undefined && ticker && ticker.length !== 0) {
+    $('#algo-result-spinner').show();
     $.getJSON(endpoint, data => {
+      $('#algo-result-spinner').hide();
       $('#conf-ticker').html(ticker);
       $('#conf-value').html(
         // indicator value (just showing the first indicator for now)
