@@ -16,7 +16,7 @@ It is just the beginning but my vision for this repo is as follows:
 
 Let's see how it goes! It's only the start.
 
-See this repo in action here - http://www.buythedipclub.com
+See this repo in action here - https://www.buythedipclub.com
 
 # Roadmap
 
