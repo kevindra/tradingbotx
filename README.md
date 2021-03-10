@@ -38,6 +38,7 @@ See this repo in action here - https://www.buythedipclub.com
 - [x] Multiple Algo Support - Buy & Sell basic
 - [x] README documentation for open sources, code clean up etc.
 - [ ] Generic algorithm parameters support (Coming Soon!)
+- [ ] Expose a mechanism to configure algorithms from the interface
 - [ ] Fix algo selection based on query params on Quick Analysis page
 - [ ] Strong Validations (https://wanago.io/2018/12/17/typescript-express-error-handling-validation/)
 - [ ] Live money trading approval by Alpaca
