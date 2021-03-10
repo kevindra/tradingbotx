@@ -74,14 +74,14 @@ You need to set following environment variables. You can do so by creating a `.e
 # AlphaVantage - API KEY (need for Stock's historical prices)
 AV_API_KEY=<your-alphavantage-key>
 
-#Crypto Compare Key (only needed for Crypto history prices)
+# (optional) Crypto Compare Key (only needed for Crypto history prices)
 CRYPTO_API_KEY=<your-crypto-compare-key>
 
-# Alpaca Configuration
+# (optional) Alpaca Configuration
 # Note: You only need these if you're planning to
 # 1. Make Trades from local
 # 2. Manage/view watchlists
-# OAUTH CONFIGURATION
+# OAuth Configuration
 # Guide: https://alpaca.markets/docs/build-apps_services-with-alpaca/oauth-guide/
 ALP_CLIENT_ID=<your-alpaca-client-id>
 ALP_CLIENT_SECRET=<your-alpaca-client-secret>
