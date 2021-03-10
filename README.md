@@ -185,3 +185,7 @@ Go to http://localhost:3000 and see it in action:
 **Note:** Do not forget to create a documentation of your algorithm before submitting the pull request so community can understand how to use it. You can find documentation README at `./src/algo/README.md`.
 
 After you are ready to deploy, feel free to submit a pull request.
+
+## Current Algorithms Repository
+
+Check out the current algorithms [here](https://github.com/kevindra/tradingbot/tree/main/src/algo).
