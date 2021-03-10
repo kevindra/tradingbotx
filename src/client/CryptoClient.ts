@@ -1,8 +1,7 @@
 import request from 'request';
 import Mustache from 'mustache';
 
-const URL =
-  'https://min-api.cryptocompare.com/data/histoday?aggregate=1&e=CCCAGG&extraParams=CryptoCompare&fsym={{ticker}}&limit={{periodInDays}}&tryConversion=false&tsym={{currency}}';
+const URL = `https://min-api.cryptocompare.com/data/histoday?aggregate=1&e=__CRYPTO_API_KEY__&extraParams=CryptoCompare&fsym={{ticker}}&limit={{periodInDays}}&tryConversion=false&tsym={{currency}}`;
 
 export interface Query {
   ticker: string;
@@ -38,7 +37,11 @@ export class CryptoClient {
    * }
    */
   async getData(query: Query): Promise<CryptoGetDataResult> {
-    const url = this._buildUrl(query);
+    let url = this._buildUrl(query);
+    url = url.replace(
+      '__CRYPTO_API_KEY__',
+      process.env['CRYPTO_API_KEY'] || ''
+    );
     const opt = {
       url: url,
     };

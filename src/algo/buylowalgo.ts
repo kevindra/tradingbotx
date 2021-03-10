@@ -16,12 +16,12 @@ export interface Event {
   maxDropIntensity?: number;
 }
 
+/*
+ * If stock price is significantly down from its previous high,
+ * and if that downturn happens very fast. For example 2-3 drops and ~40%+ down which never happened before in the history, the company usually becomes under value.
+ * We should consider buying at that price.
+ */
 export class BuyLowAlgo implements Algo {
-  /*
-   * If stock price is significantly down from its previous high,
-   * and if that downturn happens very fast (2-3 months and ~40%+ down, the company usually becomes under value)
-   * we should consider buying at that price.
-   */
   async run(algoInput: AlgoInput): Promise<AlgoOutput> {
     const events: Event[] = [];
     let n = 1;
@@ -108,15 +108,8 @@ export class BuyLowAlgo implements Algo {
   name(): string {
     return 'Buy Low';
   }
-}
 
-// let c = new ConfidenceAlgo();
-// console.log(
-//   c.predict(
-//     {
-//       prices: [1, 2, 3, 4, 1, 2, 3, 4],
-//     },
-//     0.5,
-//     0
-//   )
-// );
+  id(): string {
+    return 'BuyLow';
+  }
+}

@@ -97,7 +97,7 @@ var ticker = getUrlParameter('t');
 var currency = getUrlParameter('c');
 var type = getUrlParameter('type');
 var form = getUrlParameter('h') || '365';
-var algoIds = getUrlParameter('algoIds') || 'buy-low';
+var algoIds = getUrlParameter('algoIds') || 'BuyLow';
 var algoIdsList = typeof algoIds === 'string' ? [algoIds] : algoIds;
 
 console.log(ticker, currency, type, form, algoIds);
@@ -124,7 +124,7 @@ $(document).ready(function () {
   currency = getUrlParameter('c');
   type = getUrlParameter('type');
   form = getUrlParameter('h') || '365';
-  algoIds = getUrlParameter('algoIds') || 'buy-low';
+  algoIds = getUrlParameter('algoIds') || 'BuyLow';
   algoIdsList = typeof algoIds === 'string' ? [algoIds] : algoIds;
 
   if (Highcharts !== undefined && ticker && ticker.length !== 0) {

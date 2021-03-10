@@ -17,6 +17,9 @@ export interface Event {
   maxGainIntensity?: number;
 }
 
+/**
+ * This algo is just the reverse of the BuyLow algorithm.
+ */
 export class SellHighAlgo implements Algo {
   /*
    * If stock price is significantly up from its previous low,
@@ -36,5 +39,9 @@ export class SellHighAlgo implements Algo {
 
   name(): string {
     return 'Sell High';
+  }
+
+  id(): string {
+    return 'SellHigh';
   }
 }

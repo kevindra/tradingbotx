@@ -57,9 +57,9 @@ loggerMiddleware.use((req, res, next) => {
 
 const devEnvironmentMiddleware = Router();
 devEnvironmentMiddleware.use((req, res, next) => {
-  if (process.env.ENV === 'dev') {
+  if (process.env.ENV === 'dev' && process.env.ALP_HARDCODED_ACCESS_TOKEN) {
     (req.session as any).tokens = {
-      access_token: '96a7eea7-0946-4e10-b6fd-b948544ad2f2',
+      access_token: process.env.ALP_HARDCODED_ACCESS_TOKEN,
       token_type: 'Bearer',
       scope: 'account:write trading',
     };

@@ -1,13 +1,14 @@
 import express from 'express';
+import {getAllAlgoIds, getAllAlgoNames} from '../algo/algoregistry';
 import {NAV_TITLE, SECONDARY_TITLE} from '../consts';
 const router = express.Router();
 
 router.get('/', (req, res) => {
   // Default
-  if(!req.query.t) {
-    req.query.t = 'BTC'
-    req.query.type = 'crypto'
-    req.query.h = '100'
+  if (!req.query.t) {
+    req.query.t = 'BTC';
+    req.query.type = 'crypto';
+    req.query.h = '100';
   }
 
   res.render('index', {
@@ -19,7 +20,10 @@ router.get('/', (req, res) => {
     ticker: req.query.t,
     tickerType: req.query.type,
     horizon: req.query.h,
-    isAuth: res.locals['isAuth']
+    selectedAlgoIds: req.query.algoIds || [],
+    algoIds: getAllAlgoIds(),
+    algoNames: getAllAlgoNames(),
+    isAuth: res.locals['isAuth'],
   });
 });
 

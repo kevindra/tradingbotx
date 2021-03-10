@@ -1,8 +1,9 @@
 import {Watchlist} from '@master-chief/alpaca';
 import express from 'express';
+import {getAllAlgoIds, getAllAlgoNames} from '../algo/algoregistry';
 import {AlpacaClient} from '../client/AlpacaClient';
 import {NAV_TITLE, SECONDARY_TITLE} from '../consts';
-import { withTryCatchNext } from '../util';
+import {withTryCatchNext} from '../util';
 const tradingbotRouter = express.Router();
 
 tradingbotRouter.get('/', async (req, res, next) => {
@@ -33,6 +34,8 @@ tradingbotRouter.get('/', async (req, res, next) => {
       message: SECONDARY_TITLE,
       isAuth,
       lists,
+      algoIds: getAllAlgoIds(),
+      algoNames: getAllAlgoNames(),
     });
   });
 });

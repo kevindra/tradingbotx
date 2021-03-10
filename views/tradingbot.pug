@@ -87,8 +87,11 @@ html(lang="en")
                         </div>
                         <div class="col-sm-4">
                         <select class="form-select" name="algoId">
-                            <option value="buy-low" selected>Buy Low</option>
-                            <option value="sell-high">Sell High</option>
+                            each algoId,i in algoIds
+                                if i == 0
+                                    <option value="#{algoId}" selected>#{algoNames[i]}</option>
+                                else 
+                                    <option value="#{algoId}">#{algoNames[i]}</option>
                         </select>
                         </div>
                         <div class="col-sm-3">

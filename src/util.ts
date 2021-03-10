@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from 'express';
-import {AlgoId, getAlgoById} from './algo/algolookup';
+import {ALGO_REGISTRY, getAlgoById} from './algo/algoregistry';
 
 /**
  * A generic function to catch all exceptions for the input function and route them to express's next function
@@ -18,9 +18,9 @@ export const withTryCatchNext = async (
 };
 
 export const getAlgosFromRequest = (req: Request) => {
-  const algoIds: AlgoId[] = ((req.query.algoIds as string) || 'buy-low').split(
-    ','
-  ) as AlgoId[];
+  const algoIds: string[] = (
+    (req.query.algoIds as string) || ALGO_REGISTRY[0].id()
+  ).split(',');
 
   const algosToRun = algoIds.map(a => {
     const algo = getAlgoById(a);
@@ -32,7 +32,7 @@ export const getAlgosFromRequest = (req: Request) => {
 };
 
 export const getAlgoFromRequest = (req: Request) => {
-  const algoId: AlgoId = ((req.query.algoId as string) || 'buy-low') as AlgoId;
+  const algoId: string = (req.query.algoId as string) || ALGO_REGISTRY[0].id();
 
   const algo = getAlgoById(algoId);
   if (!algo) throw new Error(`Invalid algo name ${algoId}`);
