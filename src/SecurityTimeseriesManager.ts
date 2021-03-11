@@ -1,9 +1,11 @@
+import moment, {Moment} from 'moment';
 import {AlphaVantageClient} from './client/AlphaVantageClient';
 import {CryptoClient, CryptoGetDataResult} from './client/CryptoClient';
 import {
   PriceTimeSeriesData,
   SecurityTimeseriesAdapter,
 } from './SecurityTimeseriesAdapter';
+import {getMomentInEST} from './util';
 
 const avClient = new AlphaVantageClient();
 const cryptoClient = new CryptoClient();
@@ -15,27 +17,25 @@ export class SecurityTimeseriesManager {
   async getCryptoTimeseries(
     ticker: string,
     currency: string,
-    periodInDays: number
+    lookBackDays: number,
+    endDate: Moment
   ): Promise<PriceTimeSeriesData> {
     const cryptoData: CryptoGetDataResult = await cryptoClient.getData({
       ticker: ticker.toUpperCase(),
       currency: currency.toUpperCase(),
-      periodInDays: periodInDays,
+      lookBackDays:
+        lookBackDays + getMomentInEST(moment()).diff(endDate, 'days'), // actual lookBackDays = endDate + input lookback days
     });
 
-    return adapter.adaptCrypto(cryptoData);
+    return adapter.adaptCrypto(cryptoData, endDate, lookBackDays);
   }
 
   async getStockTimeseries(
     ticker = 'AMZN',
-    periodInDays = 365
+    lookBackDays: number,
+    endDate: Moment
   ): Promise<PriceTimeSeriesData> {
     const stockData = await avClient.getData(ticker.toUpperCase());
-    return adapter.adaptAlphaVantage(stockData, periodInDays);
+    return adapter.adaptAlphaVantage(stockData, lookBackDays, endDate);
   }
 }
-
-// const stm = new SecurityTimeseries();
-// module.exports = stm;
-// stm.getCryptoTimeseries('BTC', 'USD').then((d) => console.log(d))
-// stm.getStockTimeseries('AMZN').then((d) => console.log(d))

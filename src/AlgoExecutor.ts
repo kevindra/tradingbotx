@@ -2,6 +2,7 @@ import _ from 'lodash';
 import {SecurityTimeseriesManager} from './SecurityTimeseriesManager';
 import {PriceTimeSeriesData} from './SecurityTimeseriesAdapter';
 import {Algo, AlgoActionType, AlgoOutput} from './algo/algo';
+import {Moment} from 'moment';
 
 const timeseriesManager = new SecurityTimeseriesManager();
 
@@ -20,10 +21,16 @@ interface AlgoExecutorTimestampResponse {
 export class AlgoExecutor {
   constructor() {}
 
-  async executeAlgoOnStock(ticker: string, horizon: number, algos: Algo[]) {
+  async executeAlgoOnStock(
+    ticker: string,
+    horizon: number,
+    endDate: Moment,
+    algos: Algo[]
+  ) {
     const stockData = await timeseriesManager.getStockTimeseries(
       ticker,
-      horizon
+      horizon,
+      endDate
     );
     const prices = stockData.prices;
 
@@ -63,15 +70,17 @@ export class AlgoExecutor {
   }
 
   async executeAlgoOnCrypto(
-    ticker = 'BTC',
-    currency = 'USD',
-    horizon = 365,
+    ticker: string,
+    currency: string,
+    horizon: number,
+    endDate: Moment,
     algos: Algo[]
   ) {
     const cryptoData: PriceTimeSeriesData = await timeseriesManager.getCryptoTimeseries(
       ticker,
       currency,
-      horizon
+      horizon,
+      endDate
     );
 
     const prices = cryptoData.prices;

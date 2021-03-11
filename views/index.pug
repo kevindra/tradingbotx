@@ -41,13 +41,25 @@ html(lang="en")
 
                 <div class="row mb-3">
                     <div class="col-sm-2">
-                        <label for="tickerType" class="col-sm-2 col-form-label">Investment horizon(#days):</label>
+                        <label for="tickerType" class="col-sm-2 col-form-label">Lookback Days:</label>
                     </div>
                     <div class="col-sm-4">
                         input#horizon.form-control(type='text' name='h' aria-describedby='horizonHelp' value=horizon)
                     </div>
                     <div class="col-sm-3">
                         <span id="horizonHelp" class="form-text">Algo results are relative to past price patterns within a given timeframe. This is number of days in the past you want to look into. Try something like 365-720 (1-2 years) to get better sample data of the price.</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-2">
+                        <label for="tickerType" class="col-sm-2 col-form-label">End Date (optional):</label>
+                    </div>
+                    <div class="col-sm-4">
+                        input#horizon.form-control(type='text' name='endDate' aria-describedby='horizonHelp' value=endDate)
+                    </div>
+                    <div class="col-sm-3">
+                        <span id="horizonHelp" class="form-text">End Date (YYYY-DD-MM). Default = today's date. Can be used to backtest.</span>
                     </div>
                 </div>
 

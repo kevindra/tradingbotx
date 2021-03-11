@@ -6,7 +6,7 @@ const URL = `https://min-api.cryptocompare.com/data/histoday?aggregate=1&e=__CRY
 export interface Query {
   ticker: string;
   currency: string;
-  periodInDays: number;
+  lookBackDays: number;
 }
 
 export interface CryptoGetDataResult {
@@ -61,7 +61,7 @@ export class CryptoClient {
     return Mustache.render(URL, {
       ticker: query.ticker.toUpperCase(),
       currency: query.currency.toUpperCase(),
-      periodInDays: query.periodInDays,
+      periodInDays: query.lookBackDays,
     });
   }
 }

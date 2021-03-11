@@ -97,11 +97,13 @@ var ticker = getUrlParameter('t');
 var currency = getUrlParameter('c');
 var type = getUrlParameter('type');
 var form = getUrlParameter('h') || '365';
+var endDate =
+  getUrlParameter('endDate') || new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 var algoIds = getUrlParameter('algoIds') || 'BuyLow';
 var algoIdsList = typeof algoIds === 'string' ? [algoIds] : algoIds;
 
 console.log(ticker, currency, type, form, algoIds);
-var endpoint = `/api/indicators/history?t=${ticker}&c=${currency}&type=${type}&horizon=${form}&algoIds=${algoIdsList.join(
+var endpoint = `/api/indicators/history?t=${ticker}&c=${currency}&type=${type}&horizon=${form}&endDate=${endDate}&algoIds=${algoIdsList.join(
   ','
 )}`;
 console.log(endpoint);
@@ -120,12 +122,12 @@ function printAlgoResult(algoResult, algoIndex) {
 }
 $(document).ready(function () {
   // temp
-  ticker = getUrlParameter('t');
-  currency = getUrlParameter('c');
-  type = getUrlParameter('type');
-  form = getUrlParameter('h') || '365';
-  algoIds = getUrlParameter('algoIds') || 'BuyLow';
-  algoIdsList = typeof algoIds === 'string' ? [algoIds] : algoIds;
+  // ticker = getUrlParameter('t');
+  // currency = getUrlParameter('c');
+  // type = getUrlParameter('type');
+  // form = getUrlParameter('h') || '365';
+  // algoIds = getUrlParameter('algoIds') || 'BuyLow';
+  // algoIdsList = typeof algoIds === 'string' ? [algoIds] : algoIds;
 
   if (Highcharts !== undefined && ticker && ticker.length !== 0) {
     $('#algo-result-spinner').show();
@@ -251,28 +253,6 @@ function gtag() {
 }
 gtag('js', new Date());
 gtag('config', 'G-HGFNWY883M');
-
-// Dynamic Table
-// function getTickerConf(ticker, tickerType, horizon, algoIds, callback) {
-//   $.ajax({
-//     url: '/api/indicators/current',
-//     dataType: 'json',
-//     data: {
-//       t: ticker,
-//       currency: 'USD',
-//       type: tickerType,
-//       h: horizon,
-//       algoIds: algoIds
-//     },
-//     success: function (data) {
-//       console.log('GOT: ' + JSON.stringify(data));
-//       callback(data);
-//     },
-//     fail: function () {
-//       alert('Error occurred.');
-//     },
-//   });
-// }
 
 function getOpportunities(
   tickers,

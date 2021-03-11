@@ -1,7 +1,9 @@
 import {CryptoData, CryptoGetDataResult} from './client/CryptoClient';
 import {AVDailyTimeSeries, AVGetDataResult} from './client/AlphaVantageClient';
 import _ from 'lodash';
-import moment from 'moment-timezone';
+import moment, {Moment} from 'moment';
+import {getMomentInEST} from './util';
+import {DATE_FORMAT} from './consts';
 
 const AV_TS_DAILY = 'Time Series (Daily)';
 const AV_ADJ_CLOSE_PRICE = '5. adjusted close';
@@ -21,16 +23,23 @@ export class SecurityTimeseriesAdapter {
 
   adaptCrypto(
     cryptoData: CryptoGetDataResult,
+    endDate: Moment,
+    lookBackDays: number,
     filter: string[] = ['time', 'close']
   ): PriceTimeSeriesData {
     const rawData: CryptoData[] = cryptoData.Data;
-
-    const prices = rawData.map(d => {
-      return <Price>{
-        price: d.close,
-        timestamp: d.time * 1000,
-      };
-    });
+    const prices = rawData
+      .filter(d => {
+        // dates b/w endDate & (endDate - lookBackDays)
+        const diff = endDate.diff(moment(d.time * 1000), 'days');
+        return diff <= lookBackDays && diff >= 0;
+      })
+      .map(d => {
+        return <Price>{
+          price: d.close,
+          timestamp: d.time * 1000,
+        };
+      });
 
     return <PriceTimeSeriesData>{
       dimensions: [...filter],
@@ -40,24 +49,28 @@ export class SecurityTimeseriesAdapter {
 
   adaptAlphaVantage(
     avData: AVGetDataResult,
-    periodInDays: number = 365
+    lookBackDays: number,
+    endDate: Moment
   ): PriceTimeSeriesData {
     const rawData: AVDailyTimeSeries = avData[AV_TS_DAILY];
     let dates: string[] = Object.keys(rawData);
 
-    console.log(moment().toISOString() + "  " + periodInDays)
-    const startDate = moment()
-      .tz('America/Toronto')
-      .subtract(periodInDays, 'day')
-      .format('YYYY-MM-DD');
+    const endDateStr = endDate.format('YYYY-MM-DD');
+    let startDate = getMomentInEST(endDate)
+      .subtract(lookBackDays, 'day')
+      .format(DATE_FORMAT);
     dates = dates.sort();
 
-    console.log('Start date : ', startDate, ', filter: ', AV_ADJ_CLOSE_PRICE);
+    console.log('StartDate : ' + startDate + ', endDate: ' + endDateStr);
     const startIndex = dates.findIndex(e => e >= startDate);
+    const endIndex = dates.findIndex(e => e > endDateStr);
     if (startIndex === -1) {
-      throw new Error('Enter a valid periodInDays');
+      throw new Error('No data found in this date range.');
     }
-    dates = dates.slice(startIndex);
+    dates = dates.slice(
+      startIndex,
+      endIndex == -1 ? dates.length - 1 : endIndex
+    );
 
     const stockPrices: Price[] = [];
     dates.forEach(d => {
@@ -74,12 +87,3 @@ export class SecurityTimeseriesAdapter {
     };
   }
 }
-
-// const fs = require('fs')
-// const data = fs.readFileSync('./data/timeseries/AMZN.json', 'utf-8')
-// data = JSON.parse(data)
-
-// const sta = new SecurityTimeseriesAdapter();
-// sta.adaptCrypto(data)
-// console.log(sta.adaptAlphaVantage(data))
-// module.exports = sta;

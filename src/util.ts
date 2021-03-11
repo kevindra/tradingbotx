@@ -1,4 +1,5 @@
 import {Request, Response, NextFunction} from 'express';
+import moment, {Moment} from 'moment';
 import {ALGO_REGISTRY, getAlgoById} from './algo/algoregistry';
 
 /**
@@ -41,4 +42,12 @@ export const getAlgoFromRequest = (req: Request) => {
 
 export const getIndicatorFromRequest = (req: Request) => {
   return parseInt((req.query.indicator as string) || '0');
+};
+
+export const getDateTimeInEST = (datetime: string, format: string) => {
+  return moment(datetime, format).tz('America/Toronto');
+};
+
+export const getMomentInEST = (moment: Moment) => {
+  return moment.tz('America/Toronto');
 };

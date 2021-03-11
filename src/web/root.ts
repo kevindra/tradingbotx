@@ -1,4 +1,5 @@
 import express from 'express';
+import moment from 'moment-timezone';
 import {getAllAlgoIds, getAllAlgoNames} from '../algo/algoregistry';
 import {NAV_TITLE, SECONDARY_TITLE} from '../consts';
 const router = express.Router();
@@ -19,6 +20,9 @@ router.get('/', (req, res) => {
       'This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.',
     ticker: req.query.t,
     tickerType: req.query.type,
+    endDate:
+      req.query.endDate ||
+      moment().tz('America/Toronto').format('YYYY-MM-DD'),
     horizon: req.query.h,
     selectedAlgoIds: req.query.algoIds || [],
     algoIds: getAllAlgoIds(),

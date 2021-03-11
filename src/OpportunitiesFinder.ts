@@ -1,4 +1,5 @@
 import Bottleneck from 'bottleneck';
+import moment from 'moment-timezone';
 import {Algo} from './algo/algo';
 import {AlgoExecutor} from './AlgoExecutor';
 
@@ -41,7 +42,12 @@ export class OpportunitiesFinder {
       symbols.map(async symbol => {
         const conf = await limiter.schedule(
           async () =>
-            await algoExecutor.executeAlgoOnStock(symbol, horizon, [algo])
+            await algoExecutor.executeAlgoOnStock(
+              symbol,
+              horizon,
+              moment().tz('America/Toronto'),
+              [algo]
+            )
         );
         return <Opportunity>{
           symbol: symbol,
