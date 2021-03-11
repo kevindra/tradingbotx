@@ -57,7 +57,12 @@ loggerMiddleware.use((req, res, next) => {
 
 const devEnvironmentMiddleware = Router();
 devEnvironmentMiddleware.use((req, res, next) => {
-  if (process.env.ENV === 'dev' && process.env.ALP_HARDCODED_ACCESS_TOKEN) {
+  // If OAuth is not enabled, don't hardcode the token
+  if (
+    process.env.ALP_OAUTH_DISABLED !== 'true' &&
+    process.env.ENV === 'dev' &&
+    process.env.ALP_HARDCODED_ACCESS_TOKEN
+  ) {
     (req.session as any).tokens = {
       access_token: process.env.ALP_HARDCODED_ACCESS_TOKEN,
       token_type: 'Bearer',
@@ -73,6 +78,11 @@ devEnvironmentMiddleware.use((req, res, next) => {
 
 const googleAnalyticsMiddleware = Router();
 googleAnalyticsMiddleware.use((req, res, next) => {
+  if (process.env.ENV !== 'prod') {
+    next()
+    return;
+  }
+
   const params = {
     // API Version.
     v: '1',

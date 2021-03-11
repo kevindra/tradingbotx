@@ -8,6 +8,9 @@ export async function isAuthenticated(
   accessToken: AccessToken,
   isLiveMoney: boolean
 ) {
+  if (process.env.ALP_OAUTH_DISABLED === 'true') {
+    return true;
+  }
   if (!accessToken) {
     return false;
   }

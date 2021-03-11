@@ -13,17 +13,41 @@ export interface OrderRequest {
 export class AlpacaClient {
   alpaca;
   accessToken;
+  apiKey;
+  secret;
+
   constructor(accessToken: AccessToken, isLiveMoney: boolean) {
-    this.alpaca = new Alpaca.AlpacaClient({
-      credentials: {
-        // key: process.env.ALP_API_KEY || accessKey,
-        // secret: process.env.ALP_SECURITY_KEY || secretKey,
-        access_token: accessToken.access_token,
-        paper: !isLiveMoney,
-        // usePolygon: false,
-      },
-      rate_limit: false,
-    });
+    if (process.env.ALP_OAUTH_DISABLED === 'true') {
+      if (process.env.ALP_USE_LIVE_MONEY === 'true') {
+        this.alpaca = new Alpaca.AlpacaClient({
+          credentials: {
+            key: process.env.ALP_API_KEY_LIVE || '',
+            secret: process.env.ALP_API_SECRET_KEY_LIVE || '',
+            paper: false,
+          },
+        });
+        this.apiKey = process.env.ALP_API_KEY_LIVE;
+        this.secret = process.env.ALP_API_SECRET_KEY_LIVE;
+      } else {
+        this.alpaca = new Alpaca.AlpacaClient({
+          credentials: {
+            key: process.env.ALP_API_KEY || '',
+            secret: process.env.ALP_API_SECRET_KEY || '',
+            paper: true,
+          },
+        });
+        this.apiKey = process.env.ALP_API_KEY;
+        this.secret = process.env.ALP_API_SECRET_KEY;
+      }
+    } else {
+      this.alpaca = new Alpaca.AlpacaClient({
+        credentials: {
+          access_token: accessToken.access_token, // accessToken must be present for OAUTH
+          paper: !isLiveMoney,
+        },
+        rate_limit: false,
+      });
+    }
     this.accessToken = accessToken;
   }
 
@@ -68,7 +92,13 @@ export class AlpacaClient {
           url: url,
           json: params,
           headers: {
-            Authorization: `Bearer ${this.accessToken.access_token}`,
+            // either api/secret or access token will be set
+            Authorization:
+              this.accessToken !== undefined
+                ? `Bearer ${this.accessToken.access_token}`
+                : undefined,
+            'APCA-API-KEY-ID': this.apiKey,
+            'APCA-API-SECRET-KEY': this.secret,
           },
         },
         (err, res, body) => {
