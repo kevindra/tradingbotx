@@ -4,7 +4,7 @@ const loginRouter = express.Router();
 
 loginRouter.get('/', (req, res) => {
   res.render('login', {
-    title: 'Buy The Dip Club | Login',
+    title: 'TradingBotX | Login',
     navTitle: NAV_TITLE,
     message: SECONDARY_TITLE,
     clientId: process.env.ALP_CLIENT_ID,

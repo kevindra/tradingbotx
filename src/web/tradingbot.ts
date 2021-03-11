@@ -29,7 +29,7 @@ tradingbotRouter.get('/', async (req, res, next) => {
     }
 
     res.render('tradingbot', {
-      title: 'Buy The Dip Club | Trading Bot',
+      title: 'TradingBotX | Trading Bot',
       navTitle: NAV_TITLE,
       message: SECONDARY_TITLE,
       isAuth,

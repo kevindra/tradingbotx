@@ -8,11 +8,11 @@ const watchlistsRouter = express.Router();
 watchlistsRouter.get('/create', (req, res) => {
   var sess: any = req.session;
   res.render('watchlists', {
-    title: 'Buy The Dip Club | Watchlists',
+    title: 'TradingBotX | Watchlists',
     navTitle: NAV_TITLE,
     message: 'Create watchlist',
     secondaryMessage:
-      'This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.',
+      'Here, you can manage your watchlists for your favorite stocks and use them as inputs to the algorithms.',
     isAuth: res.locals['isAuth'],
     create: true,
   });
@@ -29,11 +29,11 @@ watchlistsRouter.get('/edit', async (req, res, next) => {
     });
 
     res.render('watchlists', {
-      title: 'Buy The Dip Club | Watchlists',
+      title: 'TradingBotX | Watchlists',
       navTitle: NAV_TITLE,
       message: 'Edit your watchlist',
       secondaryMessage:
-        'This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.',
+        'Here, you can manage your watchlists for your favorite stocks and use them as inputs to the algorithms.',
       isAuth: res.locals['isAuth'],
       edit: true,
       name: watchlist.name,
@@ -77,11 +77,11 @@ watchlistsRouter.get('/', async (req, res, next) => {
     }
 
     res.render('watchlists', {
-      title: 'Buy The Dip Club | Watchlists',
+      title: 'TradingBotX | Watchlists',
       navTitle: NAV_TITLE,
       message: 'Manage your watchlists',
       secondaryMessage:
-        'This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.',
+        'Here, you can manage your watchlists for your favorite stocks and use them as inputs to the algorithms.',
       isAuth: res.locals['isAuth'],
       list: true,
       watchlists: watchlists,

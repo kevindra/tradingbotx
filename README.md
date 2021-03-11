@@ -4,6 +4,8 @@ This is an autonomous trading bot in Typescript with web access! It allows users
 
 It is just the beginning but my vision for this repo is as follows:
 
+# See it in action - https://tradingbotx.com
+
 # Vision
 
 - Build a community driven strong open source algorithm base in Typescript for trading efficiently
@@ -12,11 +14,8 @@ It is just the beginning but my vision for this repo is as follows:
 - Able to schedule algorithms based on user's preference
 - Provide a rating mechanism for Algorithms, so users can see the popular/highly rated algorithms
 - Seamlessly integrate with all popular brokerages and crypto exchanges
-- ?
 
 Let's see how it goes! It's only the start.
-
-See this repo in action here - https://www.buythedipclub.com
 
 # Roadmap
 

@@ -8,11 +8,11 @@ const portfolioRouter = express.Router();
 
 portfolioRouter.get('/', (req, res) => {
   res.render('portfolio', {
-    title: 'Buy The Dip Club | Portfolio Analysis',
+    title: 'TradingBotX | Portfolio Analysis',
     navTitle: NAV_TITLE,
     message: SECONDARY_TITLE,
     secondaryMessage:
-      'This app analyzes the past price pattern of the ticker and calculates the confidence to buy. It depends on variety of factors but the most important one is the momentum speed.',
+      'This app analyzes the past price pattern of the ticker and calculates the confidence to buy or sell based on the algorithm(s) you choose.',
     ticker: req.query.t,
     tickerType: req.query.type,
     horizon: req.query.h,

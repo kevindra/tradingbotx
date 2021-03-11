@@ -4,7 +4,7 @@ const termsPrivacyRouter = express.Router();
 
 termsPrivacyRouter.use('/', (req, res) => {
   res.render('terms-and-privacy', {
-    title: 'Buy The Dip Club | Trading Bot',
+    title: 'TradingBotX | Trading Bot',
     navTitle: NAV_TITLE,
     message: SECONDARY_TITLE,
     isAuth: res.locals['isAuth'],
