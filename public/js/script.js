@@ -291,8 +291,8 @@ function trade(opportunities, callback) {
     dataType: 'json',
     data: {
       opportunities: opportunities,
-      minBuyAmount: window.minBuyAmount,
-      maxBuyAmount: window.maxBuyAmount,
+      minTradeAmount: window.minTradeAmount,
+      maxTradeAmount: window.maxTradeAmount,
       indicatorMinValue: MIN_INDICATOR_VALUE,
       indicatorMaxValue: MAX_INDICATOR_VALUE,
     },
@@ -442,8 +442,8 @@ $(document).on('submit', '#startbot', function (e) {
       console.log('Final opportunities ' + JSON.stringify(opp));
     });
     window.opportunities = opp;
-    window.minBuyAmount = form.minBuyAmount;
-    window.maxBuyAmount = form.maxBuyAmount;
+    window.minTradeAmount = form.minTradeAmount;
+    window.maxTradeAmount = form.maxTradeAmount;
   });
 });
 

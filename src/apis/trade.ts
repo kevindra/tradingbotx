@@ -1,5 +1,5 @@
 import express from 'express';
-import {BUY_CONFIDENCE_THRESHOLD, SELL_CONFIDENCE_THRESHOLD} from '../consts';
+import {MIN_BUY_CONFIDENCE_THRESHOLD, MAX_BUY_CONFIDENCE_THRESHOLD} from '../consts';
 import {Opportunities, OpportunitiesFinder} from '../OpportunitiesFinder';
 import {AccessToken, Trader} from '../trader';
 import {withTryCatchNext} from '../util';
@@ -13,10 +13,10 @@ tradeApiRouter.post('/', async (req, res, next) => {
     const minTradeAmount = parseInt((req.body.minTradeAmount as string) || '40');
     const maxTradeAmount = parseInt((req.body.maxTradeAmount as string) || '100');
     const indicatorMinValue = parseInt(
-      (req.body.indicatorMinValue as string) || `${BUY_CONFIDENCE_THRESHOLD}`
+      (req.body.indicatorMinValue as string) || `${MIN_BUY_CONFIDENCE_THRESHOLD}`
     );
     const indicatorMaxValue = parseInt(
-      (req.body.indicatorMaxValue as string) || `${SELL_CONFIDENCE_THRESHOLD}`
+      (req.body.indicatorMaxValue as string) || `${MAX_BUY_CONFIDENCE_THRESHOLD}`
     );
     const isLiveMoney: boolean = (req.session as any).liveMoney;
 
