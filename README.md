@@ -38,6 +38,7 @@ See this repo in action here - https://www.buythedipclub.com
 - [x] Multiple Algo Support - Buy & Sell basic
 - [x] README documentation for open sources, code clean up etc.
 - [x] Basic Backtest feature - allows you to look up algorithm's output b/w any timeframe
+- [x] Dark Mode Toggle 😍 
 - [ ] Advanced Backtest feature - allows you to simulate the trading using multiple algorithms on a list of stocks
 - [ ] Generic algorithm parameters support (Coming Soon!)
 - [ ] Expose a mechanism to configure algorithms from the interface
