@@ -192,3 +192,6 @@ After you are ready to deploy, feel free to submit a pull request.
 ## Current Algorithms Repository
 
 Check out the current algorithms [here](https://github.com/kevindra/tradingbot/tree/main/src/algo).
+
+---
+Copyright Kevindra Singh © 2021. All rights reserved.
