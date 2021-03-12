@@ -2,17 +2,15 @@ import express from 'express';
 import session from 'express-session';
 import path from 'path';
 import dotenv from 'dotenv';
-import {OpportunitiesFinder} from './OpportunitiesFinder';
 import bodyParser from 'body-parser';
 import {rootRouter} from './web/root';
 import {watchlistsRouter} from './web/watchlists';
 import {portfolioRouter} from './web/portfolio';
 import {tradingbotRouter} from './web/tradingbot';
+import {algoRepoRouter} from './web/algorepo';
 import {loginRouter} from './web/login';
 import {oauthRouter} from './web/oauth';
 import {apisRouter} from './apis/apis';
-import {AccessToken} from './trader';
-import {isAuthenticated} from './auth';
 import {
   authMiddleware,
   devEnvironmentMiddleware,
@@ -46,6 +44,7 @@ app.use('/', rootRouter);
 app.use('/watchlists', watchlistsRouter);
 app.use('/portfolio', portfolioRouter);
 app.use('/tradingbot', tradingbotRouter);
+app.use('/algorepo', algoRepoRouter);
 app.use('/login', loginRouter);
 app.use('/oauth', oauthRouter);
 app.use('/terms-and-privacy', termsPrivacyRouter);

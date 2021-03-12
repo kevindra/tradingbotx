@@ -1,0 +1,13 @@
+html(lang="en")
+    head
+        include head.pug
+    body
+        - var algoRepoPageActive = 'active'
+        include nav.pug 
+
+        div.container !{markdownHtml}
+
+            include donation.pug
+            include disclaimer.pug 
+
+    include footer.pug

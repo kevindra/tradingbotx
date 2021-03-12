@@ -38,17 +38,19 @@ Let's see how it goes! It's only the start.
 - [x] README documentation for open sources, code clean up etc.
 - [x] Basic Backtest feature - allows you to look up algorithm's output b/w any timeframe
 - [x] Dark Mode Toggle 😍 
+- [x] Fix algo selection based on query params on Quick Analysis page
+- [x] Algorithms page to describe what each algorithm does
+- [ ] Account's page
+- [ ] Account's positions page
 - [ ] Advanced Backtest feature - allows you to simulate the trading using multiple algorithms on a list of stocks
-- [ ] Generic algorithm parameters support (Coming Soon!)
+- [ ] Generic algorithm parameters support
 - [ ] Expose a mechanism to configure algorithms from the interface
-- [ ] Fix algo selection based on query params on Quick Analysis page
 - [ ] Strong Validations (https://wanago.io/2018/12/17/typescript-express-error-handling-validation/)
+- [ ] Expose API based live money trading for people who are look to live trade (since OAuth isn't available for live trading yet)
 - [ ] Live money trading approval by Alpaca
 - [ ] Delete watchlist support
 - [ ] Watchlist detail page
 - [ ] Trade link on watchlist page
-- [ ] Account's page
-- [ ] Account's positions page
 - [ ] List Order page
 - [ ] Cancel Order
 - [ ] Update Order
