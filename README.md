@@ -40,8 +40,9 @@ Let's see how it goes! It's only the start.
 - [x] Dark Mode Toggle 😍 
 - [x] Fix algo selection based on query params on Quick Analysis page
 - [x] Algorithms page to describe what each algorithm does
-- [ ] Account's page
-- [ ] Account's positions page
+- [x] Account's page
+- [x] Account's positions page
+- [x] List Orders page
 - [ ] Advanced Backtest feature - allows you to simulate the trading using multiple algorithms on a list of stocks
 - [ ] Generic algorithm parameters support
 - [ ] Expose a mechanism to configure algorithms from the interface
@@ -51,7 +52,6 @@ Let's see how it goes! It's only the start.
 - [ ] Delete watchlist support
 - [ ] Watchlist detail page
 - [ ] Trade link on watchlist page
-- [ ] List Order page
 - [ ] Cancel Order
 - [ ] Update Order
 

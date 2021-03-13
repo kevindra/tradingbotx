@@ -20,6 +20,7 @@ import {
 } from './common.middleware';
 import {termsPrivacyRouter} from './web/terms-privacy';
 import {errorMiddleware} from './error.middleware';
+import {accountRouter} from './web/account';
 
 dotenv.config();
 const app = express();
@@ -44,6 +45,7 @@ app.use('/', rootRouter);
 app.use('/watchlists', watchlistsRouter);
 app.use('/portfolio', portfolioRouter);
 app.use('/tradingbot', tradingbotRouter);
+app.use('/account', accountRouter);
 app.use('/algorepo', algoRepoRouter);
 app.use('/login', loginRouter);
 app.use('/oauth', oauthRouter);

@@ -1,0 +1,112 @@
+html(lang="en")
+    head
+        include head.pug
+    body
+        - var accountPageActive = 'active'
+        include nav.pug 
+
+        div(class="container")
+            h3.display-6=message
+            div.mb-5
+                <span>#{secondaryMessage}</span>
+                <span>To manage or edit your account go to <a href='https://alpaca.markets'>Alpaca</a>.</span>
+            h4.display-6='Overview'
+            <table class="table table-striped table-hover table-sm table-responsive-sm mt-3" >
+                <thead>
+                    <tr>
+                        <th>Account #</th>
+                        <th>Status</th>
+                        <th>Account Value</th>
+                        <th>Cash</th>
+                        <th>Buying Power</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    td=account.account_number
+                    td=account.status
+                    td=equity
+                    td=cash
+                    td=buying_power
+                </tbody>
+            </table>
+
+            h4.display-6='Positions'
+            <table class="table table-striped table-hover table-sm table-responsive-sm mt-3 small" >
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Shares</th>
+                        <th>Price</th>
+                        <th>Price Change %</th>
+                        <th>Avg Entry</th>
+                        <th>Cost Basis</th>
+                        <th>Market Value</th>
+                        <th>Today's P/L(%)</th>
+                        <th>Today's P/L($)</th>
+                        <th>Total P/L(%)</th>
+                        <th>Total P/L($)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    each position in positions
+                        tr
+                            td=position.symbol
+                            td=position.qty
+                            td=position.current_price
+                            td !{position.change_today}
+                            td=position.avg_entry_price
+                            td=position.cost_basis
+                            td=position.market_value
+                            td !{position.unrealized_intraday_plpc}
+                            td !{position.unrealized_intraday_pl}
+                            td !{position.unrealized_plpc}
+                            td !{position.unrealized_pl}
+                    tr 
+                        td <strong>Total</strong>
+                        td
+                        td
+                        td
+                        td 
+                        td <strong>!{positionsSummary.formatted.totalCost}</strong>
+                        td <strong>!{positionsSummary.formatted.mktValue}</strong>
+                        td <strong>!{positionsSummary.formatted.todayProfitPc}</strong>
+                        td <strong>!{positionsSummary.formatted.todayProfit}</strong>
+                        td <strong>!{positionsSummary.formatted.totalProfitPc}</strong>
+                        td <strong>!{positionsSummary.formatted.totalProfit}</strong>
+                </tbody>
+            </table>
+
+            h4.display-6='Orders'
+            <table class="table table-striped table-hover table-sm table-responsive-sm mt-3 small" >
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Qty</th>
+                        <th>Filled Qty</th>
+                        <th>Side</th>
+                        <th>Type</th>
+                        <th>Time in Force</th>
+                        <th>Filled Avg Price</th>
+                        <th>Status</th>
+                        <th>Submitted at</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    each order in orders
+                        tr
+                            td=order.symbol
+                            td=order.qty
+                            td=order.filled_qty
+                            td=order.side
+                            td=order.type
+                            td=order.time_in_force
+                            td=order.filled_avg_price
+                            td=order.status
+                            td=order.submitted_at
+                </tbody>
+            </table>
+
+            include donation.pug
+            include disclaimer.pug 
+
+    include footer.pug
