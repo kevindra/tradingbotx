@@ -43,6 +43,8 @@ Let's see how it goes! It's only the start.
 - [x] Account's page
 - [x] Account's positions page
 - [x] List Orders page
+- [ ] Cloud based trade schedule
+- [ ] API key/secret input for trade schedule
 - [ ] Advanced Backtest feature - allows you to simulate the trading using multiple algorithms on a list of stocks
 - [ ] Generic algorithm parameters support
 - [ ] Expose a mechanism to configure algorithms from the interface

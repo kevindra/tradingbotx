@@ -100,7 +100,7 @@ accountRouter.get('/', async (req, res, next) => {
         time_in_force: o.time_in_force,
         filled_avg_price: o.filled_avg_price ? o.filled_avg_price : '-',
         status: o.status,
-        submitted_at: moment(o.submitted_at).format('MMMM Do YYYY, h:mm:ss a z'),
+        submitted_at: moment(o.submitted_at).format('MM/DD/YYYY h:mm a z'),
         filled_at: o.filled_at,
         canceled_at: o.canceled_at,
         replaced_at: o.replaced_at,
