@@ -247,12 +247,14 @@ function plotChart(data, ticker = '') {
 }
 
 // Analytics
-window.dataLayer = window.dataLayer || [];
-function gtag() {
-  dataLayer.push(arguments);
+if (window.location.hostname === 'www.tradingbotx.com') {
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag('js', new Date());
+  gtag('config', 'G-HGFNWY883M');
 }
-gtag('js', new Date());
-gtag('config', 'G-HGFNWY883M');
 
 function getOpportunities(
   tickers,
