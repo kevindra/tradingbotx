@@ -11,16 +11,14 @@ import {algoRepoRouter} from './web/algorepo';
 import {loginRouter} from './web/login';
 import {oauthRouter} from './web/oauth';
 import {apisRouter} from './apis/apis';
-import {
-  authMiddleware,
-  devEnvironmentMiddleware,
-  loggerMiddleware,
-  googleAnalyticsMiddleware,
-  httpsMiddleware,
-} from './common.middleware';
 import {termsPrivacyRouter} from './web/terms-privacy';
 import {errorMiddleware} from './error.middleware';
 import {accountRouter} from './web/account';
+import {loggerMiddleware} from './middlewares/logger.middleware';
+import {authMiddleware} from './middlewares/auth.middleware';
+import {httpsMiddleware} from './middlewares/https.middleware';
+import {devEnvironmentMiddleware} from './middlewares/devenv.middleware';
+import {googleAnalyticsMiddleware} from './middlewares/ga.middleware';
 
 dotenv.config();
 const app = express();
@@ -37,8 +35,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(loggerMiddleware);
-app.use(devEnvironmentMiddleware);
 app.use(authMiddleware);
+app.use(devEnvironmentMiddleware);
 app.use(googleAnalyticsMiddleware);
 
 app.use('/', rootRouter);

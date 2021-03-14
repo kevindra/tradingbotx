@@ -12,7 +12,7 @@ export interface OrderRequest {
 
 export class AlpacaClient {
   alpaca;
-  accessToken;
+  accessToken: AccessToken | undefined;
   apiKey;
   secret;
 
@@ -22,6 +22,12 @@ export class AlpacaClient {
     apikey?: string,
     apisecret?: string
   ) {
+    console.log(
+      `initializing alpaca with ${JSON.stringify(
+        accessToken
+      )}, key: ${apikey}, secret: ${apisecret}, liveMoney: ${isLiveMoney}, typeof liveMoney ${typeof isLiveMoney}`
+    );
+
     if (apikey) {
       this.alpaca = new Alpaca.AlpacaClient({
         credentials: {
@@ -30,6 +36,8 @@ export class AlpacaClient {
           paper: !isLiveMoney,
         },
       });
+      this.apiKey = apikey;
+      this.secret = apisecret;
     } else if (process.env.ALP_OAUTH_DISABLED === 'true') {
       if (process.env.ALP_USE_LIVE_MONEY === 'true') {
         this.alpaca = new Alpaca.AlpacaClient({

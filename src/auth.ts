@@ -13,18 +13,15 @@ export async function isAuthenticated(
   if (process.env.ALP_OAUTH_DISABLED === 'true') {
     return true;
   }
-  if (!accessToken) {
-    return false;
+  if (accessToken || apikey) {
+    const alpacaClient = new AlpacaClient(
+      accessToken,
+      isLiveMoney,
+      apikey,
+      apisecret
+    );
+    let isAuth = await alpacaClient.raw().isAuthenticated();
+    return isAuth;
   }
-  const alpacaClient = new AlpacaClient(
-    accessToken,
-    isLiveMoney,
-    apikey,
-    apisecret
-  );
-  let isAuth = await alpacaClient.raw().isAuthenticated();
-  if (!isAuth) {
-    return false;
-  }
-  return true;
+  return false;
 }
