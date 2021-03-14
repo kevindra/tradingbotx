@@ -25,7 +25,7 @@ authMiddleware.use(async (req, res, next) => {
     if (headers.apikey) {
       (req.session as any).apikey = headers.apikey;
       (req.session as any).apisecret = headers.apisecret;
-      (req.session as any).liveMoney = headers.liveMoney;
+      (req.session as any).liveMoney = headers.livemoney;
     } else if (headers.accessToken) {
       (req.session as any).tokens = {
         access_token: headers.accessToken,
@@ -36,7 +36,7 @@ authMiddleware.use(async (req, res, next) => {
 
     const isLiveMoney: boolean = (req.session as any).liveMoney;
 
-    let isAuth = await isAuthenticated(sess.tokens as AccessToken, isLiveMoney);
+    let isAuth = await isAuthenticated(sess.tokens as AccessToken, isLiveMoney, (req.session as any).apikey, (req.session as any).apisecret);
     res.locals['isAuth'] = isAuth;
 
     let pathRequiresAuth =

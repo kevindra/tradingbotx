@@ -6,7 +6,9 @@ import {AccessToken} from './trader';
  */
 export async function isAuthenticated(
   accessToken: AccessToken,
-  isLiveMoney: boolean
+  isLiveMoney: boolean,
+  apikey?: string,
+  apisecret?: string
 ) {
   if (process.env.ALP_OAUTH_DISABLED === 'true') {
     return true;
@@ -14,7 +16,12 @@ export async function isAuthenticated(
   if (!accessToken) {
     return false;
   }
-  const alpacaClient = new AlpacaClient(accessToken, isLiveMoney);
+  const alpacaClient = new AlpacaClient(
+    accessToken,
+    isLiveMoney,
+    apikey,
+    apisecret
+  );
   let isAuth = await alpacaClient.raw().isAuthenticated();
   if (!isAuth) {
     return false;
