@@ -15,7 +15,6 @@ export type OpportunityType = 'buy' | 'sell';
 
 export interface Opportunities {
   opportunities: Opportunity[];
-  // sellOpportunities: Opportunity[];
 }
 
 const algoExecutor = new AlgoExecutor();

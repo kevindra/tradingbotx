@@ -12,11 +12,11 @@ tradeApiRouter.post('/', async (req, res, next) => {
     const tokens = (req.session as any).tokens;
     const minTradeAmount = parseInt((req.body.minTradeAmount as string) || '40');
     const maxTradeAmount = parseInt((req.body.maxTradeAmount as string) || '100');
-    const indicatorMinValue = parseInt(
-      (req.body.indicatorMinValue as string) || `${MIN_BUY_CONFIDENCE_THRESHOLD}`
+    const minIndicatorValue = parseInt(
+      (req.body.minIndicatorValue as string) || `${MIN_BUY_CONFIDENCE_THRESHOLD}`
     );
-    const indicatorMaxValue = parseInt(
-      (req.body.indicatorMaxValue as string) || `${MAX_BUY_CONFIDENCE_THRESHOLD}`
+    const maxIndicatorValue = parseInt(
+      (req.body.maxIndicatorValue as string) || `${MAX_BUY_CONFIDENCE_THRESHOLD}`
     );
     const isLiveMoney: boolean = (req.session as any).liveMoney;
 
@@ -25,8 +25,8 @@ tradeApiRouter.post('/', async (req, res, next) => {
       opp,
       minTradeAmount,
       maxTradeAmount,
-      indicatorMinValue,
-      indicatorMaxValue
+      minIndicatorValue,
+      maxIndicatorValue
     );
 
     res.setHeader('Content-Type', 'application/json');

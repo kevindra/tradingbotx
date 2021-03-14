@@ -295,8 +295,8 @@ function trade(opportunities, callback) {
       opportunities: opportunities,
       minTradeAmount: window.minTradeAmount,
       maxTradeAmount: window.maxTradeAmount,
-      indicatorMinValue: MIN_INDICATOR_VALUE,
-      indicatorMaxValue: MAX_INDICATOR_VALUE,
+      minIndicatorValue: MIN_INDICATOR_VALUE,
+      maxIndicatorValue: MAX_INDICATOR_VALUE,
     },
     success: function (data) {
       console.log('GOT: ' + JSON.stringify(data));
