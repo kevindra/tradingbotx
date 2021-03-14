@@ -14,6 +14,7 @@ export const withTryCatchNext = async (
   try {
     await func(req, res, next);
   } catch (err) {
+    console.log(`Error occurred: ${err}`)
     next(err);
   }
 };

@@ -36,14 +36,22 @@ authMiddleware.use(async (req, res, next) => {
       }
       delete (req.session as any).apikey;
       delete (req.session as any).apisecret;
+    } else {
+      // keep session values as they are
+      delete (req.session as any).apikey;
+      delete (req.session as any).apisecret;
+      // Only update the livemoney flag in session if header was specified
+      if (headers.livemoney !== undefined) {
+        (req.session as any).liveMoney = headers.livemoney === 'true';
+      }
     }
 
     const isLiveMoney: boolean = (req.session as any).liveMoney;
 
     console.log(
-      `${sess.tokens} ${isLiveMoney} ${(req.session as any).apikey} ${
-        (req.session as any).apisecret
-      }`
+      `Session tokens: ${sess.tokens}, liveMoney: ${isLiveMoney}, apiKey: ${
+        (req.session as any).apikey
+      }, apisecret: ${(req.session as any).apisecret}`
     );
     let isAuth = await isAuthenticated(
       sess.tokens as AccessToken,

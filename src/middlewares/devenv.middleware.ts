@@ -35,6 +35,8 @@ devEnvironmentMiddleware.use(async (req, res, next) => {
     );
     res.locals['isAuth'] = isAuth;
     next();
+  } else {
+    next();
   }
 });
 
