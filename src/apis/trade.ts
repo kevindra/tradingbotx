@@ -1,5 +1,8 @@
 import express from 'express';
-import {MIN_BUY_CONFIDENCE_THRESHOLD, MAX_BUY_CONFIDENCE_THRESHOLD} from '../consts';
+import {
+  MIN_BUY_CONFIDENCE_THRESHOLD,
+  MAX_BUY_CONFIDENCE_THRESHOLD,
+} from '../consts';
 import {Opportunities, OpportunitiesFinder} from '../OpportunitiesFinder';
 import {AccessToken, Trader} from '../trader';
 import {withTryCatchNext} from '../util';
@@ -10,17 +13,28 @@ tradeApiRouter.post('/', async (req, res, next) => {
   await withTryCatchNext(req, res, next, async (req, res, next) => {
     const opp = req.body.opportunities as Opportunities;
     const tokens = (req.session as any).tokens;
-    const minTradeAmount = parseInt((req.body.minTradeAmount as string) || '40');
-    const maxTradeAmount = parseInt((req.body.maxTradeAmount as string) || '100');
+    const minTradeAmount = parseInt(
+      (req.body.minTradeAmount as string) || '40'
+    );
+    const maxTradeAmount = parseInt(
+      (req.body.maxTradeAmount as string) || '100'
+    );
     const minIndicatorValue = parseInt(
-      (req.body.minIndicatorValue as string) || `${MIN_BUY_CONFIDENCE_THRESHOLD}`
+      (req.body.minIndicatorValue as string) ||
+        `${MIN_BUY_CONFIDENCE_THRESHOLD}`
     );
     const maxIndicatorValue = parseInt(
-      (req.body.maxIndicatorValue as string) || `${MAX_BUY_CONFIDENCE_THRESHOLD}`
+      (req.body.maxIndicatorValue as string) ||
+        `${MAX_BUY_CONFIDENCE_THRESHOLD}`
     );
     const isLiveMoney: boolean = (req.session as any).liveMoney;
 
-    const trader = new Trader(tokens as AccessToken, isLiveMoney);
+    const trader = new Trader(
+      tokens as AccessToken,
+      isLiveMoney,
+      (req.session as any).apikey,
+      (req.session as any).apisecret
+    );
     const orders = await trader.performTrades(
       opp,
       minTradeAmount,

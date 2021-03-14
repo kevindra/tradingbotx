@@ -9,7 +9,12 @@ watchlistsApiRouter.get('/', async (req, res, next) => {
     const id = req.query.id as string;
     const tokens = (req.session as any).tokens;
     const isLiveMoney: boolean = (req.session as any).liveMoney;
-    const alpaca = new AlpacaClient(tokens, isLiveMoney);
+    const alpaca = new AlpacaClient(
+      tokens,
+      isLiveMoney,
+      (req.session as any).apikey,
+      (req.session as any).apisecret
+    );
 
     const output = await alpaca.raw().getWatchlist({
       uuid: id,
@@ -26,7 +31,12 @@ watchlistsApiRouter.post('/', async (req, res, next) => {
     const tickers = req.body.tickers as string[];
     const tokens = (req.session as any).tokens;
     const isLiveMoney: boolean = (req.session as any).liveMoney;
-    const alpaca = new AlpacaClient(tokens, isLiveMoney);
+    const alpaca = new AlpacaClient(
+      tokens,
+      isLiveMoney,
+      (req.session as any).apikey,
+      (req.session as any).apisecret
+    );
 
     let output;
     if (id) {

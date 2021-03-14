@@ -10,7 +10,12 @@ accountRouter.get('/', async (req, res, next) => {
   await withTryCatchNext(req, res, next, async (req, res, next) => {
     var sess: any = req.session;
     const isLiveMoney: boolean = sess.liveMoney;
-    const alpaca = new AlpacaClient(sess.tokens, isLiveMoney);
+    const alpaca = new AlpacaClient(
+      sess.tokens,
+      isLiveMoney,
+      (req.session as any).apikey,
+      (req.session as any).apisecret
+    );
     const account = await alpaca.raw().getAccount();
     const positions = await alpaca.raw().getPositions();
     const orders = await alpaca.raw().getOrders({

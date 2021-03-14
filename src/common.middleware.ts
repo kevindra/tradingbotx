@@ -19,13 +19,13 @@ authMiddleware.use(async (req, res, next) => {
     ];
 
     let sess: any = req.session;
-    const isLiveMoney: boolean = (req.session as any).liveMoney;
     const headers = req.headers;
 
     // Clients can set the access keys in the request header as well
     if (headers.apikey) {
       (req.session as any).apikey = headers.apikey;
       (req.session as any).apisecret = headers.apisecret;
+      (req.session as any).liveMoney = headers.liveMoney;
     } else if (headers.accessToken) {
       (req.session as any).tokens = {
         access_token: headers.accessToken,
@@ -33,6 +33,8 @@ authMiddleware.use(async (req, res, next) => {
         scope: 'account:write trading',
       };
     }
+
+    const isLiveMoney: boolean = (req.session as any).liveMoney;
 
     let isAuth = await isAuthenticated(sess.tokens as AccessToken, isLiveMoney);
     res.locals['isAuth'] = isAuth;

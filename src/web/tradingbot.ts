@@ -24,7 +24,12 @@ tradingbotRouter.get('/', async (req, res, next) => {
       },
     ];
     if (isAuth) {
-      const alpaca = new AlpacaClient(sess.tokens, isLiveMoney);
+      const alpaca = new AlpacaClient(
+        sess.tokens,
+        isLiveMoney,
+        (req.session as any).apikey,
+        (req.session as any).apisecret
+      );
       lists = lists.concat(await alpaca.raw().getWatchlists());
     }
 

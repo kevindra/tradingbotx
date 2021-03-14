@@ -7,6 +7,8 @@ export interface AccessToken {
   access_token: string;
   token_type: string;
   scope: string;
+  apikey?: string;
+  apisecret?: string;
 }
 
 /**
@@ -14,8 +16,18 @@ export interface AccessToken {
  */
 export class Trader {
   alpacaClient: AlpacaClient;
-  constructor(accessToken: AccessToken, isLiveMoney: boolean) {
-    this.alpacaClient = new AlpacaClient(accessToken, isLiveMoney);
+  constructor(
+    accessToken: AccessToken,
+    isLiveMoney: boolean,
+    apikey?: string,
+    apisecret?: string
+  ) {
+    this.alpacaClient = new AlpacaClient(
+      accessToken,
+      isLiveMoney,
+      apikey,
+      apisecret
+    );
   }
 
   async performTrades(

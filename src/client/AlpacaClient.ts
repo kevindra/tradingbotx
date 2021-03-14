@@ -16,8 +16,21 @@ export class AlpacaClient {
   apiKey;
   secret;
 
-  constructor(accessToken: AccessToken, isLiveMoney: boolean) {
-    if (process.env.ALP_OAUTH_DISABLED === 'true') {
+  constructor(
+    accessToken: AccessToken,
+    isLiveMoney: boolean,
+    apikey?: string,
+    apisecret?: string
+  ) {
+    if (apikey) {
+      this.alpaca = new Alpaca.AlpacaClient({
+        credentials: {
+          key: apikey,
+          secret: apisecret || '',
+          paper: !isLiveMoney,
+        },
+      });
+    } else if (process.env.ALP_OAUTH_DISABLED === 'true') {
       if (process.env.ALP_USE_LIVE_MONEY === 'true') {
         this.alpaca = new Alpaca.AlpacaClient({
           credentials: {
