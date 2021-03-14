@@ -20,6 +20,19 @@ authMiddleware.use(async (req, res, next) => {
 
     let sess: any = req.session;
     const isLiveMoney: boolean = (req.session as any).liveMoney;
+    const headers = req.headers;
+
+    // Clients can set the access keys in the request header as well
+    if (headers.apikey) {
+      (req.session as any).apikey = headers.apikey;
+      (req.session as any).apisecret = headers.apisecret;
+    } else if (headers.accessToken) {
+      (req.session as any).tokens = {
+        access_token: headers.accessToken,
+        token_type: 'Bearer',
+        scope: 'account:write trading',
+      };
+    }
 
     let isAuth = await isAuthenticated(sess.tokens as AccessToken, isLiveMoney);
     res.locals['isAuth'] = isAuth;
@@ -79,7 +92,7 @@ devEnvironmentMiddleware.use((req, res, next) => {
 const googleAnalyticsMiddleware = Router();
 googleAnalyticsMiddleware.use((req, res, next) => {
   if (process.env.ENV !== 'prod') {
-    next()
+    next();
     return;
   }
 
