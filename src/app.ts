@@ -36,9 +36,9 @@ app.set('view engine', 'pug');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.use(loggerMiddleware);
 app.use(devEnvironmentMiddleware);
 app.use(authMiddleware);
-app.use(loggerMiddleware);
 app.use(googleAnalyticsMiddleware);
 
 app.use('/', rootRouter);

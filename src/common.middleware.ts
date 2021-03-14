@@ -65,7 +65,9 @@ loggerMiddleware.use((req, res, next) => {
   console.log(
     `${req.method}: ${req.url} query: ${JSON.stringify(
       req.query
-    )} body: ${JSON.stringify(req.body)}`
+    )} body: ${JSON.stringify(req.body)}, header: ${JSON.stringify(
+      req.headers
+    )}`
   );
   next();
 });
