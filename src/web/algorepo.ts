@@ -16,9 +16,9 @@ router.get('/', async (req, res) => {
     );
   });
   res.render('algorepo', {
-    title: 'TradingBotX | Quick Analysis',
+    title: 'TradingBotX | Algorithms',
     navTitle: NAV_TITLE,
-    message: 'Algorithms Repository',
+    message: 'Algorithms',
     secondaryMessage: 'Following are the current algorithms and how they work.',
     markdownHtml: mkd.render(markdownContent),
     isAuth: res.locals['isAuth'],

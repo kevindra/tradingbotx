@@ -4,7 +4,7 @@ const termsPrivacyRouter = express.Router();
 
 termsPrivacyRouter.use('/', (req, res) => {
   res.render('terms-and-privacy', {
-    title: 'TradingBotX | Trading Bot',
+    title: 'TradingBotX | Terms and Privacy',
     navTitle: NAV_TITLE,
     message: SECONDARY_TITLE,
     isAuth: res.locals['isAuth'],
