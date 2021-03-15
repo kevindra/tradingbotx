@@ -364,12 +364,10 @@ function editWatchlist(id, name, tickers, callback) {
   });
 }
 
-function createSchedule(o, header, callback) {
+function createSchedule(o, header, apiUrl, callback) {
   // https://API-ID.execute-api.REGION.amazonaws.com/STAGE
-  const api =
-    'https://ew90lp188a.execute-api.us-west-2.amazonaws.com/prod/tradeSchedules';
   $.ajax({
-    url: api,
+    url: apiUrl,
     method: 'POST',
     contentType: 'application/json',
     dataType: 'json',
@@ -641,11 +639,12 @@ $(document).on('submit', '#create-schedule', function (e) {
     header.Authorization = `Bearer ${o.accesstoken}`;
   }
 
+  let apiUrl = o.tbotxUrl
   o.accesstoken = undefined;
   o.apikey = undefined;
   o.apisecret = undefined;
 
-  createSchedule(req, header, function (data) {
+  createSchedule(req, header, apiUrl, function (data) {
     window.location.replace('/automation?id=' + data.ruleArn);
   });
 });

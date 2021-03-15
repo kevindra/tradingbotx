@@ -31,6 +31,7 @@ automationRouter.get('/create', (req, res) => {
     showApiKeyField: process.env.ENV !== 'prod',
     accesstoken: sess.tokens ? sess.tokens.access_token : undefined,
     paper: sess.liveMoney !== true,
+    tbotxApiEndpoint: process.env.TBOTX_API_ENDPOINT
   });
 });
 
