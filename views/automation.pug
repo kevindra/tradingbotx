@@ -119,7 +119,7 @@ html(lang="en")
                                         <label for="tickerType" class="col-sm-2 col-form-label">Live Account API Key:</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        input#horizon.form-control(type='text' name='apikey' aria-describedby='horizonHelp' value="")
+                                        input#horizon.form-control(type='text' name='apikey' aria-describedby='horizonHelp' value=apikey)
                                     </div>
                                     <div class="col-sm-3">
                                         <span id="horizonHelp" class="form-text">For live money trading, API key is required. For paper trading, leave it blank.</span>
@@ -130,7 +130,7 @@ html(lang="en")
                                         <label for="tickerType" class="col-sm-2 col-form-label">Live Account Secret Key:</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        input#horizon.form-control(type='text' name='apisecret' aria-describedby='horizonHelp' value="")
+                                        input#horizon.form-control(type='text' name='apisecret' aria-describedby='horizonHelp' value=apisecret)
                                     </div>
                                     <div class="col-sm-3">
                                         <span id="horizonHelp" class="form-text">For live money trading, API secret is required. For paper trading, leave it blank.</span>
@@ -142,7 +142,7 @@ html(lang="en")
                                         <label for="tickerType" class="col-sm-2 col-form-label">Paper Money?</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        input#horizon.form-control(type='text' name='paper' aria-describedby='horizonHelp' value="true")
+                                        input#horizon.form-control(type='text' name='paper' aria-describedby='horizonHelp' value=paper)
                                     </div>
                                     <div class="col-sm-3">
                                         <span id="horizonHelp" class="form-text">'true' for paper money, else 'false' for live money. </span>

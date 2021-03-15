@@ -15,9 +15,6 @@ export interface Rule {
 }
 automationRouter.get('/create', (req, res) => {
   var sess: any = req.session;
-
-  console.log(JSON.stringify(sess, null, 2));
-  console.log(sess.tokens.access_token);
   res.render('automation', {
     title: 'TradingBotX | Automated Trades',
     navTitle: NAV_TITLE,
@@ -28,10 +25,12 @@ automationRouter.get('/create', (req, res) => {
     create: true,
     algoIds: getAllAlgoIds(),
     algoNames: getAllAlgoNames(),
+    apikey: (req.session as any).apikey || '',
+    apisecret: (req.session as any).apisecret || '',
     showApiKeyField: process.env.ENV !== 'prod',
     accesstoken: sess.tokens ? sess.tokens.access_token : undefined,
-    paper: sess.liveMoney !== true,
-    tbotxApiEndpoint: process.env.TBOTX_API_ENDPOINT
+    paper: (sess.liveMoney !== true).toString(),
+    tbotxApiEndpoint: process.env.TBOTX_API_ENDPOINT,
   });
 });
 
@@ -79,19 +78,38 @@ automationRouter.get('/', async (req, res, next) => {
       const tokens = (req.session as any).tokens;
       const isLiveMoney: boolean = (req.session as any).liveMoney;
 
-      const headers = {
-        'Content-Type': 'application/json',
-        apikey: (req.session as any).apikey,
-        apisecret: (req.session as any).apisecret,
-        Authorization: `Bearer ${
-          (req.session as any).tokens &&
-          (req.session as any).tokens.access_token
-        }`,
-      };
+      let headers = {};
+      if ((req.session as any).apikey) {
+        headers = {
+          'Content-Type': 'application/json',
+          apikey: (req.session as any).apikey,
+          apisecret: (req.session as any).apisecret,
+        };
+      } else {
+        if ((req.session as any).tokens === undefined) {
+          res.render('automation', {
+            title: 'TradingBotX | Automated Trades',
+            navTitle: NAV_TITLE,
+            message: 'List of all your automated trades.',
+            secondaryMessage:
+              'Here, you can see all your currently scheduled automated trades.',
+            isAuth: false,
+            list: true,
+          });
+          return;
+        }
+        headers = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${(req.session as any).tokens.access_token}`,
+        };
+      }
 
       let url = process.env.TBOTX_API_ENDPOINT || '';
       if (id) {
         url += '?ruleArn=' + id;
+        url += '&paper=' + !(req.session as any).liveMoney;
+      } else {
+        url += '?paper=' + !(req.session as any).liveMoney;
       }
 
       console.log('hitting url: ' + url);

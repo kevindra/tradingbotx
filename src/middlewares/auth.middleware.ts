@@ -46,6 +46,19 @@ authMiddleware.use(async (req, res, next) => {
       }
     }
 
+    // For backdoor access
+    if (process.env.ALP_OAUTH_DISABLED === 'true') {
+      (req.session as any).liveMoney =
+        process.env.ALP_USE_LIVE_MONEY === 'true';
+
+      (req.session as any).apikey = (req.session as any).liveMoney
+        ? process.env.ALP_API_KEY_LIVE
+        : process.env.ALP_API_KEY;
+      (req.session as any).apisecret = (req.session as any).liveMoney
+        ? process.env.ALP_API_SECRET_KEY_LIVE
+        : process.env.ALP_API_SECRET_KEY;
+    }
+
     const isLiveMoney: boolean = (req.session as any).liveMoney;
 
     console.log(
