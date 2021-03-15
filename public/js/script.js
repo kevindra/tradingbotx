@@ -600,7 +600,9 @@ $(document).on('submit', '#edit-watchlist', function (e) {
 });
 
 $(document).on('click', '#livemoneytogglediv', e => {
-  alert('Live money trading is not yet supported on this website. Waiting for Alpaca\'s approval.');
+  alert(
+    "Live money trading is not yet supported on this website. Waiting for Alpaca's approval."
+  );
   e.preventDefault();
 });
 
@@ -614,8 +616,13 @@ $(document).on('submit', '#create-schedule', function (e) {
   formData.forEach(e => {
     o[e.name] = e.value;
   });
-  o.apikey = o.apikey && o.apikey.trim() === '' ? undefined : o.apikey.trim();
-  o.apisecret = o.apikey && o.apisecret.trim() === '' ? undefined : o.apisecret.trim();
+  if (o.apikey) {
+    o.apikey = o.apikey.trim() === '' ? undefined : o.apikey.trim();
+  }
+  if (o.apisecret) {
+    o.apisecret = o.apisecret.trim() === '' ? undefined : o.apisecret.trim();
+  }
+
   var td = {};
   td.symbols = o.tickers.split(',').map(t => t.trim());
   td.lookBackDays = parseInt(o.lookBackDays);
@@ -639,7 +646,7 @@ $(document).on('submit', '#create-schedule', function (e) {
     header.Authorization = `Bearer ${o.accesstoken}`;
   }
 
-  let apiUrl = o.tbotxUrl
+  let apiUrl = o.tbotxUrl;
   o.accesstoken = undefined;
   o.apikey = undefined;
   o.apisecret = undefined;
