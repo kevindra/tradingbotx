@@ -19,37 +19,37 @@ Let's see how it goes! It's only the start.
 
 # Roadmap
 
-- [x] Rewrite the project in typescript
-- [x] OAuth Support (https://alpaca.markets/docs/build-apps_services-with-alpaca/oauth-guide/)
-- [x] Trade with watchlists
-- [x] Watchlist
-- [x] SSL
-- [x] Transaction Type in the Trade Table
-- [x] Premium API support
-- [x] Skip orders that are not tradable fractionally
-- [x] Responsive Trade table for mobile
-- [x] Fix list selector styling on the trading page
-- [x] Support for live account (https://alpaca.markets/docs/api-documentation/api-v2/#paper-trading)
-- [x] Error handling layer for both sync & async
-- [x] Timezone fix (changed to EST)
-- [x] Intraday price support for stocks (confidence is now realtime)
-- [x] Generic Algo Execution interfaces
-- [x] Multiple Algo Support - Buy & Sell basic
-- [x] README documentation for open sources, code clean up etc.
-- [x] Basic Backtest feature - allows you to look up algorithm's output b/w any timeframe
-- [x] Dark Mode Toggle 😍 
-- [x] Fix algo selection based on query params on Quick Analysis page
-- [x] Algorithms page to describe what each algorithm does
-- [x] Account's page
-- [x] Account's positions page
-- [x] List Orders page
-- [ ] Cloud based trade schedule
-- [ ] API key/secret input for trade schedule
+- [x] 🧹 Rewrite the project in typescript
+- [x] 🆕 ✨ OAuth Support (https://alpaca.markets/docs/build-apps_services-with-alpaca/oauth-guide/)
+- [x] 🆕 ✨ Trade with watchlists
+- [x] 🆕 ✨ Watchlist
+- [x] 🆕 ✨ SSL
+- [x] 🧹 Transaction Type in the Trade Table
+- [x] 🆕 ✨ Premium API support
+- [x] 🧹 Skip orders that are not tradable fractionally
+- [x] 🆕 ✨ Responsive Trade table for mobile
+- [x] 🧹 Fix list selector styling on the trading page
+- [x] 🆕 ✨ Support for live account (https://alpaca.markets/docs/api-documentation/api-v2/#paper-trading) - not exposed to public yet
+- [x] 🧹 Error handling layer for both sync & async
+- [x] 🐛 Timezone fix (changed to EST)
+- [x] 🆕 ✨ Intraday price support for stocks (confidence is now realtime)
+- [x] 🧹 Generic Algo Execution interfaces
+- [x] 🆕 ✨ Multiple Algo Support - Buy & Sell basic
+- [x] 🧹 README documentation for open sources, code clean up etc.
+- [x] 🆕 ✨ Basic Backtest feature - allows you to look up algorithm's output b/w any timeframe
+- [x] 🆕 ✨ Dark Mode Toggle 😍 
+- [x] 🐛 Fix algo selection based on query params on Quick Analysis page
+- [x] 🆕 ✨ Algorithms page to describe what each algorithm does
+- [x] 🆕 ✨ Account's page
+- [x] 🆕 ✨ Account's positions page
+- [x] 🆕 ✨ List Orders page
+- [x] 🆕 ✨ Cloud based trade schedule
+- [ ] 🚧 API key/secret input for trade schedule
 - [ ] Advanced Backtest feature - allows you to simulate the trading using multiple algorithms on a list of stocks
+- [ ] Strong Validations (https://wanago.io/2018/12/17/typescript-express-error-handling-validation/)
 - [ ] Generic algorithm parameters support
 - [ ] Expose a mechanism to configure algorithms from the interface
-- [ ] Strong Validations (https://wanago.io/2018/12/17/typescript-express-error-handling-validation/)
-- [ ] Expose API based live money trading for people who are look to live trade (since OAuth isn't available for live trading yet)
+- [ ] Expose API based live money trading for people who are looking to live trade (since OAuth isn't available for live trading yet)
 - [ ] Live money trading approval by Alpaca
 - [ ] Delete watchlist support
 - [ ] Watchlist detail page
