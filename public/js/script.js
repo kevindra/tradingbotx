@@ -614,8 +614,8 @@ $(document).on('submit', '#create-schedule', function (e) {
   formData.forEach(e => {
     o[e.name] = e.value;
   });
-  o.apikey = o.apikey.trim() === '' ? undefined : o.apikey.trim();
-  o.apisecret = o.apisecret.trim() === '' ? undefined : o.apisecret.trim();
+  o.apikey = o.apikey && o.apikey.trim() === '' ? undefined : o.apikey.trim();
+  o.apisecret = o.apikey && o.apisecret.trim() === '' ? undefined : o.apisecret.trim();
   var td = {};
   td.symbols = o.tickers.split(',').map(t => t.trim());
   td.lookBackDays = parseInt(o.lookBackDays);
