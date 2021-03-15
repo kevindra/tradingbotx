@@ -1,0 +1,249 @@
+html(lang="en")
+    head
+        include head.pug
+    body
+        - var automationPageActive = 'active'
+        include nav.pug 
+
+        div(class="container")
+            h3.display-6=message
+            if isAuth
+                if create   
+                    div.mb-5.mt-5 
+                        <form method="GET" action="/" id="create-schedule">
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickers" class="col-sm-2 col-form-label">Tickers:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    input.form-control(type='text' id='tickers' name='tickers' aria-describedby="tickerHelp" value=tickers)
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="tickerHelp" class="form-text">Must be comma-seperated ticker symbols.</span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickerType" class="col-sm-2 col-form-label">Schedule:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    input#horizon.form-control(type='text' name='cron' aria-describedby='horizonHelp' value="0/30 * * * ? *")
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="horizonHelp" class="form-text">Pick a schedule to run the algorithm periodically. Format is known as Cron. You can find a <a href='https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html'>cheat sheet here</a>. Example - Every week day at 6:45 AM - "45 6 ? * MON-FRI *". </span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickerType" class="col-sm-2 col-form-label">Choose an algorithm:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <select class="form-select" name="algoId">
+                                        each algoId, i in algoIds
+                                            if i == 0
+                                                <option value="#{algoId}" selected>#{algoNames[i]}</option>
+                                            else 
+                                                <option value="#{algoId}">#{algoNames[i]}</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="horizonHelp" class="form-text">Pick an algorithm.</span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickerType" class="col-sm-2 col-form-label">Lookback Days:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    input#horizon.form-control(type='text' name='lookBackDays' aria-describedby='horizonHelp' value=365)
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="horizonHelp" class="form-text">Algo results are relative to past price patterns within a given timeframe. This is number of days in the past you want to look into. Try something like 365-720 (1-2 years) to get better sample data of the price.</span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickerType" class="col-sm-2 col-form-label">Min $/trade/run:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    input#horizon.form-control(type='text' name='minTradeAmount' aria-describedby='horizonHelp' value=15)
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="horizonHelp" class="form-text">Minimum $ amount you want the job to trade per run.</span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickerType" class="col-sm-2 col-form-label">Max $/trade/run:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    input#horizon.form-control(type='text' name='maxTradeAmount' aria-describedby='horizonHelp' value=50)
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="horizonHelp" class="form-text">Maximum $ amount you want the job to trade per run.</span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickerType" class="col-sm-2 col-form-label">Min indicator value:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    input#horizon.form-control(type='text' name='minIndicatorValue' aria-describedby='horizonHelp' value=80)
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="horizonHelp" class="form-text">Minimum algorithm indicator value above which you want to trigger the trades. Default 80%.</span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                    <label for="tickerType" class="col-sm-2 col-form-label">Max indicator value:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    input#horizon.form-control(type='text' name='maxIndicatorValue' aria-describedby='horizonHelp' value=100)
+                                </div>
+                                <div class="col-sm-3">
+                                    <span id="horizonHelp" class="form-text">Maximum algorithm indicator value below which you want to trigger the trades. Default 100%.</span>
+                                </div>
+                            </div>
+
+                            if showApiKeyField
+                                <div class="row mb-3">
+                                    <div class="col-sm-2">
+                                        <label for="tickerType" class="col-sm-2 col-form-label">Live Account API Key:</label>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        input#horizon.form-control(type='text' name='apikey' aria-describedby='horizonHelp' value="")
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <span id="horizonHelp" class="form-text">For live money trading, API key is required. For paper trading, leave it blank.</span>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-2">
+                                        <label for="tickerType" class="col-sm-2 col-form-label">Live Account Secret Key:</label>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        input#horizon.form-control(type='text' name='apisecret' aria-describedby='horizonHelp' value="")
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <span id="horizonHelp" class="form-text">For live money trading, API secret is required. For paper trading, leave it blank.</span>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-sm-2">
+                                        <label for="tickerType" class="col-sm-2 col-form-label">Paper Money?</label>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        input#horizon.form-control(type='text' name='paper' aria-describedby='horizonHelp' value="true")
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <span id="horizonHelp" class="form-text">'true' for paper money, else 'false' for live money. </span>
+                                    </div>
+                                </div>
+                            else 
+                                <input type="hidden" name="paper" value=#{paper} />
+
+                            <div class="row mb-3">
+                                <div class="col-sm-2">
+                                </div>
+                                <div class="col-sm-4">
+                                    <button type="submit" class="btn btn-primary" id="create-schedule-button">
+                                    <span class="spinner-border spinner-border-sm" role="status" style='display:none' id='create-schedule-spinner'></span>
+                                    <span>Submit</span>
+                                    </button> 
+                                </div>
+                                <div class="col-sm-3">
+                                    <span class="form-text">Click Submit to submit this schedule.</label>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="brokerageType" value="Alpaca" />
+                            <input type="hidden" name="accesstoken" value=#{accesstoken} />
+                        </form>
+                //- if edit
+                //-     div.mb-5.mt-5 
+                //-         <form method="POST" action="/" id="edit-watchlist">
+                //-             <input type="hidden" name="id" value="#{id}"/>
+                //-             <div class="row mb-3">
+                //-                 <div class="col-sm-2">
+                //-                     <label for="tickerType" class="col-sm-2 col-form-label">Name:</label>
+                //-                 </div>
+                //-                 <div class="col-sm-4">
+                //-                     input#horizon.form-control(type='text' name='name' aria-describedby='horizonHelp' value=name)
+                //-                 </div>
+                //-                 <div class="col-sm-3">
+                //-                     <span id="horizonHelp" class="form-text">Name of the watchlist.</span>
+                //-                 </div>
+                //-             </div>
+
+                //-             <div class="row mb-3">
+                //-                 <div class="col-sm-2">
+                //-                     <label for="tickers" class="col-sm-2 col-form-label">Tickers:</label>
+                //-                 </div>
+                //-                 <div class="col-sm-4">
+                //-                     input.form-control(type='text' id='tickers' name='tickers' aria-describedby="tickerHelp" value=tickers)
+                //-                 </div>
+                //-                 <div class="col-sm-3">
+                //-                     <span id="tickerHelp" class="form-text">Must be comma-seperated ticker symbols.</span>
+                //-                 </div>
+                //-             </div>
+
+                //-             <div class="row mb-3">
+                //-                 <div class="col-sm-5">
+                //-                     <button type="submit" class="btn btn-primary" id="edit-watchlist-button">
+                //-                     <span class="spinner-border spinner-border-sm" role="status" style='display:none' id='edit-watchlist-spinner'></span>
+                //-                     <span>Submit</span>
+                //-                     </button> 
+                //-                 </div>
+                //-             </div>
+                //-         </form>
+
+                if list
+                    div.mb-5.mt-5 
+                        <div class="table table-striped table-hover table-sm table-responsive-sm mt-3">
+                            <div class="table-wrapper">
+                                <div class="table-title">
+                                    <div class="row">
+                                        <div class="col"><h2>Automated Trades</b></h2></div>
+                                        <div class="col">
+                                            <a href='/automation/create' type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Create new automated trades</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <table class="table table-striped table-hover table-sm table-responsive-sm mt-2">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Schedule</th>
+                                            <th>Paper Money?</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        each r in rules
+                                            tr
+                                                td=r.name 
+                                                td=r.schedule 
+                                                td=r.paper
+                                                td=r.state
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+            else
+                <div class="alert alert-danger" role="alert">
+                    <span>To access this page, you first need to <a href='/login'>login!</a></span>
+                </div>
+
+            include donation.pug
+            include disclaimer.pug
+            include footer.pug

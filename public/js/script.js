@@ -364,6 +364,28 @@ function editWatchlist(id, name, tickers, callback) {
   });
 }
 
+function createSchedule(o, header, callback) {
+  // https://API-ID.execute-api.REGION.amazonaws.com/STAGE
+  const api =
+    'https://ew90lp188a.execute-api.us-west-2.amazonaws.com/prod/tradeSchedules';
+  $.ajax({
+    url: api,
+    method: 'POST',
+    contentType: 'application/json',
+    dataType: 'json',
+    crossDomain: true,
+    data: JSON.stringify(o),
+    headers: header,
+    success: function (data) {
+      console.log('GOT: ' + JSON.stringify(data));
+      callback(data);
+    },
+    error: function (err) {
+      alert('Error occurred. ' + JSON.stringify(err, null, 2));
+    },
+  });
+}
+
 $(document).on('click', '#save', function () {
   var records = [];
   $('table tbody tr').each(function () {
@@ -580,6 +602,50 @@ $(document).on('submit', '#edit-watchlist', function (e) {
 });
 
 $(document).on('click', '#livemoneytogglediv', e => {
-  alert('Live money trading is not yet supported on this website.');
+  alert('Live money trading is not yet supported on this website. Waiting for Alpaca\'s approval.');
   e.preventDefault();
+});
+
+$(document).on('submit', '#create-schedule', function (e) {
+  e.preventDefault();
+  $('#create-schedule-spinner').show();
+  $('#create-schedule-button').attr('disabled', '');
+
+  var formData = $('#create-schedule').serializeArray();
+  var o = {};
+  formData.forEach(e => {
+    o[e.name] = e.value;
+  });
+  o.apikey = o.apikey.trim() === '' ? undefined : o.apikey.trim();
+  o.apisecret = o.apisecret.trim() === '' ? undefined : o.apisecret.trim();
+  var td = {};
+  td.symbols = o.tickers.split(',').map(t => t.trim());
+  td.lookBackDays = parseInt(o.lookBackDays);
+  td.minTradeAmount = parseInt(o.minTradeAmount);
+  td.maxTradeAmount = parseInt(o.maxTradeAmount);
+  td.minIndicatorValue = parseFloat(o.minIndicatorValue);
+  td.maxIndicatorValue = parseFloat(o.maxIndicatorValue);
+  td.algoId = o.algoId.trim();
+
+  var req = {};
+  req.cron = o.cron.trim();
+  req.paper = o.paper === 'true';
+  req.brokerageType = o.brokerageType;
+  req.tradeDetails = td;
+
+  var header = {};
+
+  if (o.apikey) {
+    (header.apikey = o.apikey), (header.apisecret = o.apisecret);
+  } else {
+    header.Authorization = `Bearer ${o.accesstoken}`;
+  }
+
+  o.accesstoken = undefined;
+  o.apikey = undefined;
+  o.apisecret = undefined;
+
+  createSchedule(req, header, function (data) {
+    window.location.replace('/automation?id=' + data.ruleArn);
+  });
 });

@@ -4,6 +4,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import {rootRouter} from './web/root';
+import {automationRouter} from './web/automation';
 import {watchlistsRouter} from './web/watchlists';
 import {portfolioRouter} from './web/portfolio';
 import {tradingbotRouter} from './web/tradingbot';
@@ -41,6 +42,7 @@ app.use(googleAnalyticsMiddleware);
 
 app.use('/', rootRouter);
 app.use('/watchlists', watchlistsRouter);
+app.use('/automation', automationRouter);
 app.use('/portfolio', portfolioRouter);
 app.use('/tradingbot', tradingbotRouter);
 app.use('/account', accountRouter);
