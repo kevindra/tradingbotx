@@ -7,7 +7,7 @@ export interface Opportunity {
   symbol: string;
   indicatorValues: number[];
   // sellConfidence: number;
-  price: number;
+  price?: number;
   type: OpportunityType;
 }
 
@@ -48,30 +48,51 @@ export class OpportunitiesFinder {
               [algo]
             )
         );
-        return <Opportunity>{
-          symbol: symbol,
-          indicatorValues: [
-            conf.timestamps[conf.timestamps.length - 1].algoOutputs[0][
-              indicatorIndex
+
+        if (conf.timestamps && conf.timestamps.length > 0) {
+          return <Opportunity>{
+            symbol: symbol,
+            indicatorValues: [
+              conf.timestamps[conf.timestamps.length - 1].algoOutputs[0][
+                indicatorIndex
+              ],
             ],
-          ],
-          price: conf.timestamps[conf.timestamps.length - 1].price,
-          type: algo.actionType(),
-        };
+            price: conf.timestamps[conf.timestamps.length - 1].price,
+            type: algo.actionType(),
+          };
+        } else {
+          return <Opportunity>{
+            symbol: symbol,
+            indicatorValues: [],
+            type: algo.actionType(),
+          };
+        }
       })
     );
 
     const filteredOpportunities: Opportunity[] = allOpportunities
-      .filter(o => o.indicatorValues[0] >= minIndicatorValue)
-      .filter(o => o.indicatorValues[0] <= maxIndicatorValue)
+      .filter(
+        o =>
+          o.indicatorValues.length > 0 &&
+          o.indicatorValues[0] >= minIndicatorValue
+      )
+      .filter(
+        o =>
+          o.indicatorValues.length > 0 &&
+          o.indicatorValues[0] <= maxIndicatorValue
+      )
       .sort((a, b) =>
+        a.indicatorValues.length > 0 &&
+        b.indicatorValues.length > 0 &&
         a.indicatorValues[0] < b.indicatorValues[0]
           ? 1
           : a.indicatorValues[0] > b.indicatorValues[0]
           ? -1
           : 0
       );
-
+    console.log(
+      `Filtered opportunities ${JSON.stringify(filteredOpportunities, null, 2)}`
+    );
     return <Opportunities>{
       opportunities: filteredOpportunities,
     };

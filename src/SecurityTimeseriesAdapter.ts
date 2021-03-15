@@ -63,7 +63,7 @@ export class SecurityTimeseriesAdapter {
 
     console.log('StartDate : ' + startDate + ', endDate: ' + endDateStr);
     const startIndex = dates.findIndex(e => e >= startDate);
-    const endIndex = dates.findIndex(e => e > endDateStr);
+    const endIndex = dates.findIndex(e => e >= endDateStr);
     if (startIndex === -1) {
       throw new Error('No data found in this date range.');
     }
