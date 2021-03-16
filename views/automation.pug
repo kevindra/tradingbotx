@@ -31,7 +31,7 @@ html(lang="en")
                                     input#horizon.form-control(type='text' name='cron' aria-describedby='horizonHelp' value="45 6 ? * MON-FRI *")
                                 </div>
                                 <div class="col-sm-3">
-                                    <span id="horizonHelp" class="form-text">Pick a schedule to run the algorithm periodically. Format is known as Cron. You can find a <a href='https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html'>cheat sheet here</a>. Example - Every week day at 6:45 AM - "45 6 ? * MON-FRI *". </span>
+                                    <span id="horizonHelp" class="form-text">Pick a schedule in UTC timezone to run the algorithm periodically. Format is known as Cron. You can find a <a href='https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html'>cheat sheet here</a>. Example - Every week day at 13:45 UTC (6:45 AM PST) - "45 13 ? * MON-FRI *". </span>
                                 </div>
                             </div>
 
