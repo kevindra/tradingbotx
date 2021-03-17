@@ -1,6 +1,10 @@
 export const NAV_TITLE = 'TradingBotX';
 export const SECONDARY_TITLE = 'Autonomous Algo based analysis & trading';
 export const GA_TRACKING_ID = 'UA-190564097-1';
-export const MIN_BUY_CONFIDENCE_THRESHOLD = 40;
-export const MAX_BUY_CONFIDENCE_THRESHOLD = 40;
+export const MIN_INDICATOR_VALUE_DEFAULT = 80;
+export const MAX_INDICATOR_VALUE_DEFAULT = 100;
+export const MIN_TRADE_AMOUNT_DEFAULT = 15;
+export const MAX_TRADE_AMOUNT_DEFAULT = 30;
+export const LOOK_BACK_DAYS_DEFAULT = 365;
 export const DATE_FORMAT = 'YYYY-MM-DD';
+export const EST_TIMEZONE = 'America/Toronto';

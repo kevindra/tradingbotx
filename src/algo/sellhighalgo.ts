@@ -30,6 +30,7 @@ export class SellHighAlgo implements Algo {
     const b = new BuyLowAlgo();
     const output = await b.run(algoInput);
     output.indicators[0] = output.indicators[0].map(i => 100 - i);
+    output.indicators[1] = output.indicators[1].map(i => 100 - i);
     return output;
   }
 

@@ -1,6 +1,7 @@
 import request from 'request';
 import queryString from 'query-string';
 import moment from 'moment-timezone';
+import {CACHE} from '../app';
 export interface GetData {
   symbol: string;
   apikey: string;
@@ -68,20 +69,37 @@ export class AlphaVantageClient {
       url: url,
     };
 
-    let data: AVGetDataResult = await new Promise((resolve, reject) => {
-      request(opt, (err, res, body) => {
-        if (err) {
-          reject(JSON.parse(body));
-        } else {
-          resolve(JSON.parse(body));
-        }
+    const cacheKey = `${symbol}-${getDataQuery.function}-${getDataQuery.outputsize}`;
+    const cacheEntry = CACHE.get(cacheKey);
+
+    let data: AVGetDataResult;
+    if (cacheEntry !== undefined) {
+      data = cacheEntry as AVGetDataResult;
+      console.log(`Cache hit for ${cacheKey}`);
+    } else {
+      console.log(`Cache miss for ${cacheKey}`);
+      data = await new Promise((resolve, reject) => {
+        request(opt, (err, res, body) => {
+          if (err) {
+            reject(JSON.parse(body));
+          } else {
+            let response = JSON.parse(body);
+            CACHE.set(cacheKey, response);
+            console.log(`Updated the cache for ${cacheKey}`);
+            resolve(response);
+          }
+        });
       });
-    });
+    }
 
-    var today = moment(new Date()).tz('America/Toronto')
+    var today = moment(new Date()).tz('America/Toronto');
 
-    // if today is not weekend, get the latest price as well to get real time confidence values
-    if (!(today.day() == 6 || today.day() == 7)) {
+    // if today is not weekend or market close hours,
+    // get the latest price as well to get real time confidence values
+    if (
+      !(today.day() == 6 || today.day() == 7) &&
+      (today.hour() >= 9 || today.hour() < 4)
+    ) {
       let quote = (await this.getQuote(symbol))['Global Quote'];
       let todayStr = today.format('YYYY-MM-DD');
       data['Time Series (Daily)'][todayStr] = {

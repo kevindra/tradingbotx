@@ -56,12 +56,20 @@ export class SecurityTimeseriesAdapter {
     let dates: string[] = Object.keys(rawData);
 
     const endDateStr = endDate.format('YYYY-MM-DD');
-    let startDate = getMomentInEST(endDate)
+    let startDate = getMomentInEST(endDate.clone())
       .subtract(lookBackDays, 'day')
       .format(DATE_FORMAT);
     dates = dates.sort();
 
-    console.log('StartDate : ' + startDate + ', endDate: ' + endDateStr);
+    console.log(
+      'StartDate : ' +
+        startDate +
+        ', endDate: ' +
+        endDateStr +
+        ', lookback: ' +
+        lookBackDays
+    );
+
     const startIndex = dates.findIndex(e => e >= startDate);
     const endIndex = dates.findIndex(e => e >= endDateStr);
     if (startIndex === -1) {

@@ -129,17 +129,22 @@ accountRouter.get('/', async (req, res, next) => {
   });
 });
 
-function formatAndColor(num: number, type: 'dollar' | 'pct') {
+export function formatAndColor(num: number, type: 'dollar' | 'pct') {
   return num < 0
     ? `<span class='text-danger'>${format(num, type)}</span>`
     : `<span class='text-success'>${format(num, type)}</span>`;
 }
 
-function format(num: number, type: 'dollar' | 'pct') {
+export function format(
+  num: number,
+  type: 'dollar' | 'pct',
+  withSign: boolean = true
+) {
+  const sign = withSign ? '+' : '';
   if (type === 'dollar') {
-    return num > 0 ? `+$${num.toFixed(2)}` : `$${num.toFixed(2)}`;
+    return num > 0 ? `${sign}$${num.toFixed(2)}` : `$${num.toFixed(2)}`;
   } else {
-    return num > 0 ? `+${num.toFixed(2)}%` : `${num.toFixed(2)}%`;
+    return num > 0 ? `${sign}${num.toFixed(2)}%` : `${num.toFixed(2)}%`;
   }
 }
 export {accountRouter};

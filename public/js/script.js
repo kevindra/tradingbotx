@@ -113,7 +113,7 @@ function printAlgoResult(algoResult, algoIndex) {
     ' Algo: ' +
     algoResult.timestamps[algoResult.timestamps.length - 1].algoOutputs[
       algoIndex
-    ][0].toFixed(2) +
+    ][1].toFixed(2) +
     '% ' +
     algoResult.types[algoIndex] +
     ' @ $' +
@@ -186,7 +186,7 @@ function plotChart(data, ticker = '') {
     series.push({
       yAxis: i + 1,
       name: an + ' - ' + data.types[i] + '% (' + ticker + ')',
-      data: data.timestamps.map(d => [d.timestamp, d.algoOutputs[i][0]]),
+      data: data.timestamps.map(d => [d.timestamp, d.algoOutputs[i][1]]),
     });
   });
 
@@ -654,4 +654,10 @@ $(document).on('submit', '#create-schedule', function (e) {
   createSchedule(req, header, apiUrl, function (data) {
     window.location.replace('/automation?id=' + data.ruleArn);
   });
+});
+
+$(document).on('submit', '#run-backtest', function (e) {
+  // e.preventDefault();
+  $('#run-backtest-spinner').show();
+  $('#run-backtest-button').attr('disabled', '');
 });

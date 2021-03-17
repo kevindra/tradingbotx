@@ -14,6 +14,7 @@ export interface Event {
   normalizedAvgDropPerInterval?: number;
   maxAvgDropPerInterval?: number;
   maxDropIntensity?: number;
+  historicalNormalizeDropIntensity?: number;
 }
 
 /*
@@ -45,6 +46,7 @@ export class BuyLowAlgo implements Algo {
       maxDropIntensity: 0,
       normalizedAvgDropPerInterval: 0,
       normalizedDropIntensity: 0,
+      historicalNormalizeDropIntensity: 0,
     });
 
     while (n < algoInput.prices.length) {
@@ -76,6 +78,8 @@ export class BuyLowAlgo implements Algo {
       maxDropIntensity = Math.max(e.dropIntensity, maxDropIntensity);
       e.maxAvgDropPerInterval = maxAvgDropPerInterval;
       e.maxDropIntensity = maxDropIntensity;
+      e.historicalNormalizeDropIntensity =
+        100 * (e.dropIntensity / maxDropIntensity);
 
       events.push(e);
       n++;
@@ -97,7 +101,10 @@ export class BuyLowAlgo implements Algo {
     }
 
     return {
-      indicators: [events.map(e => e.normalizedDropIntensity || 0)],
+      indicators: [
+        events.map(e => e.normalizedDropIntensity || 0), // given end date values
+        events.map(e => e.historicalNormalizeDropIntensity || 0), // historical values
+      ],
     };
   }
 

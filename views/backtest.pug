@@ -1,0 +1,204 @@
+html(lang="en")
+    head
+        include head.pug
+    body
+        - var backtestPageActive = 'active'
+        include nav.pug 
+
+        div(class="container")
+            h3.display-6=message
+            div.mb-5
+                span=secondaryMessage
+
+            <form method="GET" action="/backtest" id="run-backtest">
+              <div class="row mb-3">
+                  <div class="col-sm-2">
+                      <label for="tickers" class="col-sm-2 col-form-label">Tickers:</label>
+                  </div>
+                  <div class="col-sm-4">
+                      input.form-control(type='text' id='tickers' name='tickers' aria-describedby="tickerHelp" value=tickers)
+                  </div>
+                  <div class="col-sm-3">
+                      <span id="tickerHelp" class="form-text">Must be comma-seperated ticker symbols.</span>
+                  </div>
+              </div>
+
+              <div class="row mb-3">
+                  <div class="col-sm-2">
+                      <label for="tickerType" class="col-sm-2 col-form-label">Choose Algorithm(s):</label>
+                  </div>
+                  <div class="col-sm-4">
+                      <select class="form-select" multiple name="algoIds">
+                          each algoId, i in algoIds
+                              if i == 0
+                                  <option value="#{algoId}" selected>#{algoNames[i]}</option>
+                              else 
+                                  <option value="#{algoId}" selected>#{algoNames[i]}</option>
+                      </select>
+                  </div>
+                  <div class="col-sm-3">
+                      <span id="horizonHelp" class="form-text">Pick one or more algorithms. To measure success you should select algorithms for both sides i.e. buy as well as sell.</span>
+                  </div>
+              </div>
+
+              <div class="row mb-3">
+                  <div class="col-sm-2">
+                      <label for="tickerType" class="col-sm-2 col-form-label">Lookback Days:</label>
+                  </div>
+                  <div class="col-sm-4">
+                      input#horizon.form-control(type='text' name='horizon' aria-describedby='horizonHelp' value=horizon)
+                  </div>
+                  <div class="col-sm-3">
+                      <span id="horizonHelp" class="form-text">Algo results are relative to past price patterns within a given timeframe. This is number of days in the past you want to look into. Try something like 365-720 (1-2 years) to get better sample data of the price.</span>
+                  </div>
+              </div>
+
+              <div class="row mb-3">
+                  <div class="col-sm-2">
+                      <label for="tickerType" class="col-sm-2 col-form-label">Training Coefficient:</label>
+                  </div>
+                  <div class="col-sm-4">
+                      input#horizon.form-control(type='text' name='trainingCoeff' aria-describedby='horizonHelp' value=trainingCoeff)
+                  </div>
+                  <div class="col-sm-3">
+                      <span id="horizonHelp" class="form-text">Backtest needs to know how many initial days out of the lookback days are used for training purpose and not investing. By default this is kept as 0.3 or 30%, meaning initial 30% number of days will be used to learn the price pattern.</span>
+                  </div>
+              </div>
+
+              <div class="row mb-3">
+                  <div class="col-sm-2">
+                      <label for="tickerType" class="col-sm-2 col-form-label">Min $/trade/run:</label>
+                  </div>
+                  <div class="col-sm-4">
+                      input#horizon.form-control(type='text' name='minTradeAmount' aria-describedby='horizonHelp' value=minTradeAmount)
+                  </div>
+                  <div class="col-sm-3">
+                      <span id="horizonHelp" class="form-text">Minimum $ amount you want the job to trade per run.</span>
+                  </div>
+              </div>
+
+              <div class="row mb-3">
+                  <div class="col-sm-2">
+                      <label for="tickerType" class="col-sm-2 col-form-label">Max $/trade/run:</label>
+                  </div>
+                  <div class="col-sm-4">
+                      input#horizon.form-control(type='text' name='maxTradeAmount' aria-describedby='horizonHelp' value=maxTradeAmount)
+                  </div>
+                  <div class="col-sm-3">
+                      <span id="horizonHelp" class="form-text">Maximum $ amount you want the job to trade per run.</span>
+                  </div>
+              </div>
+
+              <div class="row mb-3">
+                  <div class="col-sm-2">
+                      <label for="tickerType" class="col-sm-2 col-form-label">Min indicator value:</label>
+                  </div>
+                  <div class="col-sm-4">
+                      input#horizon.form-control(type='text' name='minIndicatorValue' aria-describedby='horizonHelp' value=minIndicatorValue)
+                  </div>
+                  <div class="col-sm-3">
+                      <span id="horizonHelp" class="form-text">Minimum algorithm indicator value above which you want to trigger the trades. Default 80%.</span>
+                  </div>
+              </div>
+
+              <div class="row mb-3">
+                  <div class="col-sm-2">
+                      <label for="tickerType" class="col-sm-2 col-form-label">Max indicator value:</label>
+                  </div>
+                  <div class="col-sm-4">
+                      input#horizon.form-control(type='text' name='maxIndicatorValue' aria-describedby='horizonHelp' value=maxIndicatorValue)
+                  </div>
+                  <div class="col-sm-3">
+                      <span id="horizonHelp" class="form-text">Maximum algorithm indicator value below which you want to trigger the trades. Default 100%.</span>
+                  </div>
+              </div>
+
+              <div class="row mb-3">
+                  <div class="col-sm-2">
+                  </div>
+                  <div class="col-sm-4">
+                      <button type="submit" class="btn btn-primary" id="run-backtest-button">
+                      <span class="spinner-border spinner-border-sm" role="status" style='display:none' id='run-backtest-spinner'></span>
+                      <span>Run Backtest</span>
+                      </button> 
+                  </div>
+                  <div class="col-sm-3">
+                      <span class="form-text">Click to run the back test. The time will depend on the number of symbols you enter.</label>
+                  </div>
+              </div>
+            </form>
+
+            if results
+                h4.display-6='Overview'
+                <table class="table table-striped table-hover table-sm table-responsive-sm mt-3 small" >
+                    <thead>
+                        <tr>
+                            <th>Current Total Cost</th>
+                            <th>Total Realized Profit/Loss</th>
+                            <th>Total Realized Profit/Loss %</th>
+                            <th>Peak Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        td=results.portfolio.totalCost
+                        td !{results.portfolio.totalProfitLoss}
+                        td !{results.portfolio.totalProfitLossPct}
+                        td=results.portfolio.peakCost
+                    </tbody>
+                </table>
+
+                h4.display-6='Positions'
+                <table class="table table-striped table-hover table-sm table-responsive-sm mt-3 small" >
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Qty</th>
+                            <th>Avg Cost</th>
+                            <th>Total Cost</th>
+                            <th>Total P/L(%)</th>
+                            <th>Total P/L($)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        each position in results.positions
+                            tr
+                                td=position.symbol
+                                td=position.qty
+                                td=position.avgCost
+                                td=position.totalCost
+                                td !{position.profitLoss}
+                                td !{position.profitLossPct}
+                    </tbody>
+                </table>
+
+                h4.display-6='Trades Executed'
+                <table class="table table-striped table-hover table-sm table-responsive-sm mt-3 small" >
+                    <thead>
+                        <tr>
+                            <th>Day Number</th>
+                            <th>Symbol</th>
+                            <th>Qty</th>
+                            <th>Timestamp (EST)</th>
+                            <th>Side</th>
+                            <th>Price</th>
+                            <th>Trade P/L ($)</th>
+                            <th>Algo Indicator Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        each trade in results.trades
+                            tr
+                                td=trade.dayNum
+                                td=trade.symbol
+                                td=trade.qty
+                                td=trade.timestampEstStr
+                                td=trade.type
+                                td=trade.price
+                                td !{trade.profitLoss}
+                                td=trade.algoIndicatorValue
+                    </tbody>
+                </table>
+            include donation.pug
+            include disclaimer.pug 
+
+    include footer.pug

@@ -15,15 +15,19 @@ import {apisRouter} from './apis/apis';
 import {termsPrivacyRouter} from './web/terms-privacy';
 import {errorMiddleware} from './error.middleware';
 import {accountRouter} from './web/account';
+import {backtestRouter} from './web/backtest';
 import {loggerMiddleware} from './middlewares/logger.middleware';
 import {authMiddleware} from './middlewares/auth.middleware';
 import {httpsMiddleware} from './middlewares/https.middleware';
 import {devEnvironmentMiddleware} from './middlewares/devenv.middleware';
 import {googleAnalyticsMiddleware} from './middlewares/ga.middleware';
+import NodeCache from 'node-cache';
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
+
+export const CACHE = new NodeCache({stdTTL: 200});
 
 app.use(httpsMiddleware);
 app.use(
@@ -46,6 +50,7 @@ app.use('/automation', automationRouter);
 app.use('/portfolio', portfolioRouter);
 app.use('/tradingbot', tradingbotRouter);
 app.use('/account', accountRouter);
+app.use('/backtest', backtestRouter);
 app.use('/algorepo', algoRepoRouter);
 app.use('/login', loginRouter);
 app.use('/oauth', oauthRouter);

@@ -13,6 +13,8 @@ authMiddleware.use(async (req, res, next) => {
       '/',
       '/portfolio',
       '/login',
+      '/backtest',
+      '/api/backtest',
     ];
 
     let sess: any = req.session;

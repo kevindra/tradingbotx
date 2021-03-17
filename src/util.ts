@@ -14,7 +14,7 @@ export const withTryCatchNext = async (
   try {
     await func(req, res, next);
   } catch (err) {
-    console.log(`Error occurred: ${err} ${err.stack}`)
+    console.log(`Error occurred: ${err} ${err.stack}`);
     next(err);
   }
 };
@@ -51,4 +51,19 @@ export const getDateTimeInEST = (datetime: string, format: string) => {
 
 export const getMomentInEST = (moment: Moment) => {
   return moment.tz('America/Toronto');
+};
+
+// old = indicator value (original range of x)
+// new = tradeAmount (new range of x)
+// normalizes a number from old range to a new range (for ex - from indicator value range to trade amount range)
+export const normalize = (
+  x: number,
+  oldMin: number,
+  oldMax: number,
+  newMin: number,
+  newMax: number
+) => {
+  let weightedX =
+    newMin + ((x - oldMin) * (newMax - newMin)) / (oldMax - oldMin);
+  return Math.floor(weightedX);
 };
