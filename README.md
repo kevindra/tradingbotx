@@ -1,5 +1,7 @@
 # TradingBot Typescript 
 
+[![Join the chat at https://gitter.im/tradingbotx/community](https://badges.gitter.im/tradingbotx/community.svg)](https://gitter.im/tradingbotx/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This is an autonomous trading bot in Typescript with web access! It allows users to run algorithms and create and deploy new algorithms very quickly and easily. It allows paper trading as well as live trading (live pending approval).
 
 It is just the beginning but my vision for this repo is as follows:
