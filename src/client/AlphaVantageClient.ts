@@ -98,7 +98,7 @@ export class AlphaVantageClient {
     // get the latest price as well to get real time confidence values
     if (
       !(today.day() == 6 || today.day() == 7) &&
-      (today.hour() >= 9 || today.hour() < 4)
+      (today.hour() >= 9 && today.hour() < 16)
     ) {
       let quote = (await this.getQuote(symbol))['Global Quote'];
       let todayStr = today.format('YYYY-MM-DD');
