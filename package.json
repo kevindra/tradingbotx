@@ -51,6 +51,7 @@
     "cron-picker": "^1.0.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-ipfilter": "^1.1.2",
     "express-session": "^1.17.1",
     "markdown-it": "^12.0.4",
     "moment": "^2.29.1",

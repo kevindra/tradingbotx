@@ -22,6 +22,7 @@ import {httpsMiddleware} from './middlewares/https.middleware';
 import {devEnvironmentMiddleware} from './middlewares/devenv.middleware';
 import {googleAnalyticsMiddleware} from './middlewares/ga.middleware';
 import NodeCache from 'node-cache';
+import ipfilter from 'express-ipfilter';
 
 dotenv.config();
 const app = express();
@@ -38,6 +39,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
+if (process.env.ENV === 'staging') {
+  app.use(
+    ipfilter.IpFilter(['204.246.162.34', '73.181.231.92', '::1'], {mode: 'allow'})
+  );
+}
 
 app.use(loggerMiddleware);
 app.use(authMiddleware);
