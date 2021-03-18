@@ -134,13 +134,19 @@ html(lang="en")
                     <thead>
                         <tr>
                             <th>Current Total Cost</th>
-                            <th>Total Realized Profit/Loss</th>
-                            <th>Total Realized Profit/Loss %</th>
+                            <th>Current Value</th>
+                            <th>Total Unrealized P/L ($)</th>
+                            <th>Total Unrealized P/L (%)</th>
+                            <th>Total Realized P/L ($)</th>
+                            <th>Total Realized P/L (%)</th>
                             <th>Peak Cost</th>
                         </tr>
                     </thead>
                     <tbody>
                         td=results.portfolio.totalCost
+                        td !{results.portfolio.currentValue}
+                        td !{results.portfolio.totalUnrealizedProfitLoss}
+                        td !{results.portfolio.totalUnrealizedProfitLossPct}
                         td !{results.portfolio.totalProfitLoss}
                         td !{results.portfolio.totalProfitLossPct}
                         td=results.portfolio.peakCost
@@ -155,8 +161,12 @@ html(lang="en")
                             <th>Qty</th>
                             <th>Avg Cost</th>
                             <th>Total Cost</th>
-                            <th>Total P/L($)</th>
-                            <th>Total P/L(%)</th>
+                            <th>Current Price</th>
+                            <th>Current Value</th>
+                            <th>Unrealized P/L($)</th>
+                            <th>Unrealized P/L(%)</th>
+                            <th>Realized P/L($)</th>
+                            <th>Realized P/L(%)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -166,6 +176,10 @@ html(lang="en")
                                 td=position.qty
                                 td=position.avgCost
                                 td=position.totalCost
+                                td !{position.currentPrice}
+                                td !{position.currentValue}
+                                td !{position.unrealizedProfitLoss}
+                                td !{position.unrealizedProfitLossPct}
                                 td !{position.profitLoss}
                                 td !{position.profitLossPct}
                     </tbody>

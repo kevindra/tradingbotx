@@ -84,6 +84,9 @@ backtestRouter.get('/', async (req, res, next) => {
         r.portfolio.totalProfitLossPct * 100 || 0,
         'pct'
       ),
+      totalUnrealizedProfitLoss: 0,
+      totalUnrealizedProfitLossPct: 0,
+      currentValue: 0,
     };
     formattedResults.portfolio = portfolio;
 
@@ -91,6 +94,11 @@ backtestRouter.get('/', async (req, res, next) => {
 
     Object.keys(r.positions || {}).forEach(i => {
       let p = (r.positions || {})[i];
+      const unrealizedProfitLoss = (p.currentPrice - p.avgCost) * p.qty;
+      const unrealizedProfitLossPct =
+        (100 * unrealizedProfitLoss) / p.totalCost;
+      const currentValue = p.qty * p.currentPrice;
+
       pos.push({
         symbol: i,
         qty: p.qty.toFixed(2),
@@ -101,8 +109,28 @@ backtestRouter.get('/', async (req, res, next) => {
           (100 * p.profitLoss) / p.totalCost,
           'pct'
         ),
+        currentPrice: format(p.currentPrice, 'dollar', false),
+        currentValue: format(currentValue, 'dollar', false),
+        unrealizedProfitLoss: formatAndColor(unrealizedProfitLoss, 'dollar'),
+        unrealizedProfitLossPct: formatAndColor(unrealizedProfitLossPct, 'pct'),
       });
+      portfolio.totalUnrealizedProfitLoss += unrealizedProfitLoss;
+      portfolio.currentValue += currentValue;
     });
+
+    portfolio.totalUnrealizedProfitLossPct =
+      (100 * portfolio.totalUnrealizedProfitLoss) / r.portfolio.totalCost;
+
+    portfolio.totalUnrealizedProfitLoss = formatAndColor(
+      portfolio.totalUnrealizedProfitLoss,
+      'dollar'
+    );
+    portfolio.totalUnrealizedProfitLossPct = formatAndColor(
+      portfolio.totalUnrealizedProfitLossPct,
+      'pct'
+    );
+    portfolio.currentValue = format(portfolio.currentValue, 'dollar', false);
+
     formattedResults.positions = pos;
 
     let trades: any[] = r.trades.map(t => {

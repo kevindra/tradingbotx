@@ -14,6 +14,7 @@ import {
   Opportunity,
   OpportunityType,
 } from '../OpportunitiesFinder';
+import {SecurityTimeseriesManager} from '../SecurityTimeseriesManager';
 import {getAlgosFromRequest, normalize, withTryCatchNext} from '../util';
 
 const backtestApiRouter = express.Router();
@@ -38,6 +39,7 @@ export interface Position {
   // dailyProfitLoss: number; // can't do it for now
   profitLoss: number;
   totalCost: number;
+  currentPrice: number;
 }
 
 export interface Trade {
@@ -165,6 +167,21 @@ backtestApiRouter.get('/', async (req, res, next) => {
     // console.log(`Total opportunities found: ${flattenOpportunities.length}`);
     // console.log(`Opps: ${JSON.stringify(flattenOpportunities)}`);
 
+    const currentPrice: {[key: string]: number} = {};
+    const tmManager = new SecurityTimeseriesManager();
+    await Promise.all(
+      tickers.map(async t => {
+        const series = await tmManager.getStockTimeseries(
+          t,
+          horizon,
+          endDate.clone()
+        );
+        if (series && series.prices && series.prices.length > 0) {
+          currentPrice[t] = series.prices[series.prices.length - 1].price;
+        }
+      })
+    );
+
     flattenOpportunities.forEach((o, index) => {
       const indicatorValue = o.indicatorValues[0]; // historical
       const s = o.symbol;
@@ -203,6 +220,7 @@ backtestApiRouter.get('/', async (req, res, next) => {
             profitLoss: 0,
             qty: 0,
             totalCost: 0,
+            currentPrice: currentPrice[s],
           };
         }
 
