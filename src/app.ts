@@ -40,11 +40,11 @@ app.set('view engine', 'pug');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-if (process.env.ENV === 'staging') {
-  app.use(
-    ipfilter.IpFilter(['204.246.162.34', '73.181.231.92', '::1'], {mode: 'allow'})
-  );
-}
+// if (process.env.ENV === 'staging') {
+//   app.use(
+//     ipfilter.IpFilter(['204.246.162.34', '73.181.231.92', '::1'], {mode: 'allow'})
+//   );
+// }
 
 app.use(loggerMiddleware);
 app.use(authMiddleware);
