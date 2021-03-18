@@ -42,7 +42,7 @@ backtestRouter.get('/', async (req, res, next) => {
 
   let formattedResults: any;
   if (tickers.length > 0 && algoIds.length > 0) {
-    formattedResults = {}
+    formattedResults = {};
     const params = {
       tickers: tickers.join(','),
       algoIds: algoIds.join(','),
@@ -67,6 +67,7 @@ backtestRouter.get('/', async (req, res, next) => {
             return;
           }
 
+          // console.log(body);
           resolve(JSON.parse(body) as BacktestResults);
         }
       );
@@ -113,7 +114,11 @@ backtestRouter.get('/', async (req, res, next) => {
         price: format(t.price, 'dollar', false),
         dayNum: t.dayNum,
         timestamp: t.timestamp,
-        profitLoss: formatAndColor(t.profitLoss, 'dollar'),
+        tradeProfitLoss: formatAndColor(t.tradeProfitLoss, 'dollar'),
+        cummulativeProfitLoss: formatAndColor(
+          t.cummulativeProfitLoss,
+          'dollar'
+        ),
         algoIndicatorValue: t.indicatorValue.toFixed(2) + '%',
       };
     });

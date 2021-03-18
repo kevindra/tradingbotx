@@ -48,7 +48,8 @@ export interface Trade {
   qty: number;
   price: number;
   avgCost: number;
-  profitLoss: number;
+  tradeProfitLoss: number;
+  cummulativeProfitLoss: number;
   type: OpportunityType;
   indicatorValue: number;
   portfolioSnapshot: PortfolioSnapshot;
@@ -77,21 +78,19 @@ backtestApiRouter.get('/', async (req, res, next) => {
         `${MAX_INDICATOR_VALUE_DEFAULT}`
     );
     const minTradeAmount = parseInt(
-      (req.body.minTradeAmount as string) || `${MIN_TRADE_AMOUNT_DEFAULT}`
+      (req.query.minTradeAmount as string) || `${MIN_TRADE_AMOUNT_DEFAULT}`
     );
     const maxTradeAmount = parseInt(
-      (req.body.maxTradeAmount as string) || `${MAX_TRADE_AMOUNT_DEFAULT}`
+      (req.query.maxTradeAmount as string) || `${MAX_TRADE_AMOUNT_DEFAULT}`
     );
     // 30% of the initial price action is for learning the price pattern
     const trainingCoeff = parseFloat(
-      (req.body.trainingCoeff as string) || '0.3'
+      (req.query.trainingCoeff as string) || '0.3'
     );
     // algo to run
     const algosToRun = getAlgosFromRequest(req);
     // indicator to use from the algo's output, 0-based TODO need algo based
     const indicator = 1; // getIndicatorFromRequest(req); // historical indicator
-    const trainingCutOverDay = Math.floor(horizon * trainingCoeff);
-
     let historicalOpportunitiesByAlgoId: {[key: string]: Opportunity[][]} = {};
 
     let endDate = moment().tz('America/Toronto');
@@ -121,11 +120,12 @@ backtestApiRouter.get('/', async (req, res, next) => {
         algosToRun[aIndex].id()
       ] = historicalOpportunities;
 
+      // console.log(JSON.stringify(historicalOpportunities));
       // flatten the opportunities into:
       // date - ticker - type(buy,sell) etc..
       // so that it's easier to run trade logic on it
       historicalOpportunities.forEach((filteredOpp, symbolNum) => {
-        filteredOpp.forEach((o, oppNum) => {
+        filteredOpp.forEach(o => {
           flattenOpportunities.push(o);
         });
       });
@@ -136,7 +136,36 @@ backtestApiRouter.get('/', async (req, res, next) => {
       return a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : 0;
     });
 
-    flattenOpportunities.forEach((o, oppNum) => {
+    const intervalCountBySymbols: {[key: string]: number} = {};
+    tickers.forEach(t => {
+      let minInterval = 100000;
+      flattenOpportunities.forEach(o => {
+        if (o.symbol === t) {
+          minInterval = Math.min(minInterval, o.intervalNumber);
+        }
+      });
+
+      let maxInterval = -1;
+      flattenOpportunities.forEach(o => {
+        if (o.symbol === t) {
+          maxInterval = Math.max(maxInterval, o.intervalNumber);
+        }
+      });
+
+      if (minInterval !== 100000 || maxInterval !== -1) {
+        intervalCountBySymbols[t] = maxInterval - minInterval + 1;
+      } else {
+        intervalCountBySymbols[t] = 0;
+      }
+    });
+
+    console.log(
+      `Interval counts: ${JSON.stringify(intervalCountBySymbols, null, 2)}`
+    );
+    // console.log(`Total opportunities found: ${flattenOpportunities.length}`);
+    // console.log(`Opps: ${JSON.stringify(flattenOpportunities)}`);
+
+    flattenOpportunities.forEach((o, index) => {
       const indicatorValue = o.indicatorValues[0]; // historical
       const s = o.symbol;
       const currPrice = o.price || 0;
@@ -151,23 +180,16 @@ backtestApiRouter.get('/', async (req, res, next) => {
       // console.log(
       //   `${moment(o.timestamp).format(DATE_FORMAT)}: ${o.type} ${o.symbol}: ${
       //     o.indicatorValues[0]
-      //   }, trade amount: $${proposedTradeAmount}`
+      //   }, trade amount: $${proposedTradeAmount}, day number: ${oppNum}`
       // );
 
-      if (oppNum < trainingCutOverDay) {
+      if (
+        o.intervalNumber < Math.floor(intervalCountBySymbols[s] * trainingCoeff)
+      ) {
         // console.log(
         //   `No trade yet as this price pattern is used for learning the price pattern`
         // );
         return;
-      }
-
-      if (positions[s] === undefined) {
-        positions[s] = {
-          avgCost: 0,
-          profitLoss: 0,
-          qty: 0,
-          totalCost: 0,
-        };
       }
 
       if (currPrice === 0) {
@@ -175,6 +197,21 @@ backtestApiRouter.get('/', async (req, res, next) => {
       }
 
       if (type === 'buy') {
+        if (positions[s] === undefined) {
+          positions[s] = {
+            avgCost: 0,
+            profitLoss: 0,
+            qty: 0,
+            totalCost: 0,
+          };
+        }
+
+        // console.log(
+        //   `${moment(o.timestamp).format(DATE_FORMAT)}: ${o.type} ${o.symbol}: ${
+        //     o.indicatorValues[0]
+        //   }, trade amount: $${proposedTradeAmount}, day number: ${oppNum}`
+        // );
+
         let totalCost = positions[s].avgCost * positions[s].qty;
         let qtyToBuy = proposedTradeAmount / currPrice;
         let newTotalCost = totalCost + proposedTradeAmount;
@@ -199,7 +236,8 @@ backtestApiRouter.get('/', async (req, res, next) => {
           qty: qtyToBuy,
           type: type,
           avgCost: positions[s].avgCost,
-          profitLoss: positions[s].profitLoss,
+          tradeProfitLoss: 0, // buy trades don't make any profit
+          cummulativeProfitLoss: positions[s].profitLoss,
           portfolioSnapshot: {
             totalCost: totalPortfolioCost,
             profitLoss: totalProfitLoss,
@@ -209,9 +247,18 @@ backtestApiRouter.get('/', async (req, res, next) => {
       } else {
         let qtyToSell = proposedTradeAmount / currPrice;
         // can only sell if we own more qty than we are selling
-        if (positions[s].qty >= qtyToSell) {
-          positions[s].profitLoss +=
+        if (positions[s] && positions[s].qty >= qtyToSell) {
+          // console.log(
+          //   `${moment(o.timestamp).format(DATE_FORMAT)}: ${o.type} ${
+          //     o.symbol
+          //   }: ${
+          //     o.indicatorValues[0]
+          //   }, trade amount: $${proposedTradeAmount}, day number: ${oppNum}`
+          // );
+
+          const tradeProfitLoss =
             qtyToSell * (currPrice - positions[s].avgCost);
+          positions[s].profitLoss += tradeProfitLoss;
           positions[s].qty = positions[s].qty - qtyToSell;
           positions[s].totalCost = positions[s].qty * positions[s].avgCost;
 
@@ -223,7 +270,7 @@ backtestApiRouter.get('/', async (req, res, next) => {
           });
 
           trades.push({
-            dayNum: oppNum,
+            dayNum: index,
             timestamp: o.timestamp,
             timestampStr: moment(o.timestamp)
               .tz(EST_TIMEZONE)
@@ -233,7 +280,8 @@ backtestApiRouter.get('/', async (req, res, next) => {
             qty: qtyToSell,
             type: type,
             avgCost: positions[s].avgCost,
-            profitLoss: positions[s].profitLoss,
+            tradeProfitLoss: tradeProfitLoss,
+            cummulativeProfitLoss: positions[s].profitLoss,
             indicatorValue: o.indicatorValues[0],
             portfolioSnapshot: {
               totalCost: totalPortfolioCost,
@@ -249,12 +297,14 @@ backtestApiRouter.get('/', async (req, res, next) => {
       portfolio.peakCost = Math.max(portfolio.peakCost, totalCost);
     });
 
-    Object.keys(positions).forEach(s => {
-      portfolio.totalCost += positions[s].totalCost;
-      portfolio.totalProfitLoss += positions[s].profitLoss;
-    });
-    portfolio.totalProfitLossPct =
-      portfolio.totalProfitLoss / portfolio.totalCost;
+    if (Object.keys(positions).length > 0) {
+      Object.keys(positions).forEach(s => {
+        portfolio.totalCost += positions[s].totalCost;
+        portfolio.totalProfitLoss += positions[s].profitLoss;
+      });
+      portfolio.totalProfitLossPct =
+        portfolio.totalProfitLoss / portfolio.totalCost;
+    }
 
     res.setHeader('Content-Type', 'application/json');
     res.end(

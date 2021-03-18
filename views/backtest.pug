@@ -155,8 +155,8 @@ html(lang="en")
                             <th>Qty</th>
                             <th>Avg Cost</th>
                             <th>Total Cost</th>
-                            <th>Total P/L(%)</th>
                             <th>Total P/L($)</th>
+                            <th>Total P/L(%)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -182,6 +182,7 @@ html(lang="en")
                             <th>Side</th>
                             <th>Price</th>
                             <th>Trade P/L ($)</th>
+                            <th>Total Trade P/L ($)</th>
                             <th>Algo Indicator Value</th>
                         </tr>
                     </thead>
@@ -194,7 +195,8 @@ html(lang="en")
                                 td=trade.timestampEstStr
                                 td=trade.type
                                 td=trade.price
-                                td !{trade.profitLoss}
+                                td !{trade.tradeProfitLoss}
+                                td !{trade.cummulativeProfitLoss}
                                 td=trade.algoIndicatorValue
                     </tbody>
                 </table>
