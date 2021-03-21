@@ -6,11 +6,25 @@ import {getMomentInEST} from './util';
 import {DATE_FORMAT} from './consts';
 
 const AV_TS_DAILY = 'Time Series (Daily)';
+const AV_OPEN_PRICE = '1. open';
+const AV_HIGH_PRICE = '2. high';
+const AV_LOW_PRICE = '3. low';
+const AV_CLOSE_PRICE = '4. close';
 const AV_ADJ_CLOSE_PRICE = '5. adjusted close';
+const AV_VOLUME = '6. volume';
+const AV_DIVIDEND_AMOUNT = '7. dividend amount';
+const AV_ADJ_SPLIT_COEFFICIENT = '8. split coefficient';
 
 export interface Price {
   timestamp: number;
-  price: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  adjustedClosePrice: number; // Split adjusted
+  volume: number;
+  dividendAmount: number;
+  splitCoefficient: number;
 }
 
 export interface PriceTimeSeriesData {
@@ -36,8 +50,14 @@ export class SecurityTimeseriesAdapter {
       })
       .map(d => {
         return <Price>{
-          price: d.close,
+          open: d.open,
+          adjustedClosePrice: d.close,
+          close: d.close,
+          high: d.high,
+          low: d.low,
+          volume: d.volumeto - d.volumefrom,
           timestamp: d.time * 1000,
+          splitCoefficient: 1.0
         };
       });
 
@@ -84,7 +104,14 @@ export class SecurityTimeseriesAdapter {
     dates.forEach(d => {
       const stockPrice: Price = {
         timestamp: new Date(d).getTime(),
-        price: parseFloat(rawData[d][AV_ADJ_CLOSE_PRICE]),
+        open: parseFloat(rawData[d][AV_OPEN_PRICE]),
+        high: parseFloat(rawData[d][AV_HIGH_PRICE]),
+        low: parseFloat(rawData[d][AV_LOW_PRICE]),
+        close: parseFloat(rawData[d][AV_CLOSE_PRICE]),
+        adjustedClosePrice: parseFloat(rawData[d][AV_ADJ_CLOSE_PRICE]),
+        dividendAmount: parseFloat(rawData[d][AV_DIVIDEND_AMOUNT]),
+        splitCoefficient: parseFloat(rawData[d][AV_ADJ_SPLIT_COEFFICIENT]),
+        volume: parseFloat(rawData[d][AV_VOLUME]),
       };
       stockPrices.push(stockPrice);
     });

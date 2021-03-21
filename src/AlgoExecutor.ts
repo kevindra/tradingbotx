@@ -38,7 +38,13 @@ export class AlgoExecutor {
     for (let a in algos) {
       rawAlgoOutputs.push(
         await algos[a].run({
-          prices: prices.map(price => price.price),
+          open: prices.map(p => p.open),
+          close: prices.map(p => p.close),
+          adjustedClose: prices.map(price => price.adjustedClosePrice),
+          low: prices.map(p => p.low),
+          high: prices.map(p => p.high),
+          volume: prices.map(p => p.volume),
+          splitCoefficient: prices.map(p => p.splitCoefficient),
         })
       );
     }
@@ -55,7 +61,7 @@ export class AlgoExecutor {
 
       let perTimestampResponse: AlgoExecutorTimestampResponse = {
         timestamp: row.timestamp,
-        price: row.price,
+        price: row.adjustedClosePrice,
         algoOutputs: algoOutputs,
       };
       return perTimestampResponse;
@@ -88,7 +94,13 @@ export class AlgoExecutor {
     for (let a in algos) {
       rawAlgoOutputs.push(
         await algos[a].run({
-          prices: prices.map(price => price.price),
+          open: prices.map(p => p.open),
+          close: prices.map(p => p.close),
+          adjustedClose: prices.map(price => price.adjustedClosePrice),
+          low: prices.map(p => p.low),
+          high: prices.map(p => p.high),
+          volume: prices.map(p => p.volume),
+          splitCoefficient: prices.map(p => p.splitCoefficient),
         })
       );
     }
@@ -105,7 +117,7 @@ export class AlgoExecutor {
 
       let perTimestampResponse: AlgoExecutorTimestampResponse = {
         timestamp: row.timestamp,
-        price: row.price,
+        price: row.close,
         algoOutputs: algoOutputs,
       };
       return perTimestampResponse;

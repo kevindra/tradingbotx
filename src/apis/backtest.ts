@@ -177,7 +177,7 @@ backtestApiRouter.get('/', async (req, res, next) => {
           endDate.clone()
         );
         if (series && series.prices && series.prices.length > 0) {
-          currentPrice[t] = series.prices[series.prices.length - 1].price;
+          currentPrice[t] = series.prices[series.prices.length - 1].close;
         }
       })
     );

@@ -25,7 +25,13 @@ export interface Algo {
  * Inputs and outputs of the algo
  */
 export interface AlgoInput {
-  prices: number[];
+  open: number[],
+  close: number[],
+  adjustedClose: number[];
+  high: number[],
+  low: number[],
+  volume: number[],
+  splitCoefficient: number[]
 }
 
 export interface AlgoOutput {

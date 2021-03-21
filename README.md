@@ -2,7 +2,7 @@
 
 [![Join the chat at https://gitter.im/tradingbotx/community](https://badges.gitter.im/tradingbotx/community.svg)](https://gitter.im/tradingbotx/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-This is an autonomous trading bot in Typescript with web access! It allows users to run algorithms and create and deploy new algorithms very quickly and easily. It allows paper trading as well as live trading (live pending approval).
+This is a manual as well as autonomous trading bot in Typescript with web access! It allows users to run algorithms and create and deploy new algorithms quickly and easily. It allows paper trading as well as live trading (live pending approval).
 
 It is just the beginning but my vision for this repo is as follows:
 
@@ -121,7 +121,13 @@ An Algorithm in this repo has an input and an output. The input takes an object 
 
 ```ts
 export interface AlgoInput {
-  prices: number[];
+  open: number[], // open price
+  close: number[], // close price
+  adjustedClose: number[]; // close price, split adjusted
+  high: number[], // high price
+  low: number[], // low price
+  volume: number[], // volume
+  splitCoefficient: number[] // split coefficient for the interval
 }
 ```
 

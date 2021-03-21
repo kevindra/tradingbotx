@@ -26,7 +26,7 @@ export class BuyLowAlgo implements Algo {
   async run(algoInput: AlgoInput): Promise<AlgoOutput> {
     const events: Event[] = [];
     let n = 1;
-    let lastMaxPrice = algoInput.prices[0];
+    let lastMaxPrice = algoInput.adjustedClose[0];
     let lastMaxPriceIndex = 0;
     let maxAvgDropPerInterval = 0;
     let maxDropIntensity = -1;
@@ -35,7 +35,7 @@ export class BuyLowAlgo implements Algo {
     events.push({
       currentIndex: 0,
       lastMaxPriceIndex: lastMaxPriceIndex,
-      currentPrice: algoInput.prices[0],
+      currentPrice: algoInput.adjustedClose[0],
       lastMaxPrice: lastMaxPrice,
       drop: 0,
       dropPercent: 0,
@@ -49,21 +49,21 @@ export class BuyLowAlgo implements Algo {
       historicalNormalizeDropIntensity: 0,
     });
 
-    while (n < algoInput.prices.length) {
-      if (algoInput.prices[n] > algoInput.prices[n - 1]) {
-        if (algoInput.prices[n] > lastMaxPrice) {
-          lastMaxPrice = algoInput.prices[n];
+    while (n < algoInput.adjustedClose.length) {
+      if (algoInput.adjustedClose[n] > algoInput.adjustedClose[n - 1]) {
+        if (algoInput.adjustedClose[n] > lastMaxPrice) {
+          lastMaxPrice = algoInput.adjustedClose[n];
           lastMaxPriceIndex = n;
         }
       }
 
-      const drop = lastMaxPrice - algoInput.prices[n];
+      const drop = lastMaxPrice - algoInput.adjustedClose[n];
       const dropPercent = drop / lastMaxPrice;
       const dropDuration = n - lastMaxPriceIndex;
       const e: Event = {
         currentIndex: n,
         lastMaxPriceIndex: lastMaxPriceIndex,
-        currentPrice: algoInput.prices[n],
+        currentPrice: algoInput.adjustedClose[n],
         lastMaxPrice: lastMaxPrice,
         drop: drop,
         dropPercent: drop / lastMaxPrice,
