@@ -187,13 +187,15 @@ backtestApiRouter.get('/', async (req, res, next) => {
       const s = o.symbol;
       const currPrice = o.price || 0;
       const type = o.type;
-      const proposedTradeAmount = normalize(
+
+      let proposedTradeAmount = normalize(
         indicatorValue,
         minIndicatorValue,
         maxIndicatorValue,
         minTradeAmount,
         maxTradeAmount
       );
+
       // console.log(
       //   `${moment(o.timestamp).format(DATE_FORMAT)}: ${o.type} ${o.symbol}: ${
       //     o.indicatorValues[0]

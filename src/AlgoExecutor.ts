@@ -3,6 +3,7 @@ import {SecurityTimeseriesManager} from './SecurityTimeseriesManager';
 import {PriceTimeSeriesData} from './SecurityTimeseriesAdapter';
 import {Algo, AlgoActionType, AlgoOutput} from './algo/algo';
 import {Moment} from 'moment';
+import {BuyLowAlgo} from './algo/buylowalgo';
 
 const timeseriesManager = new SecurityTimeseriesManager();
 

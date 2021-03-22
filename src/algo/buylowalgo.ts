@@ -1,5 +1,4 @@
 import {Algo, AlgoInput, AlgoOutput, AlgoActionType} from './algo';
-
 export interface Event {
   currentIndex: number;
   currentPrice: number;
@@ -58,6 +57,7 @@ export class BuyLowAlgo implements Algo {
       }
 
       const drop = lastMaxPrice - algoInput.adjustedClose[n];
+
       const dropPercent = drop / lastMaxPrice;
       const dropDuration = n - lastMaxPriceIndex;
       const e: Event = {
@@ -69,7 +69,7 @@ export class BuyLowAlgo implements Algo {
         dropPercent: drop / lastMaxPrice,
         dropDuration: dropDuration,
         avgDropPerInterval: dropDuration == 0 ? 0 : dropPercent / dropDuration, // percent
-        dropIntensity: dropDuration * dropPercent, // how intense the drop is i.e. how fast and how much, both together will exponentially increase the confidence
+        dropIntensity: dropPercent, // how intense the drop is
       };
       maxAvgDropPerInterval = Math.max(
         e.avgDropPerInterval,
@@ -120,3 +120,32 @@ export class BuyLowAlgo implements Algo {
     return 'BuyLow';
   }
 }
+
+// import Deque from 'double-ended-queue';
+// function printMax(arr: number[], windowSize: number) {
+//   let deque = new Deque<number>();
+//   let i = 0;
+//   for (i = 0; i < windowSize; ++i) {
+//     while (!deque.isEmpty() && arr[i] >= arr[deque.peekBack() || 0]) {
+//       deque.removeBack();
+//     }
+//     deque.insertBack(i);
+//   }
+
+//   for (; i < arr.length; ++i) {
+//     console.log(arr[deque.peekFront() || 0]);
+
+//     while (!deque.isEmpty() && (deque.peekFront() || 0) <= i - windowSize) {
+//       deque.removeFront();
+//     }
+//     while (!deque.isEmpty() && arr[i] >= arr[deque.peekBack() || 0]) {
+//       deque.removeBack();
+//     }
+//     deque.insertBack(i);
+//   }
+//   console.log(arr[deque.peekFront() || 0]);
+// }
+
+// let arr = [12, 1, 78, 90, 57, 89, 56];
+// let k = 3;
+// printMax(arr, k);

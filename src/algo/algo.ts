@@ -25,13 +25,13 @@ export interface Algo {
  * Inputs and outputs of the algo
  */
 export interface AlgoInput {
-  open: number[],
-  close: number[],
+  open: number[];
+  close: number[];
   adjustedClose: number[];
-  high: number[],
-  low: number[],
-  volume: number[],
-  splitCoefficient: number[]
+  high: number[];
+  low: number[];
+  volume: number[];
+  splitCoefficient: number[];
 }
 
 export interface AlgoOutput {
