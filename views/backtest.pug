@@ -43,25 +43,25 @@ html(lang="en")
 
               <div class="row mb-3">
                   <div class="col-sm-2">
-                      <label for="tickerType" class="col-sm-2 col-form-label">Lookback Days:</label>
+                      <label for="tickerType" class="col-sm-2 col-form-label">Test Duration (days):</label>
                   </div>
                   <div class="col-sm-4">
                       input#horizon.form-control(type='text' name='horizon' aria-describedby='horizonHelp' value=horizon)
                   </div>
                   <div class="col-sm-3">
-                      <span id="horizonHelp" class="form-text">Algo results are relative to past price patterns within a given timeframe. This is number of days in the past you want to look into. Try something like 365-720 (1-2 years) to get better sample data of the price.</span>
+                      <span id="horizonHelp" class="form-text">Duration of the back test in number of days from today e.g. 700.</span>
                   </div>
               </div>
 
               <div class="row mb-3">
                   <div class="col-sm-2">
-                      <label for="tickerType" class="col-sm-2 col-form-label">Training Coefficient:</label>
+                      <label for="tickerType" class="col-sm-2 col-form-label">Investing Look Back Days:</label>
                   </div>
                   <div class="col-sm-4">
-                      input#horizon.form-control(type='text' name='trainingCoeff' aria-describedby='horizonHelp' value=trainingCoeff)
+                      input#horizon.form-control(type='text' name='windowSize' aria-describedby='horizonHelp' value=windowSize)
                   </div>
                   <div class="col-sm-3">
-                      <span id="horizonHelp" class="form-text">Backtest needs to know how many initial days out of the lookback days are used for training purpose and not investing. By default this is kept as 0.3 or 30%, meaning initial 30% number of days will be used to learn the price pattern.</span>
+                      <span id="horizonHelp" class="form-text">Algo results are relative to past price patterns within a given timeframe. This is number of days in the past you want to consider before investing decision is made by bot for that day. e.g. 365</span>
                   </div>
               </div>
 

@@ -1,11 +1,21 @@
 import express from 'express';
-import moment from 'moment-timezone';
+import moment, {Moment} from 'moment-timezone';
+import {Algo} from '../algo/algo';
+import {AlgoExecutor} from '../AlgoExecutor';
 import {
   LOOK_BACK_DAYS_DEFAULT,
   MAX_INDICATOR_VALUE_DEFAULT,
   MIN_INDICATOR_VALUE_DEFAULT,
 } from '../consts';
-import {OpportunitiesFinder, OpportunityType} from '../OpportunitiesFinder';
+import {
+  getCurrentOpportunity,
+  Opportunities,
+  OpportunitiesFinder,
+  Opportunity,
+  OpportunityType,
+} from '../OpportunitiesFinder';
+import {filterOpportunities} from '../opportunity-filter';
+import {SecurityTimeseriesManager} from '../SecurityTimeseriesManager';
 import {
   getAlgoFromRequest,
   getIndicatorFromRequest,
@@ -37,17 +47,31 @@ opportunitiesApiRouter.get('/', async (req, res, next) => {
     // indicator to use from the algo's output, 0-based
     const indicator = getIndicatorFromRequest(req);
 
-    const opportunities = await opportunitiesFinder.findOpportunities(
-      tickers,
-      horizon,
-      moment().tz('America/Toronto'), // today's date EST
-      algoToRun,
-      indicator,
-      minIndicatorValue,
-      maxIndicatorValue
+    const opportunities = await Promise.all(
+      tickers.map(async ticker => {
+        return await getCurrentOpportunity(
+          ticker,
+          horizon,
+          moment().tz('America/Toronto'),
+          algoToRun
+        );
+      })
     );
+
+    const filteredOpportunities = filterOpportunities(
+      opportunities,
+      indicator,
+      {
+        minIndicatorValue,
+        maxIndicatorValue,
+      }
+    );
+
+    const finalOpportunities = <Opportunities>{
+      opportunities: filteredOpportunities,
+    };
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(opportunities));
+    res.end(JSON.stringify(finalOpportunities));
   });
 });
 

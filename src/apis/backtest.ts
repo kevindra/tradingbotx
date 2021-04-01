@@ -1,5 +1,8 @@
+import Bottleneck from 'bottleneck';
 import express from 'express';
-import moment from 'moment-timezone';
+import moment, {Moment} from 'moment-timezone';
+import {Algo} from '../algo/algo';
+import {AlgoExecutor, AlgosResponse} from '../AlgoExecutor';
 import {
   MIN_INDICATOR_VALUE_DEFAULT,
   MAX_INDICATOR_VALUE_DEFAULT,
@@ -8,18 +11,22 @@ import {
   LOOK_BACK_DAYS_DEFAULT,
   DATE_FORMAT,
   EST_TIMEZONE,
+  INVESTING_WINDOW_SIZE,
 } from '../consts';
 import {
+  getSlidingWindowOpportunities,
   OpportunitiesFinder,
   Opportunity,
   OpportunityType,
 } from '../OpportunitiesFinder';
+import {filterOpportunities} from '../opportunity-filter';
 import {SecurityTimeseriesManager} from '../SecurityTimeseriesManager';
 import {getAlgosFromRequest, normalize, withTryCatchNext} from '../util';
 
 const backtestApiRouter = express.Router();
 const oppFinder = new OpportunitiesFinder();
-
+const timeseriesManager = new SecurityTimeseriesManager();
+const algoExecutor = new AlgoExecutor();
 export interface Portfolio {
   peakCost: number;
   totalCost: number;
@@ -67,8 +74,13 @@ backtestApiRouter.get('/', async (req, res, next) => {
     // console.log(`Query Params: ${JSON.stringify(req.query, null, 2)}`);
     const flatTickers = (req.query.tickers as string) || '';
     let tickers: string[] = flatTickers.split(',');
+    // back test period
     const horizon = parseInt(
       (req.query.horizon as string) || `${LOOK_BACK_DAYS_DEFAULT}`
+    );
+    // window size - every time we invest, we will look back for these many days
+    const windowSize = parseInt(
+      (req.query.window as string) || `${INVESTING_WINDOW_SIZE}`
     );
     // TODO - this is fine for now.. but we may need to evolve it to allow more query mechanisms
     const minIndicatorValue = parseFloat(
@@ -84,10 +96,6 @@ backtestApiRouter.get('/', async (req, res, next) => {
     );
     const maxTradeAmount = parseInt(
       (req.query.maxTradeAmount as string) || `${MAX_TRADE_AMOUNT_DEFAULT}`
-    );
-    // 30% of the initial price action is for learning the price pattern
-    const trainingCoeff = parseFloat(
-      (req.query.trainingCoeff as string) || '0.3'
     );
     // algo to run
     const algosToRun = getAlgosFromRequest(req);
@@ -106,37 +114,41 @@ backtestApiRouter.get('/', async (req, res, next) => {
       totalProfitLossPct: 0,
     };
 
-    let flattenOpportunities: Opportunity[] = [];
-    for (let aIndex in algosToRun) {
-      // [stocksymbol][dayNum]
-      const historicalOpportunities: Opportunity[][] = await oppFinder.findHistoricalOpportunities(
-        tickers,
-        horizon,
-        endDate.clone(),
-        algosToRun[aIndex],
-        indicator,
-        minIndicatorValue,
-        maxIndicatorValue
+    let perAlgoPerTickerOpportunities: {
+      algo: Algo;
+      perTickerOpportunities: {ticker: string; algoOutput: Opportunity[]}[];
+    }[] = [];
+    for (let algo of algosToRun) {
+      perAlgoPerTickerOpportunities.push(
+        await getOpportunitiesByAlgo(
+          tickers,
+          horizon,
+          endDate,
+          algo,
+          windowSize
+        )
       );
-      historicalOpportunitiesByAlgoId[
-        algosToRun[aIndex].id()
-      ] = historicalOpportunities;
-
-      // console.log(JSON.stringify(historicalOpportunities));
-      // flatten the opportunities into:
-      // date - ticker - type(buy,sell) etc..
-      // so that it's easier to run trade logic on it
-      historicalOpportunities.forEach((filteredOpp, symbolNum) => {
-        filteredOpp.forEach(o => {
-          flattenOpportunities.push(o);
-        });
-      });
     }
+    let flattenOpportunities: Opportunity[] = [];
+    perAlgoPerTickerOpportunities.map(v => {
+      v.perTickerOpportunities.map(y => {
+        flattenOpportunities.push(...y.algoOutput);
+      });
+    });
 
     // sort by date, in ascending order
     flattenOpportunities = flattenOpportunities.sort((a, b) => {
       return a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : 0;
     });
+
+    console.log(`Total flatten opportunities: ${flattenOpportunities.length}`);
+
+    // filter by specified criteria
+    flattenOpportunities = filterOpportunities(
+      flattenOpportunities,
+      indicator,
+      {minIndicatorValue, maxIndicatorValue}
+    );
 
     const intervalCountBySymbols: {[key: string]: number} = {};
     tickers.forEach(t => {
@@ -161,12 +173,6 @@ backtestApiRouter.get('/', async (req, res, next) => {
       }
     });
 
-    console.log(
-      `Interval counts: ${JSON.stringify(intervalCountBySymbols, null, 2)}`
-    );
-    // console.log(`Total opportunities found: ${flattenOpportunities.length}`);
-    // console.log(`Opps: ${JSON.stringify(flattenOpportunities)}`);
-
     const currentPrice: {[key: string]: number} = {};
     const tmManager = new SecurityTimeseriesManager();
     await Promise.all(
@@ -183,7 +189,7 @@ backtestApiRouter.get('/', async (req, res, next) => {
     );
 
     flattenOpportunities.forEach((o, index) => {
-      const indicatorValue = o.indicatorValues[0]; // historical
+      const indicatorValue = o.indicatorValues[indicator]; // historical
       const s = o.symbol;
       const currPrice = o.price || 0;
       const type = o.type;
@@ -195,21 +201,6 @@ backtestApiRouter.get('/', async (req, res, next) => {
         minTradeAmount,
         maxTradeAmount
       );
-
-      // console.log(
-      //   `${moment(o.timestamp).format(DATE_FORMAT)}: ${o.type} ${o.symbol}: ${
-      //     o.indicatorValues[0]
-      //   }, trade amount: $${proposedTradeAmount}, day number: ${oppNum}`
-      // );
-
-      if (
-        o.intervalNumber < Math.floor(intervalCountBySymbols[s] * trainingCoeff)
-      ) {
-        // console.log(
-        //   `No trade yet as this price pattern is used for learning the price pattern`
-        // );
-        return;
-      }
 
       if (currPrice === 0) {
         return;
@@ -225,12 +216,6 @@ backtestApiRouter.get('/', async (req, res, next) => {
             currentPrice: currentPrice[s],
           };
         }
-
-        // console.log(
-        //   `${moment(o.timestamp).format(DATE_FORMAT)}: ${o.type} ${o.symbol}: ${
-        //     o.indicatorValues[0]
-        //   }, trade amount: $${proposedTradeAmount}, day number: ${oppNum}`
-        // );
 
         let totalCost = positions[s].avgCost * positions[s].qty;
         let qtyToBuy = proposedTradeAmount / currPrice;
@@ -262,20 +247,12 @@ backtestApiRouter.get('/', async (req, res, next) => {
             totalCost: totalPortfolioCost,
             profitLoss: totalProfitLoss,
           },
-          indicatorValue: o.indicatorValues[0],
+          indicatorValue: o.indicatorValues[indicator],
         });
       } else {
         let qtyToSell = proposedTradeAmount / currPrice;
         // can only sell if we own more qty than we are selling
         if (positions[s] && positions[s].qty >= qtyToSell) {
-          // console.log(
-          //   `${moment(o.timestamp).format(DATE_FORMAT)}: ${o.type} ${
-          //     o.symbol
-          //   }: ${
-          //     o.indicatorValues[0]
-          //   }, trade amount: $${proposedTradeAmount}, day number: ${oppNum}`
-          // );
-
           const tradeProfitLoss =
             qtyToSell * (currPrice - positions[s].avgCost);
           positions[s].profitLoss += tradeProfitLoss;
@@ -302,7 +279,7 @@ backtestApiRouter.get('/', async (req, res, next) => {
             avgCost: positions[s].avgCost,
             tradeProfitLoss: tradeProfitLoss,
             cummulativeProfitLoss: positions[s].profitLoss,
-            indicatorValue: o.indicatorValues[0],
+            indicatorValue: o.indicatorValues[indicator],
             portfolioSnapshot: {
               totalCost: totalPortfolioCost,
               profitLoss: totalProfitLoss,
@@ -336,5 +313,41 @@ backtestApiRouter.get('/', async (req, res, next) => {
     );
   });
 });
+
+// Returns an array of opportunity per ticker
+// { ticker, opportunities }[]
+const getOpportunitiesByAlgo = async (
+  tickers: string[],
+  horizon: number,
+  endDate: Moment,
+  algo: Algo,
+  windowSize: number
+) => {
+  const limiter = new Bottleneck({
+    maxConcurrent: 1,
+    minTime: 10,
+  });
+
+  return {
+    algo,
+    perTickerOpportunities: await Promise.all(
+      tickers.map(async ticker => {
+        return {
+          ticker,
+          algoOutput: await limiter.schedule(
+            async () =>
+              await getSlidingWindowOpportunities(
+                ticker,
+                horizon,
+                endDate,
+                algo,
+                windowSize
+              )
+          ),
+        };
+      })
+    ),
+  };
+};
 
 export {backtestApiRouter};

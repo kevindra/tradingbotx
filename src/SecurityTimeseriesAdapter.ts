@@ -28,7 +28,7 @@ export interface Price {
 }
 
 export interface PriceTimeSeriesData {
-  dimensions: string[];
+  dimensions?: string[];
   prices: Price[];
 }
 

@@ -5,7 +5,8 @@ import {getAlgosFromRequest, withTryCatchNext} from '../util';
 
 const currentIndicatorsRouter = express.Router();
 const algoExecutor = new AlgoExecutor();
-
+// TODO @deprecated
+// No need to keep it - no dependency
 currentIndicatorsRouter.get('/', async (req, res, next) => {
   await withTryCatchNext(req, res, next, async (req, res, next) => {
     const ticker = req.query.t as string;

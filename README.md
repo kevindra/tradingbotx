@@ -47,7 +47,7 @@ Let's see how it goes! It's only the start.
 - [x] 🆕 ✨ List Orders page
 - [x] 🆕 ✨ Cloud based trade schedule
 - [x] 🆕 ✨ Advanced Backtest feature - allows you to simulate the trading using multiple algorithms on a list of stocks
-- [ ] 🚧 API key/secret input for trade schedule
+- [x] Window based backtest - now we have 100% accurate backtest
 - [ ] Strong Validations (https://wanago.io/2018/12/17/typescript-express-error-handling-validation/)
 - [ ] Generic algorithm parameters support
 - [ ] Expose a mechanism to configure algorithms from the interface

@@ -13,7 +13,7 @@ import {loginRouter} from './web/login';
 import {oauthRouter} from './web/oauth';
 import {apisRouter} from './apis/apis';
 import {termsPrivacyRouter} from './web/terms-privacy';
-import {errorMiddleware} from './error.middleware';
+import {errorMiddleware} from './middlewares/error.middleware';
 import {accountRouter} from './web/account';
 import {backtestRouter} from './web/backtest';
 import {loggerMiddleware} from './middlewares/logger.middleware';

@@ -5,6 +5,7 @@ import request from 'request';
 import {getAllAlgoIds, getAllAlgoNames} from '../algo/algoregistry';
 import {AlpacaClient} from '../client/AlpacaClient';
 import {
+  INVESTING_WINDOW_SIZE,
   MAX_INDICATOR_VALUE_DEFAULT,
   MAX_TRADE_AMOUNT_DEFAULT,
   MIN_INDICATOR_VALUE_DEFAULT,
@@ -22,10 +23,13 @@ const backtestRouter = express.Router();
 backtestRouter.get('/', async (req, res, next) => {
   // Default
   const tickers = ((req.query.tickers as string) || '').split(',');
-  const algoIds = (req.query.algoIds as string[]) || [];
-  const lookbackDays = parseInt((req.query.horizon as string) || '365');
-  const trainingCoeff = parseFloat(
-    (req.query.trainingCoeff as string) || '0.3'
+  const algoIds =
+    typeof req.query.algoIds === 'string'
+      ? [req.query.algoIds]
+      : (req.query.algoIds as string[]) || [];
+  const lookbackDays = parseInt((req.query.horizon as string) || '700');
+  const windowSize = parseInt(
+    (req.query.windowSize as string) || `${INVESTING_WINDOW_SIZE}`
   );
   const minTradeAmount = parseInt(
     (req.query.minTradeAmount as string) || `${MIN_TRADE_AMOUNT_DEFAULT}`
@@ -51,7 +55,6 @@ backtestRouter.get('/', async (req, res, next) => {
       maxIndicatorValue: maxIndicatorValue,
       minTradeAmount: minTradeAmount,
       maxTradeAmount: maxTradeAmount,
-      trainingCoeff: trainingCoeff,
     };
     let r: BacktestResults = await new Promise((resolve, reject) => {
       request.get(
@@ -161,7 +164,7 @@ backtestRouter.get('/', async (req, res, next) => {
       'This is where you can evaluate past performance of the algorithms on a specific set of stock symbols.',
     tickers: tickers.join(','),
     horizon: lookbackDays,
-    trainingCoeff: trainingCoeff,
+    windowSize: windowSize,
     minIndicatorValue: minIndicatorValue,
     maxIndicatorValue: maxIndicatorValue,
     minTradeAmount: minTradeAmount,
