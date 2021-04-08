@@ -97,7 +97,7 @@ export class SecurityTimeseriesAdapter {
     }
     dates = dates.slice(
       startIndex,
-      endIndex == -1 ? dates.length - 1 : endIndex
+      endIndex == -1 ? dates.length : endIndex + 1
     );
 
     const stockPrices: Price[] = [];
