@@ -64,6 +64,7 @@
     "pug": "^3.0.2",
     "query-string": "^6.14.1",
     "request": "^2.88.2",
-    "tslint-config-airbnb": "^5.11.2"
+    "tslint-config-airbnb": "^5.11.2",
+    "yahoo-finance": "^0.3.7"
   }
 }

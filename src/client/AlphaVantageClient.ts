@@ -2,6 +2,7 @@ import request from 'request';
 import queryString from 'query-string';
 import moment from 'moment-timezone';
 import {CACHE} from '../app';
+import {getQuote} from './yahoo-finance-client';
 export interface GetData {
   symbol: string;
   apikey: string;
@@ -31,29 +32,29 @@ export interface Quote {
 export class AlphaVantageClient {
   constructor() {}
 
-  async getQuote(symbol: string): Promise<GlobalQuote> {
-    const getDataQuery: GetData = {
-      symbol: symbol,
-      apikey: process.env.AV_API_KEY || '',
-      function: 'GLOBAL_QUOTE',
-      outputsize: 'full',
-    };
-    const url = URL + queryString.stringify(getDataQuery);
-    console.log(`URL: ${url}`);
-    const opt = {
-      url: url,
-    };
+  // async getQuote(symbol: string): Promise<GlobalQuote> {
+  //   const getDataQuery: GetData = {
+  //     symbol: symbol,
+  //     apikey: process.env.AV_API_KEY || '',
+  //     function: 'GLOBAL_QUOTE',
+  //     outputsize: 'full',
+  //   };
+  //   const url = URL + queryString.stringify(getDataQuery);
+  //   console.log(`URL: ${url}`);
+  //   const opt = {
+  //     url: url,
+  //   };
 
-    return new Promise((resolve, reject) => {
-      request(opt, (err, res, body) => {
-        if (err) {
-          reject(JSON.parse(body));
-        } else {
-          resolve(JSON.parse(body));
-        }
-      });
-    });
-  }
+  //   return new Promise((resolve, reject) => {
+  //     request(opt, (err, res, body) => {
+  //       if (err) {
+  //         reject(JSON.parse(body));
+  //       } else {
+  //         resolve(JSON.parse(body));
+  //       }
+  //     });
+  //   });
+  // }
 
   async getData(symbol: string): Promise<AVGetDataResult> {
     const getDataQuery: GetData = {
@@ -98,22 +99,22 @@ export class AlphaVantageClient {
     // get the latest price as well to get real time confidence values
     if (
       !(today.day() == 6 || today.day() == 7) &&
-      (today.hour() >= 9 && today.hour() < 16)
+      today.hour() >= 9 &&
+      today.hour() < 16
     ) {
-      let quote = (await this.getQuote(symbol))['Global Quote'];
+      const quote = await getQuote(symbol);
       let todayStr = today.format('YYYY-MM-DD');
       data['Time Series (Daily)'][todayStr] = {
-        '1. open': quote['02. open'],
-        '2. high': quote['03. high'],
-        '3. low': quote['04. low'],
-        '4. close': quote['05. price'], // not yet closed, so current price = close
-        '5. adjusted close': quote['05. price'], // not yet closed, so current price = close
-        '6. volume': quote['06. volume'],
+        '1. open': `${quote.price.regularMarketOpen}`,
+        '2. high': `${quote.price.regularMarketDayHigh}`,
+        '3. low': `${quote.price.regularMarketDayLow}`,
+        '4. close': `${quote.price.regularMarketPrice}`, // not yet closed, so current price = close
+        '5. adjusted close': `${quote.price.regularMarketPrice}`, // not yet closed, so current price = close
+        '6. volume': `${quote.price.regularMarketVolume}`,
         '7. dividend amount': '0.0000',
         '8. split coefficient': '1.0',
       };
     }
-
     return data;
   }
 }
