@@ -7,9 +7,9 @@ const router = express.Router();
 router.get('/', (req, res) => {
   // Default
   if (!req.query.t) {
-    req.query.t = 'BTC';
-    req.query.type = 'crypto';
-    req.query.h = '100';
+    req.query.t = 'AAPL';
+    req.query.type = 'stock';
+    req.query.h = '365';
   }
 
   res.render('index', {

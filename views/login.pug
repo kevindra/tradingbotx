@@ -17,6 +17,9 @@ html(lang="en")
             else 
                 <a href='https://app.alpaca.markets/oauth/authorize?response_type=code&client_id=#{clientId}&redirect_uri=#{redirectUri}&state=SOMETHING_RANDOM&scope=account:write%20trading' class='btn btn-primary btn-lg mb-5'>Login with Alpaca</a>
 
+            div.mb-5
+                <span>Tradingbotx.com uses <a href='https://alpaca.markets'>Alpaca</a> as its brokerage but it is not developed by Alpaca.</span>
+
             include donation.pug
             include disclaimer.pug
 
