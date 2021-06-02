@@ -389,8 +389,7 @@ function setLiveMoney(isLiveMoney = false) {
     url: '/api/liveMoney?v=' + isLiveMoney,
     method: 'GET',
     success: function (data) {
-      alert('Set the live money to ' + isLiveMoney + ', reloading the page..');
-      location.reload();
+      alert('Done. Please reload the page.');
     },
     fail: function () {
       alert('Error occurred.');
