@@ -17,6 +17,7 @@ portfolioRouter.get('/', (req, res) => {
     tickerType: req.query.type,
     horizon: req.query.h,
     isAuth: res.locals['isAuth'],
+    liveMoneyToggle: (req.session as any).liveMoney === true ? 'checked' : '',
   });
 });
 

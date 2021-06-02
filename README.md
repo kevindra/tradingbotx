@@ -1,4 +1,4 @@
-# TradingBot Typescript 
+# TradingBot Typescript
 
 [![Join the chat at https://gitter.im/tradingbotx/community](https://badges.gitter.im/tradingbotx/community.svg)](https://gitter.im/tradingbotx/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -39,7 +39,7 @@ Let's see how it goes! It's only the start.
 - [x] 🆕 ✨ Multiple Algo Support - Buy & Sell basic
 - [x] 🧹 README documentation for open sources, code clean up etc.
 - [x] 🆕 ✨ Basic Backtest feature - allows you to look up algorithm's output b/w any timeframe
-- [x] 🆕 ✨ Dark Mode Toggle 😍 
+- [x] 🆕 ✨ Dark Mode Toggle 😍
 - [x] 🐛 Fix algo selection based on query params on Quick Analysis page
 - [x] 🆕 ✨ Algorithms page to describe what each algorithm does
 - [x] 🆕 ✨ Account's page
@@ -48,11 +48,11 @@ Let's see how it goes! It's only the start.
 - [x] 🆕 ✨ Cloud based trade schedule
 - [x] 🆕 ✨ Advanced Backtest feature - allows you to simulate the trading using multiple algorithms on a list of stocks
 - [x] Window based backtest - now we have 100% accurate backtest
+- [x] Expose API based live money trading for people who are looking to live trade (since OAuth isn't available for live trading yet)
+- [x] Live money trading approval by Alpaca
 - [ ] Strong Validations (https://wanago.io/2018/12/17/typescript-express-error-handling-validation/)
 - [ ] Generic algorithm parameters support
 - [ ] Expose a mechanism to configure algorithms from the interface
-- [ ] Expose API based live money trading for people who are looking to live trade (since OAuth isn't available for live trading yet)
-- [ ] Live money trading approval by Alpaca
 - [ ] Delete watchlist support
 - [ ] Watchlist detail page
 - [ ] Trade link on watchlist page
@@ -121,13 +121,13 @@ An Algorithm in this repo has an input and an output. The input takes an object 
 
 ```ts
 export interface AlgoInput {
-  open: number[], // open price
-  close: number[], // close price
+  open: number[]; // open price
+  close: number[]; // close price
   adjustedClose: number[]; // close price, split adjusted
-  high: number[], // high price
-  low: number[], // low price
-  volume: number[], // volume
-  splitCoefficient: number[] // split coefficient for the interval
+  high: number[]; // high price
+  low: number[]; // low price
+  volume: number[]; // volume
+  splitCoefficient: number[]; // split coefficient for the interval
 }
 ```
 
@@ -205,4 +205,5 @@ After you are ready to deploy, feel free to submit a pull request.
 Check out the current algorithms [here](https://github.com/kevindra/tradingbot/tree/main/src/algo).
 
 ---
+
 Copyright Kevindra Singh © 2021. All rights reserved.

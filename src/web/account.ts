@@ -118,6 +118,7 @@ accountRouter.get('/', async (req, res, next) => {
       message: 'My Account',
       secondaryMessage: 'Here, you can see your account details',
       isAuth: res.locals['isAuth'],
+      liveMoneyToggle: sess.liveMoney === true ? 'checked' : '',
       account: account,
       buying_power: buying_power,
       cash: cash,

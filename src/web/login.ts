@@ -11,6 +11,7 @@ loginRouter.get('/', (req, res) => {
     secret: process.env.ALP_CLIENT_SECRET,
     redirectUri: process.env.ALP_REDIRECT_URI,
     isAuth: res.locals['isAuth'],
+    liveMoneyToggle: (req.session as any).liveMoney === true ? 'checked' : '',
   });
 });
 

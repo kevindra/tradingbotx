@@ -14,6 +14,7 @@ watchlistsRouter.get('/create', (req, res) => {
     secondaryMessage:
       'Here, you can manage your watchlists for your favorite stocks and use them as inputs to the algorithms.',
     isAuth: res.locals['isAuth'],
+    liveMoneyToggle: (req.session as any).liveMoney === true ? 'checked' : '',
     create: true,
   });
 });
@@ -40,6 +41,7 @@ watchlistsRouter.get('/edit', async (req, res, next) => {
       secondaryMessage:
         'Here, you can manage your watchlists for your favorite stocks and use them as inputs to the algorithms.',
       isAuth: res.locals['isAuth'],
+      liveMoneyToggle: (req.session as any).liveMoney === true ? 'checked' : '',
       edit: true,
       name: watchlist.name,
       tickers: watchlist.assets
@@ -93,6 +95,7 @@ watchlistsRouter.get('/', async (req, res, next) => {
       secondaryMessage:
         'Here, you can manage your watchlists for your favorite stocks and use them as inputs to the algorithms.',
       isAuth: res.locals['isAuth'],
+      liveMoneyToggle: (req.session as any).liveMoney === true ? 'checked' : '',
       list: true,
       watchlists: watchlists,
     });

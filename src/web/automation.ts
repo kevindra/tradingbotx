@@ -22,6 +22,7 @@ automationRouter.get('/create', (req, res) => {
     secondaryMessage:
       'Here you can create automatic schedule for bot to buy or sell your list of stocks based on the algorithm output you choose, completely hands free.',
     isAuth: res.locals['isAuth'],
+    liveMoneyToggle: sess.liveMoney === true ? 'checked' : '',
     create: true,
     algoIds: getAllAlgoIds(),
     algoNames: getAllAlgoNames(),
@@ -94,6 +95,7 @@ automationRouter.get('/', async (req, res, next) => {
             secondaryMessage:
               'Here, you can see all your currently scheduled automated trades.',
             isAuth: false,
+            liveMoneyToggle: sess.liveMoney === true ? 'checked' : '',
             list: true,
           });
           return;
@@ -140,6 +142,7 @@ automationRouter.get('/', async (req, res, next) => {
         secondaryMessage:
           'Here, you can see all your currently scheduled automated trades.',
         isAuth: res.locals['isAuth'],
+        liveMoneyToggle: sess.liveMoney === true ? 'checked' : '',
         list: true,
         rules: rules,
       });
@@ -151,6 +154,7 @@ automationRouter.get('/', async (req, res, next) => {
         secondaryMessage:
           'Here, you can see all your currently scheduled automated trades.',
         isAuth: res.locals['isAuth'],
+        liveMoneyToggle: sess.liveMoney === true ? 'checked' : '',
         list: true,
       });
     }

@@ -7,6 +7,7 @@ const router = express.Router();
 const mkd = new Markdown();
 
 router.get('/', async (req, res) => {
+  var sess: any = req.session;
   let markdownContent: string = await new Promise((resolve, reject) => {
     request.get(
       'https://raw.githubusercontent.com/kevindra/tradingbot/main/src/algo/README.md',
@@ -22,6 +23,7 @@ router.get('/', async (req, res) => {
     secondaryMessage: 'Following are the current algorithms and how they work.',
     markdownHtml: mkd.render(markdownContent),
     isAuth: res.locals['isAuth'],
+    liveMoneyToggle: sess.liveMoney === true ? 'checked' : '',
   });
 });
 

@@ -384,6 +384,20 @@ function createSchedule(o, header, apiUrl, callback) {
   });
 }
 
+function setLiveMoney(isLiveMoney = false) {
+  $.ajax({
+    url: '/api/liveMoney?v=' + isLiveMoney,
+    method: 'GET',
+    success: function (data) {
+      alert('Set the live money to ' + isLiveMoney + ', reloading the page..');
+      location.reload();
+    },
+    fail: function () {
+      alert('Error occurred.');
+    },
+  });
+}
+
 $(document).on('click', '#save', function () {
   var records = [];
   $('table tbody tr').each(function () {
@@ -599,11 +613,12 @@ $(document).on('submit', '#edit-watchlist', function (e) {
   });
 });
 
-$(document).on('click', '#livemoneytogglediv', e => {
-  alert(
-    "Live money trading is not yet supported on this website. Waiting for Alpaca's approval."
-  );
-  e.preventDefault();
+$('#livemoneytoggle').change(function () {
+  if ($(this).prop('checked') == true) {
+    setLiveMoney(true);
+  } else {
+    setLiveMoney(false);
+  }
 });
 
 $(document).on('submit', '#create-schedule', function (e) {

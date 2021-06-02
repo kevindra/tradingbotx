@@ -173,6 +173,7 @@ backtestRouter.get('/', async (req, res, next) => {
     algoIds: getAllAlgoIds(),
     algoNames: getAllAlgoNames(),
     isAuth: res.locals['isAuth'],
+    liveMoneyToggle: (req.session as any).liveMoney === true ? 'checked' : '',
     results: formattedResults,
   });
 });

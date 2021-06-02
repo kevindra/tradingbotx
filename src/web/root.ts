@@ -21,13 +21,13 @@ router.get('/', (req, res) => {
     ticker: req.query.t,
     tickerType: req.query.type,
     endDate:
-      req.query.endDate ||
-      moment().tz('America/Toronto').format('YYYY-MM-DD'),
+      req.query.endDate || moment().tz('America/Toronto').format('YYYY-MM-DD'),
     horizon: req.query.h,
     selectedAlgoIds: req.query.algoIds || [],
     algoIds: getAllAlgoIds(),
     algoNames: getAllAlgoNames(),
     isAuth: res.locals['isAuth'],
+    liveMoneyToggle: (req.session as any).liveMoney === true ? 'checked' : '',
   });
 });
 

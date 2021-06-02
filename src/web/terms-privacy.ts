@@ -8,6 +8,7 @@ termsPrivacyRouter.use('/', (req, res) => {
     navTitle: NAV_TITLE,
     message: SECONDARY_TITLE,
     isAuth: res.locals['isAuth'],
+    liveMoneyToggle: (req.session as any).liveMoney === true ? 'checked' : '',
   });
 });
 

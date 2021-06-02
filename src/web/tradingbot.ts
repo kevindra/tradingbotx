@@ -38,6 +38,7 @@ tradingbotRouter.get('/', async (req, res, next) => {
       navTitle: NAV_TITLE,
       message: SECONDARY_TITLE,
       isAuth,
+      liveMoneyToggle: (req.session as any).liveMoney === true ? 'checked' : '',
       lists,
       algoIds: getAllAlgoIds(),
       algoNames: getAllAlgoNames(),
