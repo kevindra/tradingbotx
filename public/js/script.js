@@ -145,6 +145,9 @@ $(document).ready(function () {
       plotChart(data, ticker);
     });
   }
+
+  // Account page table sorting
+  $('#account-table').DataTable();
 });
 
 // TODO it plots only the first indicator of an Algo
