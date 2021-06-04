@@ -685,3 +685,69 @@ $(document).on('submit', '#run-backtest', function (e) {
   $('#run-backtest-spinner').show();
   $('#run-backtest-button').attr('disabled', '');
 });
+
+function displayAccountBars() {
+  var tickers = [];
+  $('#account-table tbody tr').each(function () {
+    tickers.push($(this).find('td:eq(0)').text());
+  });
+  var costBasis = [];
+  $('#account-table tbody tr').each(function () {
+    costBasis.push(
+      parseFloat($(this).find('td:eq(5)').text().replace('$', ''))
+    );
+  });
+  var marketValue = [];
+  $('#account-table tbody tr').each(function () {
+    marketValue.push(
+      parseFloat($(this).find('td:eq(6)').text().replace('$', ''))
+    );
+  });
+  Highcharts.chart('account-chart', {
+    chart: {
+      type: 'column',
+    },
+    title: {
+      text: 'Investment Breakdown and Market Values',
+    },
+    subtitle: {
+      text: '$ cost value and market value per ticker',
+    },
+    xAxis: {
+      categories: tickers,
+      crosshair: true,
+    },
+    yAxis: {
+      min: 0,
+      title: {
+        text: '$ Value',
+      },
+    },
+    tooltip: {
+      headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+      pointFormat:
+        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>${point.y:.2f}</b></td></tr>',
+      footerFormat: '</table>',
+      shared: true,
+      useHTML: true,
+    },
+    plotOptions: {
+      column: {
+        pointPadding: 0.2,
+        borderWidth: 0,
+      },
+    },
+    series: [
+      {
+        name: 'Cost Basis',
+        data: costBasis,
+      },
+      {
+        name: 'Market Value',
+        data: marketValue,
+      },
+    ],
+  });
+}
+displayAccountBars();
