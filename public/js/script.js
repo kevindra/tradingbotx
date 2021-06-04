@@ -687,6 +687,10 @@ $(document).on('submit', '#run-backtest', function (e) {
 });
 
 function displayAccountBars() {
+  if ($('#account-table').length === 0) {
+    return;
+  }
+
   var tickers = [];
   $('#account-table tbody tr').each(function () {
     tickers.push($(this).find('td:eq(0)').text());
