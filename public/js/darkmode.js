@@ -53,6 +53,11 @@ function initTheme() {
         'navbar navbar-expand-lg navbar-dark bg-white')
     : (document.getElementsByTagName('nav')[0].className =
         'navbar navbar-expand-lg navbar-dark bg-dark');
+
+  darkThemeSelected
+    ? (document.getElementById('account-table').style =
+        '--bs-table-bg: #212529')
+    : (document.getElementById('account-table').style = '');
 }
 
 function resetTheme() {
@@ -63,6 +68,7 @@ function resetTheme() {
     document.getElementById(darkLabel).innerHTML = darkLang;
     document.getElementsByTagName('nav')[0].className =
       'navbar navbar-expand-lg navbar-dark bg-white';
+    document.getElementById('account-table').style = '--bs-table-bg: #212529';
   } else {
     document.body.removeAttribute('data-theme');
     localStorage.removeItem('darkMode');
@@ -70,5 +76,6 @@ function resetTheme() {
     document.getElementById(darkLabel).innerHTML = lightLang;
     document.getElementsByTagName('nav')[0].className =
       'navbar navbar-expand-lg navbar-dark bg-dark';
+    document.getElementById('account-table').style = '';
   }
 }

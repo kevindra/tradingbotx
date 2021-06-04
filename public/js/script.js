@@ -147,7 +147,14 @@ $(document).ready(function () {
   }
 
   // Account page table sorting
-  $('#account-table').DataTable();
+  $('#account-table').DataTable({
+    fixedHeader: {
+      header: true,
+      footer: true,
+    },
+    paging: false,
+    searching: false,
+  });
 });
 
 // TODO it plots only the first indicator of an Algo

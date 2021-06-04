@@ -61,7 +61,9 @@ html(lang="en")
                             td !{position.unrealized_intraday_pl}
                             td !{position.unrealized_plpc}
                             td !{position.unrealized_pl}
-                    tr 
+                </tbody>
+                <tfoot>
+                    tr
                         td <strong>Total</strong>
                         td
                         td
@@ -73,7 +75,7 @@ html(lang="en")
                         td <strong>!{positionsSummary.formatted.todayProfit}</strong>
                         td <strong>!{positionsSummary.formatted.totalProfitPc}</strong>
                         td <strong>!{positionsSummary.formatted.totalProfit}</strong>
-                </tbody>
+                </tfoot>
             </table>
 
             h4.display-6='Orders'
