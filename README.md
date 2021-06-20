@@ -50,6 +50,7 @@ Let's see how it goes! It's only the start.
 - [x] Window based backtest - now we have 100% accurate backtest
 - [x] Expose API based live money trading for people who are looking to live trade (since OAuth isn't available for live trading yet)
 - [x] Live money trading approval by Alpaca
+- [x] Portfolio Chart Support - Account Page
 - [ ] Strong Validations (https://wanago.io/2018/12/17/typescript-express-error-handling-validation/)
 - [ ] Generic algorithm parameters support
 - [ ] Expose a mechanism to configure algorithms from the interface

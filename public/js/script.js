@@ -145,7 +145,37 @@ $(document).ready(function () {
       plotChart(data, ticker);
     });
   }
+  // Plot portfolio history
+  if (Highcharts !== undefined && window.location.pathname === '/account') {
+    $.getJSON('/api/portfolio/history', function (data) {
+      console.log(data);
+      var processedData = [];
+      for (var t in data.timestamp) {
+        processedData.push([data.timestamp[t], data.equity[t]]);
+      }
 
+      // Create the chart
+      Highcharts.stockChart('portfolio-chart', {
+        rangeSelector: {
+          selected: 1,
+        },
+
+        title: {
+          text: 'Portfolio History',
+        },
+
+        series: [
+          {
+            name: 'Value ($)',
+            data: processedData,
+            tooltip: {
+              valueDecimals: 2,
+            },
+          },
+        ],
+      });
+    });
+  }
   // Account page table sorting
   $('#account-table').DataTable({
     fixedHeader: {

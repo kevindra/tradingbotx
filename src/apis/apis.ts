@@ -6,6 +6,7 @@ import {opportunitiesApiRouter} from './opportunities';
 import {tradeApiRouter} from './trade';
 import {watchlistsApiRouter} from './watchlists';
 import {backtestApiRouter} from './backtest';
+import {portfolioHistory} from './portfolioHistory';
 
 const apisRouter = express.Router();
 
@@ -16,5 +17,6 @@ apisRouter.use('/trade', tradeApiRouter);
 apisRouter.use('/watchlists', watchlistsApiRouter);
 apisRouter.use('/liveMoney', liveMoneyRouter);
 apisRouter.use('/backtest', backtestApiRouter);
+apisRouter.use('/portfolio/history', portfolioHistory);
 
 export {apisRouter};

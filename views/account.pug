@@ -29,6 +29,11 @@ html(lang="en")
                     td=buying_power
                 </tbody>
             </table>
+            <figure class="highcharts-figure">
+                <div id="portfolio-chart"></div>
+                <p class="highcharts-description">
+                </p>
+            </figure>
 
             h4.display-6='Positions'
             <table class="table table-striped table-hover table-sm table-responsive-sm mt-3 small" id="account-table">
@@ -116,5 +121,6 @@ html(lang="en")
 
             include donation.pug
             include disclaimer.pug 
-
+            <script src="https://code.highcharts.com/stock/highstock.js"></script>
+            <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
     include footer.pug
