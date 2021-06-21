@@ -39,7 +39,7 @@ export class Trader {
   ) {
     let orders: Order[] = [];
 
-    // buy interesting stuff
+    // trade interesting stuff
     (
       await this.executeTrades(
         opportunities.opportunities || [],
@@ -62,10 +62,31 @@ export class Trader {
     minIndicatorValue: number,
     maxIndicatorValue: number
   ) {
+    const currentPositions = await this.alpacaClient.getPositions();
+
     // TODO Promise.all may cause burst of request to the service
     // and cause trades to fail
     return await Promise.all(
       opportunities.map(async o => {
+        if (o.type === 'sell') {
+          const symbolInPortfolio = currentPositions.filter(
+            p => p.symbol === o.symbol
+          );
+          if (
+            symbolInPortfolio !== undefined &&
+            symbolInPortfolio.length === 1
+          ) {
+            const totalReturn = symbolInPortfolio[0].unrealized_plpc;
+            if (totalReturn < 0) {
+              log(
+                `Did not submit sell order: ${o.type} ${o.symbol}, because order has negative total return of ${totalReturn}%. `,
+                'error'
+              );
+              return;
+            }
+          }
+        }
+
         // normalize the amount based on min,max amount & min,max confidence
         let weightedTradeAmount =
           minTradeAmount +
