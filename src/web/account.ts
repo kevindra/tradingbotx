@@ -1,9 +1,9 @@
-import {Position, Watchlist} from '@master-chief/alpaca';
+import {Order, Position, Watchlist} from '@master-chief/alpaca';
 import express from 'express';
 import moment from 'moment';
 import {AlpacaClient} from '../client/AlpacaClient';
 import {NAV_TITLE} from '../consts';
-import {withTryCatchNext} from '../util';
+import {calculateRealizedPl, getAllOrders, withTryCatchNext} from '../util';
 const accountRouter = express.Router();
 
 accountRouter.get('/', async (req, res, next) => {
@@ -18,9 +18,7 @@ accountRouter.get('/', async (req, res, next) => {
     );
     const account = await alpaca.raw().getAccount();
     const positions = await alpaca.raw().getPositions();
-    const orders = await alpaca.raw().getOrders({
-      status: 'all',
-    });
+    const allOrders = await getAllOrders(alpaca);
 
     const buying_power = `$${(
       Math.round(account.buying_power * 100) / 100
@@ -32,21 +30,35 @@ accountRouter.get('/', async (req, res, next) => {
     // total positions summary
     const posSum: any = {
       totalCost: 0,
-      totalProfit: 0,
+      unrealizedProfit: 0,
+      realizedProfit: 0,
       todayProfit: 0,
+      unrealizedProfitPc: 0,
+      totalProfit: 0,
       totalProfitPc: 0,
+      realizedProfitPc: 0,
       todayProfitPc: 0,
       mktValue: 0,
       formatted: {
         totalCost: 0,
-        totalProfit: 0,
+        unrealizedProfit: 0,
+        realizedProfit: 0,
         todayProfit: 0,
+        unrealizedProfitPc: 0,
+        totalProfit: 0,
         totalProfitPc: 0,
+        realizedProfitPc: 0,
         todayProfitPc: 0,
         mktValue: 0,
       },
     };
     positions.forEach(p => {
+      let realizedPl = calculateRealizedPl(
+        p.symbol,
+        p.avg_entry_price,
+        allOrders
+      );
+      console.log(`Realized PL: ${p.symbol} ${realizedPl}`);
       formattedPositions.push({
         symbol: p.symbol,
         current_price: `$${p.current_price}`,
@@ -65,11 +77,27 @@ accountRouter.get('/', async (req, res, next) => {
           p.unrealized_intraday_plpc * 100,
           'pct'
         ),
+        realized_pl: formatAndColor(realizedPl, 'dollar'),
+        total_pl: formatAndColor(realizedPl + p.unrealized_pl, 'dollar'),
+        total_plpc: formatAndColor(
+          ((realizedPl + p.unrealized_pl) / p.cost_basis) * 100,
+          'pct'
+        ),
       });
 
       posSum.totalCost += p.cost_basis;
       posSum.formatted.totalCost = `$${posSum.totalCost.toFixed(2)}`;
-      posSum.totalProfit += p.unrealized_pl;
+      posSum.realizedProfit += realizedPl;
+      posSum.formatted.realizedProfit = formatAndColor(
+        posSum.realizedProfit,
+        'dollar'
+      );
+      posSum.unrealizedProfit += p.unrealized_pl;
+      posSum.formatted.unrealizedProfit = formatAndColor(
+        posSum.unrealizedProfit,
+        'dollar'
+      );
+      posSum.totalProfit += realizedPl + p.unrealized_pl;
       posSum.formatted.totalProfit = formatAndColor(
         posSum.totalProfit,
         'dollar'
@@ -84,6 +112,12 @@ accountRouter.get('/', async (req, res, next) => {
         posSum.todayProfitPc,
         'pct'
       );
+      posSum.unrealizedProfitPc =
+        (posSum.unrealizedProfit / posSum.totalCost) * 100;
+      posSum.formatted.unrealizedProfitPc = formatAndColor(
+        posSum.unrealizedProfitPc,
+        'pct'
+      );
       posSum.totalProfitPc = (posSum.totalProfit / posSum.totalCost) * 100;
       posSum.formatted.totalProfitPc = formatAndColor(
         posSum.totalProfitPc,
@@ -95,7 +129,7 @@ accountRouter.get('/', async (req, res, next) => {
 
     const formattedOrders: any[] = [];
 
-    orders.forEach(o => {
+    allOrders.forEach(o => {
       formattedOrders.push({
         symbol: o.symbol,
         qty: o.qty ? o.qty.toFixed(2) : ' ',

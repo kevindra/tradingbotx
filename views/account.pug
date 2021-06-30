@@ -48,8 +48,11 @@ html(lang="en")
                         <th>Market Value</th>
                         <th>Today's P/L(%)</th>
                         <th>Today's P/L($)</th>
-                        <th>Total P/L(%)</th>
+                        <th>Unrealized P/L(%)</th>
+                        <th>Unrealized P/L($)</th>
+                        <th>Realized P/L($)</th>
                         <th>Total P/L($)</th>
+                        <th>Total P/L(%)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,6 +69,9 @@ html(lang="en")
                             td !{position.unrealized_intraday_pl}
                             td !{position.unrealized_plpc}
                             td !{position.unrealized_pl}
+                            td !{position.realized_pl}
+                            td !{position.total_pl}
+                            td !{position.total_plpc}
                 </tbody>
                 <tfoot>
                     tr
@@ -78,8 +84,11 @@ html(lang="en")
                         td <strong>!{positionsSummary.formatted.mktValue}</strong>
                         td <strong>!{positionsSummary.formatted.todayProfitPc}</strong>
                         td <strong>!{positionsSummary.formatted.todayProfit}</strong>
-                        td <strong>!{positionsSummary.formatted.totalProfitPc}</strong>
+                        td <strong>!{positionsSummary.formatted.unrealizedProfitPc}</strong>
+                        td <strong>!{positionsSummary.formatted.unrealizedProfit}</strong>
+                        td <strong>!{positionsSummary.formatted.realizedProfit}</strong>
                         td <strong>!{positionsSummary.formatted.totalProfit}</strong>
+                        td <strong>!{positionsSummary.formatted.totalProfitPc}</strong>
                 </tfoot>
             </table>
             div(style={width: '1024px'})
