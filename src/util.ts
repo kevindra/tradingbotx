@@ -144,6 +144,10 @@ export const getMinMaxIndicatorValues = (condition: string) => {
       minIndicatorValue = 0;
       maxIndicatorValue = Number.MAX_SAFE_INTEGER;
       break;
+    case 'GT_0':
+      minIndicatorValue = 0.01; // temporary fix until we have a better way to handle this
+      maxIndicatorValue = Number.MAX_SAFE_INTEGER;
+      break;
     default:
       // making min & max mutually exclusive so we don't return any results
       minIndicatorValue = Number.MAX_SAFE_INTEGER;
