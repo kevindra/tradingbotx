@@ -1,7 +1,8 @@
 import express from 'express';
 import moment from 'moment-timezone';
-import {AlgoExecutor} from '../AlgoExecutor';
-import {getAlgosFromRequest, withTryCatchNext} from '../util';
+
+import { AlgoExecutor } from '../AlgoExecutor';
+import { getAlgosFromRequest, withTryCatchNext } from '../util';
 
 const currentIndicatorsRouter = express.Router();
 const algoExecutor = new AlgoExecutor();
@@ -16,27 +17,20 @@ currentIndicatorsRouter.get('/', async (req, res, next) => {
     const date = moment(req.query.date as string, 'YYYY-MM-DD');
     const algosToRun = getAlgosFromRequest(req);
 
-    if (type === 'stocks') {
-      const data = await algoExecutor.executeAlgoOnStock(
-        ticker,
-        horizon,
-        date,
-        algosToRun
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(data.timestamps[data.timestamps.length - 1]));
-    } else if (type === 'crypto') {
-      const data = await algoExecutor.executeAlgoOnCrypto(
-        ticker,
-        currency,
-        horizon,
-        date,
-        algosToRun
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(data.timestamps[data.timestamps.length - 1]));
-    } else {
+    const priceData = await algoExecutor.execute(
+      ticker,
+      horizon,
+      date,
+      algosToRun
+    );
+
+    if (priceData === undefined) {
       res.end('Not found');
+    } else {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(
+        JSON.stringify(priceData.timestamps[priceData.timestamps.length - 1])
+      );
     }
   });
 });

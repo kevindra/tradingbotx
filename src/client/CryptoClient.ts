@@ -1,5 +1,5 @@
-import request from 'request';
 import Mustache from 'mustache';
+import request from 'request';
 
 const URL = `https://min-api.cryptocompare.com/data/histoday?aggregate=1&e=__CRYPTO_API_KEY__&extraParams=CryptoCompare&fsym={{ticker}}&limit={{periodInDays}}&tryConversion=false&tsym={{currency}}`;
 
@@ -46,6 +46,7 @@ export class CryptoClient {
       url: url,
     };
 
+    console.log(`Fetch: ${opt.url}`);
     return new Promise((resolve, reject) => {
       request(opt, (err, res, body) => {
         if (err) {

@@ -20,24 +20,24 @@ html(lang="en")
                         input.form-control(type='text' id='ticker' name='t' aria-describedby="tickerHelp" value=ticker)
                     </div>
                     <div class="col-sm-3">
-                        <span id="tickerHelp" class="form-text">It can be any stock ticker symbol. Or for Crypto just use "BTC" "ETH" etc..</span>
+                        <span id="tickerHelp" class="form-text">It can be a stock or crypto ticker symbol. For Crypto use "BTCUSD" "ETHUSD" etc.</span>
                     </div>
                     <input type="hidden" name="c" value="USD"/>
                 </div>
                 
-                <div class="row mb-3">
-                    <div class="col-sm-2">
-                        <label for="tickerType" class="col-sm-2 col-form-label">Type:</label>
-                    </div>
-                    <div class="col-sm-4">
-                        select.form-select(name='type' id='tickerType' aria-describedby='tickerTypeHelp')
-                            option(value='stocks', selected=(tickerType == 'stocks')) Stocks
-                            option(value='crypto', selected=(tickerType == 'crypto')) Crypto
-                    </div>
-                    <div class="col-sm-3">
-                        <span id="tickerTypeHelp" class="form-text">Stocks or Crypto, based on the ticker you enter.</span>
-                    </div>
-                </div>
+                //- <div class="row mb-3">
+                //-     <div class="col-sm-2">
+                //-         <label for="tickerType" class="col-sm-2 col-form-label">Type:</label>
+                //-     </div>
+                //-     <div class="col-sm-4">
+                //-         select.form-select(name='type' id='tickerType' aria-describedby='tickerTypeHelp')
+                //-             option(value='stocks', selected=(tickerType == 'stocks')) Stocks
+                //-             option(value='crypto', selected=(tickerType == 'crypto')) Crypto
+                //-     </div>
+                //-     <div class="col-sm-3">
+                //-         <span id="tickerTypeHelp" class="form-text">Stocks or Crypto, based on the ticker you enter.</span>
+                //-     </div>
+                //- </div>
 
                 <div class="row mb-3">
                     <div class="col-sm-2">

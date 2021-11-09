@@ -47,13 +47,15 @@ export class OpportunitiesFinder {
       symbols.map(async symbol => {
         const conf = await limiter.schedule(
           async () =>
-            await algoExecutor.executeAlgoOnStock(symbol, horizon, endDate, [
-              algo,
-            ])
+            await algoExecutor.execute(symbol, horizon, endDate, [algo])
         );
 
         let opps: Opportunity[] = [];
-        if (conf.timestamps && conf.timestamps.length > 0) {
+        if (
+          conf !== undefined &&
+          conf.timestamps &&
+          conf.timestamps.length > 0
+        ) {
           opps = conf.timestamps.map((c, i) => {
             return <Opportunity>{
               symbol: symbol,
@@ -62,7 +64,6 @@ export class OpportunitiesFinder {
                 conf.timestamps[i].algoOutputs[0][indicatorIndex],
               ],
               price: conf.timestamps[i].price,
-              // type: algo.actionType(),
               intervalNumber: i + 1,
               timestamp: conf.timestamps[i].timestamp,
             };
@@ -72,7 +73,6 @@ export class OpportunitiesFinder {
             <Opportunity>{
               symbol: symbol,
               indicatorValues: [],
-              // type: algo.actionType(),
               intervalNumber: -1,
               timestamp: -1,
             },
@@ -85,14 +85,6 @@ export class OpportunitiesFinder {
         };
       })
     );
-
-    // console.log(
-    //   `All symbols daily opps: ${JSON.stringify(
-    //     allSymbolsDailyOpportunities,
-    //     null,
-    //     2
-    //   )}`
-    // );
 
     const filteredOpportunities: Opportunity[][] = allSymbolsDailyOpportunities.map(
       perSymbolDailyOpportunities => {
@@ -142,12 +134,14 @@ export class OpportunitiesFinder {
       symbols.map(async symbol => {
         const conf = await limiter.schedule(
           async () =>
-            await algoExecutor.executeAlgoOnStock(symbol, horizon, endDate, [
-              algo,
-            ])
+            await algoExecutor.execute(symbol, horizon, endDate, [algo])
         );
 
-        if (conf.timestamps && conf.timestamps.length > 0) {
+        if (
+          conf !== undefined &&
+          conf.timestamps &&
+          conf.timestamps.length > 0
+        ) {
           return <Opportunity>{
             symbol: symbol,
             indicatorValues: [
@@ -217,14 +211,11 @@ export const getCurrentOpportunity = async (
   endDate: Moment,
   algo: Algo
 ): Promise<Opportunity> => {
-  const stockData = await timeseriesManager.getStockTimeseries(
-    ticker,
-    horizon,
-    endDate
-  );
+  const algoOutput = await algoExecutor.execute(ticker, horizon, endDate, [
+    algo,
+  ]);
 
-  // No data found for the stock ticker
-  if (stockData.prices === undefined || stockData.prices.length === 0) {
+  if (algoOutput === undefined) {
     return <Opportunity>{
       symbol: ticker,
       indicatorValues: [],
@@ -234,20 +225,12 @@ export const getCurrentOpportunity = async (
     };
   }
 
-  const algoOutput = await algoExecutor.execute(
-    stockData,
-    [algo],
-    0,
-    stockData.prices.length
-  );
-
   const currentOpportunity = <Opportunity>{
     symbol: ticker,
     indicatorValues:
       // algoOutputs[0] because we executed only one algo
       algoOutput.timestamps[algoOutput.timestamps.length - 1].algoOutputs[0],
     price: algoOutput.timestamps[algoOutput.timestamps.length - 1].price,
-    // type: algo.actionType(),
     intervalNumber: algoOutput.timestamps.length,
     timestamp:
       algoOutput.timestamps[algoOutput.timestamps.length - 1].timestamp,
@@ -272,70 +255,70 @@ export const getSlidingWindowOpportunities = async (
   algo: Algo,
   windowSize: number
 ): Promise<Opportunity[]> => {
-  const algoIndex = 0; // because there is only one algo we are running
-  const stockData = await timeseriesManager.getStockTimeseries(
-    ticker,
-    horizon,
-    endDate
-  );
+  // const algoIndex = 0; // because there is only one algo we are running
+  // const stockData = await timeseriesManager.getStockTimeseries(
+  //   ticker,
+  //   horizon,
+  //   endDate
+  // );
   // No data found for the stock ticker
-  if (stockData.prices === undefined || stockData.prices.length === 0) {
-    return [
-      <Opportunity>{
-        symbol: ticker,
-        indicatorValues: [],
-        // type: algo.actionType(),
-        intervalNumber: -1,
-        timestamp: -1,
-      },
-    ];
-  }
-
-  console.log(`STOCK DATA LENGTH: ${stockData.prices.length}`);
-
-  let finalAlgoResponse: AlgosResponse = {
-    algoNames: [algo.name()],
-    timestamps: [],
-    types: [algo.actionType()],
-  };
-
-  // when window is partial we first fill the first window
-  // [x, x], x
-  const firstWindowAlgoResponse = await algoExecutor.execute(
-    stockData,
-    [algo],
-    0, // start index
-    windowSize // end index + 1
-  );
-  finalAlgoResponse.timestamps.push(...firstWindowAlgoResponse.timestamps);
-
-  // now for each full windows
-  for (var i = windowSize + 1; i < stockData.prices.length + 1; i++) {
-    const windowAlgoResponse = await algoExecutor.execute(
-      stockData,
-      [algo],
-      i - windowSize, // start index
-      i // end index + 1
-    );
-
-    // add the last value only, as we will now incrementally get values per window
-    finalAlgoResponse.timestamps.push(
-      windowAlgoResponse.timestamps[windowAlgoResponse.timestamps.length - 1]
-    );
-  }
-
-  console.log(
-    `Final ALGO RESPONSE SIZE: ${finalAlgoResponse.timestamps.length}`
-  );
-  // finally transform to the Opportunity object
-  return finalAlgoResponse.timestamps.map((timestamp, intervalNumber) => {
-    return <Opportunity>{
+  // if (stockData.prices === undefined || stockData.prices.length === 0) {
+  return [
+    <Opportunity>{
       symbol: ticker,
-      indicatorValues: timestamp.algoOutputs[algoIndex],
-      price: timestamp.price,
+      indicatorValues: [],
       // type: algo.actionType(),
-      intervalNumber: intervalNumber,
-      timestamp: timestamp.timestamp,
-    };
-  });
+      intervalNumber: -1,
+      timestamp: -1,
+    },
+  ];
+  // }
+
+  // console.log(`STOCK DATA LENGTH: ${stockData.prices.length}`);
+
+  // let finalAlgoResponse: AlgosResponse = {
+  //   algoNames: [algo.name()],
+  //   timestamps: [],
+  //   types: [algo.actionType()],
+  // };
+
+  // // when window is partial we first fill the first window
+  // // [x, x], x
+  // const firstWindowAlgoResponse = await algoExecutor.execute_(
+  //   stockData,
+  //   [algo],
+  //   0, // start index
+  //   windowSize // end index + 1
+  // );
+  // finalAlgoResponse.timestamps.push(...firstWindowAlgoResponse.timestamps);
+
+  // // now for each full windows
+  // for (var i = windowSize + 1; i < stockData.prices.length + 1; i++) {
+  //   const windowAlgoResponse = await algoExecutor.execute_(
+  //     stockData,
+  //     [algo],
+  //     i - windowSize, // start index
+  //     i // end index + 1
+  //   );
+
+  //   // add the last value only, as we will now incrementally get values per window
+  //   finalAlgoResponse.timestamps.push(
+  //     windowAlgoResponse.timestamps[windowAlgoResponse.timestamps.length - 1]
+  //   );
+  // }
+
+  // console.log(
+  //   `Final ALGO RESPONSE SIZE: ${finalAlgoResponse.timestamps.length}`
+  // );
+  // // finally transform to the Opportunity object
+  // return finalAlgoResponse.timestamps.map((timestamp, intervalNumber) => {
+  //   return <Opportunity>{
+  //     symbol: ticker,
+  //     indicatorValues: timestamp.algoOutputs[algoIndex],
+  //     price: timestamp.price,
+  //     // type: algo.actionType(),
+  //     intervalNumber: intervalNumber,
+  //     timestamp: timestamp.timestamp,
+  //   };
+  // });
 };

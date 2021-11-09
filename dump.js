@@ -27,12 +27,12 @@ console.log('Serialized Portfolio Stocks');
 console.log('===========================');
 console.log();
 
-console.log('Buy list:');
+console.log(`Buy list: Total: (${json[0].symbols.length})`);
 console.log('---------');
 console.log(json[0].symbols.join(','));
 console.log();
 
-console.log('Sell list:');
+console.log(`Sell list: (${json[0].symbols.length})`);
 console.log('----------');
 console.log(json[1].symbols.join(','));
 // dummy
