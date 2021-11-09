@@ -98,6 +98,34 @@ html(lang="en")
                             <span id="horizonHelp" class="form-text">Pick an algorithm to find the buy/sell/hold opportunities.</span>
                         </div>
                     </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-2">
+                            <label for="tickerType" class="col-sm-2 col-form-label">Condition:</label>
+                        </div>
+                        <div class="col-sm-4">
+                            <textarea name="condition" class="col-lg-12"></textarea>
+                        </div>
+                        <div class="col-sm-3">
+                            <span id="horizonHelp" class="form-text">Condition to trigger action. Action will be triggered only if this condition evaluates to true.</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-2">
+                            <label for="tickerType" class="col-sm-2 col-form-label">Action:</label>
+                        </div>
+                        <div class="col-sm-4">
+                        <select class="form-select" name="action">
+                            <option value="buy" selected>Buy</option>
+                            <option value="sell">Sell</option>
+                        </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <span id="horizonHelp" class="form-text">Action - buy or sell.</span>
+                        </div>
+                    </div>
+
                     <div class="row mb-3">
                         <div class="col-sm-5">
                             <button type="submit" class="btn btn-primary" id="submit-button">

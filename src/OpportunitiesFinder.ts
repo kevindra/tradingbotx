@@ -1,20 +1,21 @@
 import Bottleneck from 'bottleneck';
-import moment, {Moment} from 'moment-timezone';
-import {Algo} from './algo/algo';
-import {AlgoExecutor, AlgosResponse} from './AlgoExecutor';
-import {SecurityTimeseriesAdapter} from './SecurityTimeseriesAdapter';
-import {SecurityTimeseriesManager} from './SecurityTimeseriesManager';
+import moment, { Moment } from 'moment-timezone';
+
+import { Algo } from './algo/algo';
+import { AlgoExecutor, AlgosResponse } from './AlgoExecutor';
+import { SecurityTimeseriesAdapter } from './SecurityTimeseriesAdapter';
+import { SecurityTimeseriesManager } from './SecurityTimeseriesManager';
 
 export interface Opportunity {
   symbol: string;
   indicatorValues: number[];
   price?: number;
-  type: OpportunityType;
+  // type: OpportunityType;
   intervalNumber: number;
   timestamp: number;
 }
 
-export type OpportunityType = 'buy' | 'sell';
+// export type OpportunityType = 'buy' | 'sell';
 
 export interface Opportunities {
   opportunities: Opportunity[];
@@ -61,7 +62,7 @@ export class OpportunitiesFinder {
                 conf.timestamps[i].algoOutputs[0][indicatorIndex],
               ],
               price: conf.timestamps[i].price,
-              type: algo.actionType(),
+              // type: algo.actionType(),
               intervalNumber: i + 1,
               timestamp: conf.timestamps[i].timestamp,
             };
@@ -71,7 +72,7 @@ export class OpportunitiesFinder {
             <Opportunity>{
               symbol: symbol,
               indicatorValues: [],
-              type: algo.actionType(),
+              // type: algo.actionType(),
               intervalNumber: -1,
               timestamp: -1,
             },
@@ -156,7 +157,7 @@ export class OpportunitiesFinder {
               ],
             ],
             price: conf.timestamps[conf.timestamps.length - 1].price,
-            type: algo.actionType(),
+            // type: algo.actionType(),
             intervalNumber: conf.timestamps.length,
             timestamp: conf.timestamps[conf.timestamps.length - 1].timestamp,
           };
@@ -164,7 +165,7 @@ export class OpportunitiesFinder {
           return <Opportunity>{
             symbol: symbol,
             indicatorValues: [],
-            type: algo.actionType(),
+            // type: algo.actionType(),
             intervalNumber: -1,
             timestamp: -1,
           };
@@ -227,7 +228,7 @@ export const getCurrentOpportunity = async (
     return <Opportunity>{
       symbol: ticker,
       indicatorValues: [],
-      type: algo.actionType(),
+      // type: algo.actionType(),
       intervalNumber: -1,
       timestamp: -1,
     };
@@ -246,7 +247,7 @@ export const getCurrentOpportunity = async (
       // algoOutputs[0] because we executed only one algo
       algoOutput.timestamps[algoOutput.timestamps.length - 1].algoOutputs[0],
     price: algoOutput.timestamps[algoOutput.timestamps.length - 1].price,
-    type: algo.actionType(),
+    // type: algo.actionType(),
     intervalNumber: algoOutput.timestamps.length,
     timestamp:
       algoOutput.timestamps[algoOutput.timestamps.length - 1].timestamp,
@@ -283,7 +284,7 @@ export const getSlidingWindowOpportunities = async (
       <Opportunity>{
         symbol: ticker,
         indicatorValues: [],
-        type: algo.actionType(),
+        // type: algo.actionType(),
         intervalNumber: -1,
         timestamp: -1,
       },
@@ -332,7 +333,7 @@ export const getSlidingWindowOpportunities = async (
       symbol: ticker,
       indicatorValues: timestamp.algoOutputs[algoIndex],
       price: timestamp.price,
-      type: algo.actionType(),
+      // type: algo.actionType(),
       intervalNumber: intervalNumber,
       timestamp: timestamp.timestamp,
     };

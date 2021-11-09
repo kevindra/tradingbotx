@@ -301,8 +301,7 @@ function getOpportunities(
   horizon,
   algoId,
   indicator,
-  minIndicatorValue,
-  maxIndicatorValue,
+  condition,
   callback
 ) {
   $.ajax({
@@ -313,8 +312,7 @@ function getOpportunities(
       horizon: horizon,
       algoId: algoId,
       indicator: indicator,
-      minIndicatorValue: minIndicatorValue,
-      maxIndicatorValue: maxIndicatorValue,
+      condition: condition,
     },
     success: function (data) {
       console.log('GOT: ' + JSON.stringify(data));
@@ -335,8 +333,10 @@ function trade(opportunities, callback) {
       opportunities: opportunities,
       minTradeAmount: window.minTradeAmount,
       maxTradeAmount: window.maxTradeAmount,
-      minIndicatorValue: MIN_INDICATOR_VALUE,
-      maxIndicatorValue: MAX_INDICATOR_VALUE,
+      condition: window.condition,
+      action: window.action,
+      // minIndicatorValue: MIN_INDICATOR_VALUE,
+      // maxIndicatorValue: MAX_INDICATOR_VALUE,
     },
     success: function (data) {
       console.log('GOT: ' + JSON.stringify(data));
@@ -518,6 +518,8 @@ $(document).on('submit', '#startbot', function (e) {
     });
     window.opportunities = opp;
     window.minTradeAmount = form.minTradeAmount;
+    window.condition = form.condition;
+    window.action = form.action;
     window.maxTradeAmount = form.maxTradeAmount;
   });
 });
@@ -535,8 +537,7 @@ function analyzeTicker(tickers, form, i, opp, done) {
         form.horizon,
         form.algoId,
         form.indicator,
-        form.minIndicatorValue,
-        form.maxIndicatorValue,
+        form.condition,
         opportunities => {
           opportunities = opportunities.opportunities;
           // because we're looking for only one stock
@@ -555,7 +556,8 @@ function analyzeTicker(tickers, form, i, opp, done) {
                 o.indicatorValues[form.indicator].toFixed(2) +
                 '% </td>' +
                 '<td>' +
-                (o.type === 'buy' ? 'Buy' : 'Sell, if own') +
+                form.action +
+                // (o.type === 'buy' ? 'Buy' : 'Sell, if own') +
                 '</td>' +
                 '<td > <input type="checkbox" class="form-checkbox" id="checkbox-' +
                 o.symbol +
@@ -590,10 +592,10 @@ function executeTrades(opportunities) {
     var opp = opportunities.opportunities || [];
 
     opp.forEach(b => {
-      if (b.type === 'buy') {
+      if (window.action === 'buy') {
         $('#trade-status-' + b.symbol).text('No order submitted.');
-      } else if (b.type === 'sell') {
-        $('#trade-status-' + b.symbol).text('No shares to sell.');
+      } else if (window.action === 'sell') {
+        $('#trade-status-' + b.symbol).text('No order submitted.');
       }
     });
 

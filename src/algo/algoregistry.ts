@@ -1,9 +1,13 @@
-import {BuyLowAlgo} from './buylowalgo';
-import {SellHighAlgo} from './sellhighalgo';
+import { BuyLowAlgo } from './buylowalgo';
+import { PercentDown } from './PercentDown';
+import { PercentUp } from './PercentUp';
+import { SellHighAlgo } from './sellhighalgo';
 
 export const ALGO_REGISTRY = [
   new BuyLowAlgo(),
   new SellHighAlgo(),
+  new PercentDown(),
+  new PercentUp(),
   /**
    * Add your new Algo here
    */

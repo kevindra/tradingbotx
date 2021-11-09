@@ -1,13 +1,12 @@
 import express from 'express';
+
 import {
-  MIN_INDICATOR_VALUE_DEFAULT,
-  MAX_INDICATOR_VALUE_DEFAULT,
-  MIN_TRADE_AMOUNT_DEFAULT,
-  MAX_TRADE_AMOUNT_DEFAULT,
+    MAX_INDICATOR_VALUE_DEFAULT, MAX_TRADE_AMOUNT_DEFAULT, MIN_INDICATOR_VALUE_DEFAULT,
+    MIN_TRADE_AMOUNT_DEFAULT
 } from '../consts';
-import {Opportunities, OpportunitiesFinder} from '../OpportunitiesFinder';
-import {AccessToken, Trader} from '../trader';
-import {withTryCatchNext} from '../util';
+import { Opportunities, OpportunitiesFinder } from '../OpportunitiesFinder';
+import { AccessToken, ActionType, Trader } from '../trader';
+import { getMinMaxIndicatorValues, withTryCatchNext } from '../util';
 
 const tradeApiRouter = express.Router();
 
@@ -21,12 +20,24 @@ tradeApiRouter.post('/', async (req, res, next) => {
     const maxTradeAmount = parseInt(
       (req.body.maxTradeAmount as string) || `${MAX_TRADE_AMOUNT_DEFAULT}`
     );
-    const minIndicatorValue = parseInt(
-      (req.body.minIndicatorValue as string) || `${MIN_INDICATOR_VALUE_DEFAULT}`
+    // const minIndicatorValue = parseInt(
+    //   (req.body.minIndicatorValue as string) || `${MIN_INDICATOR_VALUE_DEFAULT}`
+    // );
+    // const maxIndicatorValue = parseInt(
+    //   (req.body.maxIndicatorValue as string) || `${MAX_INDICATOR_VALUE_DEFAULT}`
+    // );
+    const action = (req.body.action as ActionType) || '';
+    const condition = (req.body.condition as string) || '';
+
+    console.log(`condition: ${condition}`);
+
+    const {minIndicatorValue, maxIndicatorValue} = getMinMaxIndicatorValues(
+      condition
     );
-    const maxIndicatorValue = parseInt(
-      (req.body.maxIndicatorValue as string) || `${MAX_INDICATOR_VALUE_DEFAULT}`
-    );
+
+    console.log(`minIndicatorValue: ${minIndicatorValue}`);
+    console.log(`maxIndicatorValue: ${maxIndicatorValue}`);
+
     const isLiveMoney: boolean = (req.session as any).liveMoney;
 
     const trader = new Trader(
@@ -37,6 +48,7 @@ tradeApiRouter.post('/', async (req, res, next) => {
     );
     const orders = await trader.performTrades(
       opp,
+      action,
       minTradeAmount,
       maxTradeAmount,
       minIndicatorValue,

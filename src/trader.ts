@@ -1,7 +1,8 @@
-import {AlpacaClient} from './client/AlpacaClient';
-import {Opportunities, Opportunity} from './OpportunitiesFinder';
-import {Order} from '@master-chief/alpaca';
-import {log} from './Logger';
+import { Order } from '@master-chief/alpaca';
+
+import { AlpacaClient } from './client/AlpacaClient';
+import { log } from './Logger';
+import { Opportunities, Opportunity } from './OpportunitiesFinder';
 
 export interface AccessToken {
   access_token: string;
@@ -11,6 +12,7 @@ export interface AccessToken {
   apisecret?: string;
 }
 
+export type ActionType = 'buy' | 'sell';
 /**
  * Given a list of opportunities, Trader trades them.
  */
@@ -32,6 +34,7 @@ export class Trader {
 
   async performTrades(
     opportunities: Opportunities,
+    action: ActionType,
     minTradeAmount: number,
     maxTradeAmount: number,
     minIndicatorValue: number,
@@ -43,6 +46,7 @@ export class Trader {
     (
       await this.executeTrades(
         opportunities.opportunities || [],
+        action,
         minTradeAmount,
         maxTradeAmount,
         minIndicatorValue,
@@ -57,6 +61,7 @@ export class Trader {
 
   private async executeTrades(
     opportunities: Opportunity[],
+    action: ActionType,
     minTradeAmount: number,
     maxTradeAmount: number,
     minIndicatorValue: number,
@@ -68,7 +73,7 @@ export class Trader {
     // and cause trades to fail
     return await Promise.all(
       opportunities.map(async o => {
-        if (o.type === 'sell') {
+        if (action === 'sell') {
           const symbolInPortfolio = currentPositions.filter(
             p => p.symbol === o.symbol
           );
@@ -79,7 +84,7 @@ export class Trader {
             const totalReturn = symbolInPortfolio[0].unrealized_plpc;
             if (totalReturn < 0) {
               log(
-                `Did not submit sell order: ${o.type} ${o.symbol}, because order has negative total return of ${totalReturn}%. `,
+                `Did not submit sell order: ${action} ${o.symbol}, because order has negative total return of ${totalReturn}%. `,
                 'error'
               );
               return;
@@ -87,21 +92,44 @@ export class Trader {
           }
         }
 
-        // normalize the amount based on min,max amount & min,max confidence
-        let weightedTradeAmount =
-          minTradeAmount +
-          ((o.indicatorValues[0] - minIndicatorValue) *
-            (maxTradeAmount - minTradeAmount)) /
-            (maxIndicatorValue - minIndicatorValue);
-        weightedTradeAmount = Math.floor(weightedTradeAmount);
-
-        log(`${o.type} $${o.symbol} amount $${weightedTradeAmount}`);
+        let weightedTradeAmount = 0;
+        // a short term fix to support more indicators
+        if (maxIndicatorValue == Number.MAX_SAFE_INTEGER) {
+          weightedTradeAmount = minTradeAmount * o.indicatorValues[0];
+          // we don't consider max trade amount when there is no upper bound to the indicator value
+          // weightedTradeAmount = Math.min(weightedTradeAmount, maxTradeAmount);
+          log(
+            `${action} $${o.symbol} weighted trade amount $${weightedTradeAmount} because Min Trade Amount = ${minTradeAmount} * IndicatorValue = ${o.indicatorValues[0]}`
+          );
+        } else {
+          // normalize the amount based on min,max amount & min,max confidence
+          weightedTradeAmount =
+            minTradeAmount +
+            ((o.indicatorValues[0] - minIndicatorValue) *
+              (maxTradeAmount - minTradeAmount)) /
+              (maxIndicatorValue - minIndicatorValue);
+          log(
+            `${action} $${o.symbol} weighted trade amount $${weightedTradeAmount} because Min Trade Amount = ${minTradeAmount}, Max Trade Amount = ${maxTradeAmount}`
+          );
+        }
+        weightedTradeAmount = Math.round(weightedTradeAmount * 100) / 100; // round to 2 decimal places
+        log(
+          `${action} $${o.symbol} weighted trade amount $${weightedTradeAmount}`
+        );
 
         let order;
+
+        if (weightedTradeAmount < 1.0) {
+          log(
+            `${action} $${o.symbol} weighted trade amount $${weightedTradeAmount} is less than 1.00, not submitting order.`
+          );
+          return order;
+        }
+
         try {
           order = await this.alpacaClient.placeOrder({
             symbol: o.symbol,
-            side: o.type,
+            side: action,
             notional: weightedTradeAmount,
           });
           log(
@@ -110,9 +138,9 @@ export class Trader {
           );
         } catch (ex) {
           log(
-            `Error submitting order: ${o.type} $${
+            `Error submitting order: ${action} $${
               o.symbol
-            } for $${weightedTradeAmount} type: buy, because ${JSON.stringify(
+            } for $${weightedTradeAmount} type: ${action}, because ${JSON.stringify(
               ex,
               null,
               2

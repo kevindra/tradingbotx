@@ -1,22 +1,19 @@
-import {Position, Watchlist} from '@master-chief/alpaca';
 import express from 'express';
 import moment from 'moment';
-import request from 'request';
-import {getAllAlgoIds, getAllAlgoNames} from '../algo/algoregistry';
-import {AlpacaClient} from '../client/AlpacaClient';
-import {
-  INVESTING_WINDOW_SIZE,
-  MAX_INDICATOR_VALUE_DEFAULT,
-  MAX_TRADE_AMOUNT_DEFAULT,
-  MIN_INDICATOR_VALUE_DEFAULT,
-  MIN_TRADE_AMOUNT_DEFAULT,
-  NAV_TITLE,
-  SECONDARY_TITLE,
-} from '../consts';
-import {withTryCatchNext} from '../util';
 import qs from 'query-string';
-import {BacktestResults} from '../apis/backtest';
-import {format, formatAndColor} from './account';
+import request from 'request';
+
+import { Position, Watchlist } from '@master-chief/alpaca';
+
+import { getAllAlgoIds, getAllAlgoNames } from '../algo/algoregistry';
+import { BacktestResults } from '../apis/backtest';
+import { AlpacaClient } from '../client/AlpacaClient';
+import {
+    INVESTING_WINDOW_SIZE, MAX_INDICATOR_VALUE_DEFAULT, MAX_TRADE_AMOUNT_DEFAULT,
+    MIN_INDICATOR_VALUE_DEFAULT, MIN_TRADE_AMOUNT_DEFAULT, NAV_TITLE, SECONDARY_TITLE
+} from '../consts';
+import { getMinMaxIndicatorValues, withTryCatchNext } from '../util';
+import { format, formatAndColor } from './account';
 
 const backtestRouter = express.Router();
 
@@ -37,6 +34,16 @@ backtestRouter.get('/', async (req, res, next) => {
   const maxTradeAmount = parseInt(
     (req.query.maxTradeAmount as string) || `${MAX_TRADE_AMOUNT_DEFAULT}`
   );
+  // const condition = req.query.condition as string;
+
+  // buy/sell specific conditions - deprioritized for now
+  // const buyCondition = (req.query.buyCondition as string);
+  // const sellCondition = (req.query.sellCondition as string);
+
+  // const {minIndicatorValue, maxIndicatorValue} = getMinMaxIndicatorValues(
+  //   condition
+  // );
+
   const minIndicatorValue = parseInt(
     (req.query.minIndicatorValue as string) || `${MIN_INDICATOR_VALUE_DEFAULT}`
   );

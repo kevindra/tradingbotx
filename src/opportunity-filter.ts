@@ -1,4 +1,5 @@
-import {Opportunity} from './OpportunitiesFinder';
+import { Opportunity } from './OpportunitiesFinder';
+import { getMinMaxIndicatorValues } from './util';
 
 export interface IndicatorThreshold {
   minIndicatorValue: number;
@@ -8,20 +9,23 @@ export interface IndicatorThreshold {
 export const filterOpportunities = (
   opportunities: Opportunity[],
   indicatorIndex: number,
-  indicatorThreshold: IndicatorThreshold
+  // indicatorThreshold: IndicatorThreshold,
+  condition: string
 ): Opportunity[] => {
+  const {minIndicatorValue, maxIndicatorValue} = getMinMaxIndicatorValues(
+    condition
+  );
+
   const filteredOpportunities: Opportunity[] = opportunities
     .filter(
       o =>
         o.indicatorValues.length > indicatorIndex &&
-        o.indicatorValues[indicatorIndex] >=
-          indicatorThreshold.minIndicatorValue
+        o.indicatorValues[indicatorIndex] >= minIndicatorValue
     )
     .filter(
       o =>
         o.indicatorValues.length > indicatorIndex &&
-        o.indicatorValues[indicatorIndex] <=
-          indicatorThreshold.maxIndicatorValue
+        o.indicatorValues[indicatorIndex] <= maxIndicatorValue
     )
     .sort((a, b) =>
       a.indicatorValues.length > indicatorIndex &&

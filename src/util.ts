@@ -1,8 +1,10 @@
-import {Order} from '@master-chief/alpaca';
-import {Request, Response, NextFunction} from 'express';
-import moment, {Moment} from 'moment';
-import {ALGO_REGISTRY, getAlgoById} from './algo/algoregistry';
-import {AlpacaClient} from './client/AlpacaClient';
+import { NextFunction, Request, Response } from 'express';
+import moment, { Moment } from 'moment';
+
+import { Order } from '@master-chief/alpaca';
+
+import { ALGO_REGISTRY, getAlgoById } from './algo/algoregistry';
+import { AlpacaClient } from './client/AlpacaClient';
 
 /**
  * A generic function to catch all exceptions for the input function and route them to express's next function
@@ -16,7 +18,7 @@ export const withTryCatchNext = async (
   try {
     await func(req, res, next);
   } catch (err) {
-    console.log(`Error occurred: ${err} ${err.stack}`);
+    console.log(`Error occurred: ${err}`);
     next(err);
   }
 };
@@ -124,3 +126,29 @@ export async function getAllOrders(alpaca: AlpacaClient) {
   }
   return allOrders;
 }
+
+export const getMinMaxIndicatorValues = (condition: string) => {
+  let minIndicatorValue: number, maxIndicatorValue: number;
+
+  // hardcoded for now
+  switch (condition) {
+    case 'GTEQ_80_LTEQ_100':
+      minIndicatorValue = 80;
+      maxIndicatorValue = 100;
+      break;
+    case 'GTEQ_50_LTEQ_100':
+      minIndicatorValue = 50;
+      maxIndicatorValue = 100;
+      break;
+    case 'GTEQ_0':
+      minIndicatorValue = 0;
+      maxIndicatorValue = Number.MAX_SAFE_INTEGER;
+      break;
+    default:
+      // making min & max mutually exclusive so we don't return any results
+      minIndicatorValue = Number.MAX_SAFE_INTEGER;
+      maxIndicatorValue = Number.MIN_SAFE_INTEGER;
+      break;
+  }
+  return {minIndicatorValue, maxIndicatorValue};
+};

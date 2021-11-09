@@ -1,26 +1,14 @@
 import express from 'express';
-import moment, {Moment} from 'moment-timezone';
-import {Algo} from '../algo/algo';
-import {AlgoExecutor} from '../AlgoExecutor';
+import moment, { Moment } from 'moment-timezone';
+
+import { Algo } from '../algo/algo';
+import { AlgoExecutor } from '../AlgoExecutor';
 import {
-  LOOK_BACK_DAYS_DEFAULT,
-  MAX_INDICATOR_VALUE_DEFAULT,
-  MIN_INDICATOR_VALUE_DEFAULT,
+    LOOK_BACK_DAYS_DEFAULT, MAX_INDICATOR_VALUE_DEFAULT, MIN_INDICATOR_VALUE_DEFAULT
 } from '../consts';
-import {
-  getCurrentOpportunity,
-  Opportunities,
-  OpportunitiesFinder,
-  Opportunity,
-  OpportunityType,
-} from '../OpportunitiesFinder';
-import {filterOpportunities} from '../opportunity-filter';
-import {SecurityTimeseriesManager} from '../SecurityTimeseriesManager';
-import {
-  getAlgoFromRequest,
-  getIndicatorFromRequest,
-  withTryCatchNext,
-} from '../util';
+import { getCurrentOpportunity, Opportunities, OpportunitiesFinder } from '../OpportunitiesFinder';
+import { filterOpportunities } from '../opportunity-filter';
+import { getAlgoFromRequest, getIndicatorFromRequest, withTryCatchNext } from '../util';
 
 const opportunitiesApiRouter = express.Router();
 const opportunitiesFinder = new OpportunitiesFinder();
@@ -41,10 +29,11 @@ opportunitiesApiRouter.get('/', async (req, res, next) => {
       (req.query.maxIndicatorValue as string) ||
         `${MAX_INDICATOR_VALUE_DEFAULT}`
     );
+    const condition = (req.query.condition as string) || '';
 
     // algo to run
     const algoToRun = getAlgoFromRequest(req);
-    // indicator to use from the algo's output, 0-based
+    // indicator to use from the algo's output, 0-based // TODO FIX ME - allow only 1 indicator value per algo
     const indicator = getIndicatorFromRequest(req);
 
     const opportunities = await Promise.all(
@@ -61,10 +50,7 @@ opportunitiesApiRouter.get('/', async (req, res, next) => {
     const filteredOpportunities = filterOpportunities(
       opportunities,
       indicator,
-      {
-        minIndicatorValue,
-        maxIndicatorValue,
-      }
+      condition
     );
 
     const finalOpportunities = <Opportunities>{

@@ -1,27 +1,21 @@
 import Bottleneck from 'bottleneck';
 import express from 'express';
-import moment, {Moment} from 'moment-timezone';
-import {Algo} from '../algo/algo';
-import {AlgoExecutor, AlgosResponse} from '../AlgoExecutor';
+import moment, { Moment } from 'moment-timezone';
+
+import { Algo } from '../algo/algo';
+import { AlgoExecutor, AlgosResponse } from '../AlgoExecutor';
 import {
-  MIN_INDICATOR_VALUE_DEFAULT,
-  MAX_INDICATOR_VALUE_DEFAULT,
-  MIN_TRADE_AMOUNT_DEFAULT,
-  MAX_TRADE_AMOUNT_DEFAULT,
-  LOOK_BACK_DAYS_DEFAULT,
-  DATE_FORMAT,
-  EST_TIMEZONE,
-  INVESTING_WINDOW_SIZE,
+    DATE_FORMAT, EST_TIMEZONE, INVESTING_WINDOW_SIZE, LOOK_BACK_DAYS_DEFAULT,
+    MAX_INDICATOR_VALUE_DEFAULT, MAX_TRADE_AMOUNT_DEFAULT, MIN_INDICATOR_VALUE_DEFAULT,
+    MIN_TRADE_AMOUNT_DEFAULT
 } from '../consts';
 import {
-  getSlidingWindowOpportunities,
-  OpportunitiesFinder,
-  Opportunity,
-  OpportunityType,
+    getSlidingWindowOpportunities, OpportunitiesFinder, Opportunity
 } from '../OpportunitiesFinder';
-import {filterOpportunities} from '../opportunity-filter';
-import {SecurityTimeseriesManager} from '../SecurityTimeseriesManager';
-import {getAlgosFromRequest, normalize, withTryCatchNext} from '../util';
+import { filterOpportunities } from '../opportunity-filter';
+import { SecurityTimeseriesManager } from '../SecurityTimeseriesManager';
+import { ActionType } from '../trader';
+import { getAlgosFromRequest, normalize, withTryCatchNext } from '../util';
 
 const backtestApiRouter = express.Router();
 const oppFinder = new OpportunitiesFinder();
@@ -59,7 +53,7 @@ export interface Trade {
   avgCost: number;
   tradeProfitLoss: number;
   cummulativeProfitLoss: number;
-  type: OpportunityType;
+  type: ActionType;
   indicatorValue: number;
   portfolioSnapshot: PortfolioSnapshot;
 }
@@ -147,7 +141,8 @@ backtestApiRouter.get('/', async (req, res, next) => {
     flattenOpportunities = filterOpportunities(
       flattenOpportunities,
       indicator,
-      {minIndicatorValue, maxIndicatorValue}
+      // {minIndicatorValue, maxIndicatorValue}
+      'GTEQ_80_LTEQ_100'
     );
 
     const intervalCountBySymbols: {[key: string]: number} = {};
@@ -192,7 +187,7 @@ backtestApiRouter.get('/', async (req, res, next) => {
       const indicatorValue = o.indicatorValues[indicator]; // historical
       const s = o.symbol;
       const currPrice = o.price || 0;
-      const type = o.type;
+      const type = 'buy'; // prev - o.type TODO - need to figure out what to do here (IT's BROKEN)
 
       let proposedTradeAmount = normalize(
         indicatorValue,
