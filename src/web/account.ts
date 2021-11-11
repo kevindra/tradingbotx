@@ -1,9 +1,12 @@
-import {Order, Position, Watchlist} from '@master-chief/alpaca';
 import express from 'express';
 import moment from 'moment';
-import {AlpacaClient} from '../client/AlpacaClient';
-import {NAV_TITLE} from '../consts';
-import {calculateRealizedPl, getAllOrders, withTryCatchNext} from '../util';
+
+import { Order, Position, Watchlist } from '@master-chief/alpaca';
+
+import { AlpacaClient } from '../client/AlpacaClient';
+import { NAV_TITLE } from '../consts';
+import { calculateRealizedPl, getAllOrders, withTryCatchNext } from '../util';
+
 const accountRouter = express.Router();
 
 accountRouter.get('/', async (req, res, next) => {
@@ -58,7 +61,6 @@ accountRouter.get('/', async (req, res, next) => {
         p.avg_entry_price,
         allOrders
       );
-      console.log(`Realized PL: ${p.symbol} ${realizedPl}`);
       formattedPositions.push({
         symbol: p.symbol,
         current_price: `$${p.current_price}`,
@@ -136,6 +138,11 @@ accountRouter.get('/', async (req, res, next) => {
         filled_qty: o.filled_qty.toFixed(2),
         side: o.side,
         type: o.type,
+        notional: `$${
+          (o as any).notional != undefined
+            ? parseFloat((o as any).notional).toFixed(2)
+            : '-'
+        }`, // as any is a temp fix - a lib bug
         time_in_force: o.time_in_force,
         filled_avg_price: o.filled_avg_price ? o.filled_avg_price : '-',
         status: o.status,
