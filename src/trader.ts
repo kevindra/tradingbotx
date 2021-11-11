@@ -73,6 +73,7 @@ export class Trader {
     // and cause trades to fail
     return await Promise.all(
       opportunities.map(async o => {
+        let currentMarketValue = 0;
         if (action === 'sell') {
           const symbolInPortfolio = currentPositions.filter(
             p => p.symbol === o.symbol
@@ -89,6 +90,7 @@ export class Trader {
               );
               return;
             }
+            currentMarketValue = symbolInPortfolio[0].market_value;
           }
         }
 
@@ -124,6 +126,10 @@ export class Trader {
             `${action} $${o.symbol} weighted trade amount $${weightedTradeAmount} is less than 1.00, not submitting order.`
           );
           return order;
+        }
+
+        if (action == 'sell' && weightedTradeAmount > currentMarketValue) {
+          weightedTradeAmount = currentMarketValue; // can not sell beyond the current market value of the equity
         }
 
         try {
