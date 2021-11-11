@@ -127,12 +127,15 @@ export class Trader {
           );
           return order;
         }
-
         if (action == 'sell' && weightedTradeAmount > currentMarketValue) {
+          log(
+            `${action} $${o.symbol} weighted trade amount $${weightedTradeAmount} is greater than current market value $${currentMarketValue}, submitting order for the current market value instead.`
+          );
           weightedTradeAmount = currentMarketValue; // can not sell beyond the current market value of the equity
         }
 
         try {
+          log(`Order: ${o.symbol} ${action} @ ${weightedTradeAmount}`);
           order = await this.alpacaClient.placeOrder({
             symbol: o.symbol,
             side: action,
